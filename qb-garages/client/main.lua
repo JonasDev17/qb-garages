@@ -278,10 +278,6 @@ function HouseGarage(house)
     end, house)
 end
 
-function yeet(gar)
-    print(gar)
-end
-
 function getPlayerVehicles(garage)
     local vehicles = {}
 
@@ -429,7 +425,6 @@ function TakeOutVehicle(vehicle)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, Garages[currentGarage].spawnPoint.h)
-                print(Garages[currentGarage].spawnPoint.h)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -491,7 +486,6 @@ function TakeOutGangVehicle(vehicle)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, GangGarages[currentGarage].spawnPoint.h)
-                print(GangGarages[currentGarage].spawnPoint.h)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -513,7 +507,6 @@ end
 
 function TakeOutDepotVehicle(vehicle)
     if vehicle.state == "Impound" then
-        print(currentGarage)
         TriggerServerEvent("qb-garage:server:PayDepotPrice", vehicle)
     end
 end

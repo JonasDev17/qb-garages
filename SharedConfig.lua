@@ -1,97 +1,83 @@
 Garages = {
-    ["fmaparking"] = {
-        label = "FMA Parking",
-        takeVehicle = {x = -228.81, y = 722.96, z = 9.85},
-        spawnPoint = {x = -236.00, y = 719.46, z = 9.86, h = 266.85},
-        putVehicle = {x = -236.43, y = 730.50, z = 9.86},
+    ["motelgarage"] = {
+        label = "Motel Parking",
+        takeVehicle = {x = 273.43, y = -343.99, z = 44.91},
+        spawnPoint = {x = 270.94, y = -342.96, z = 43.97, h = 161.5},
+        putVehicle = {x = 276.69, y = -339.85, z = 44.91},
         isHouse = false,
     },
-    ["uniondrive"] = {
-        label = "Union Drive",
-        takeVehicle = {x = -356.54, y = 965.36, z = 5.08},
-        spawnPoint = {x = -359.09, y = 954.66, z = 4.93, h = 270.33},
-        putVehicle = {x = -357.71, y = 975.37, z = 4.93},
+    ["sapcounsel"] = {
+        label = "San Andreas Parking",
+        takeVehicle = {x = -330.01, y = -780.33, z = 33.96},
+        spawnPoint = {x = -334.44, y = -780.75, z = 33.96, h = 137.5},
+        putVehicle = {x = -336.31, y = -774.93, z = 33.96},
     },
-    ["24hpublic"] = {
-        label = "24h Parking",
-        takeVehicle = {x = 235.57, y = 302.46, z = 14.52},
-        spawnPoint = {x = 238.40, y = 308.02, z = 14.52, h = 359.47},
-        putVehicle = {x = 230.85, y = 310.19, z = 14.52},
+    ["spanishave"] = {
+        label = "Spanish Ave Parking",
+        takeVehicle = {x = -1160.86, y = -741.41, z = 19.63},
+        spawnPoint = {x = -1163.88, y = -749.32, z = 18.42, h = 35.5},
+        putVehicle = {x = -1147.58, y = -738.11, z = 19.31},
     },
-    ["24hpublic2"] = {
-        label = "24h Parking",
-        takeVehicle = {x = -335.55, y = 1632.01, z = 9.90},
-        spawnPoint = {x = -325.41, y = 1634.65, z = 9.92, h = 83.38},
-        putVehicle = {x = -322.92, y = 1634.35, z = 9.92},
+    ["caears24"] = {
+        label = "Caears 24 Parking",
+        takeVehicle = {x = 69.84, y = 12.6, z = 68.96},
+        spawnPoint = {x = 73.21, y = 10.72, z = 68.83, h = 163.5},
+        putVehicle = {x = 65.43, y = 21.19, z = 69.47},
     },
-	 ["24hpublic3"] = {
-        label = "24h Parking",
-        takeVehicle = {x = 650.29, y = 2087.45, z = 16.22},
-        spawnPoint = {x = 644.23, y = 2084.02, z = 16.20, h = 216.55},
-        putVehicle = {x = 297.60, y = 2082.11, z = 16.26},
+    ["caears242"] = {
+        label = "Caears 24 Parking",
+        takeVehicle = {x = -475.31, y = -818.73, z = 30.46},
+        spawnPoint = {x = -472.03, y = -815.47, z = 30.5, h = 177.5},
+        putVehicle = {x = -453.6, y = -817.08, z = 30.61},
     },
-	 ["gantrypark"] = {
-        label = "Gantry Park",
-        takeVehicle = {x = 1500.62, y = 1490.12, z = 13.68},
-        spawnPoint = {x = 1523.25, y = 1502.44, z = 13.51, h = 85.54},
-        putVehicle = {x = 1510.99, y = 1490.90, z = 13.53},
+    ["lagunapi"] = {
+        label = "Laguna Parking",
+        takeVehicle = {x = 364.37, y = 297.83, z = 103.49},
+        spawnPoint = {x = 367.49, y = 297.71, z = 103.43, h = 340.5},
+        putVehicle = {x = 363.04, y = 283.51, z = 103.38},
     },
-	["funland"] = {
-        label = "Funland",
-        takeVehicle = {x = 1315.50, y = -48.37, z = 13.58},
-        spawnPoint = {x = 1304.58, y = -50.62, z = 13.99, h = 269.29},
-        putVehicle = {x = 1313.64, y = -51.26, z = 16.60},
+    ["airportp"] = {
+        label = "Airport Parking",
+        takeVehicle = {x = -796.86, y = -2024.85, z = 8.88},
+        spawnPoint = {x = -800.41, y = -2016.53, z = 9.32, h = 48.5},
+        putVehicle = {x = -804.84, y = -2023.21, z = 9.16},
     },
-	["24hpublic4"] = {
-        label = "24h Parking",
-        takeVehicle = {x = 2001.97, y = 896.74, z = 25.44},
-        spawnPoint = {x = 1992.47, y = 899.66, z = 25.42, h = 87.98},
-        putVehicle = {x = 1997.26, y = 899.36, z = 25.41},
+    ["beachp"] = {
+        label = "Beach Parking",
+        takeVehicle = {x = -1183.1, y = -1511.11, z = 4.36},
+        spawnPoint = {x = -1181.0, y = -1505.98, z = 4.37, h = 214.5},
+        putVehicle = {x = -1176.81, y = -1498.63, z = 4.37},
     },
-	["gavapts"] = {
-        label = "Gavleston Apts",
-        takeVehicle = {x = -243.06, y = 2005.22, z = 18.75},
-        spawnPoint = {x = -249.79, y = 2001.32, z = 18.71, h = 160.10},
-        putVehicle = {x = -237.92, y = 2004.25, z = 18.71},
+    ["themotorhotel"] = {
+        label = "The Motor Hotel Parking",
+        takeVehicle = {x = 1137.77, y = 2663.54, z = 37.9},            
+        spawnPoint = {x = 1137.69, y = 2673.61, z = 37.9, h = 359.5},      
+        putVehicle = {x = 1137.75, y = 2652.95, z = 37.9},
     },
-	["eastbo"] = {
-        label = "East Borough",
-        takeVehicle = {x = 378.47, y = 1488.55, z = 14.71},
-        spawnPoint = {x = 375.89, y = 1466.54, z = 14.56, h = 87.26},
-        putVehicle = {x = 371.11, y = 1483.22, z = 14.56},
+    ["liqourparking"] = {
+        label = "Liqour Parking",
+        takeVehicle = {x = 934.95, y = 3606.59, z = 32.81},
+        spawnPoint = {x = 941.57, y = 3619.99, z = 32.5, h = 141.5},
+        putVehicle = {x = 939.37, y = 3612.25, z = 32.69},
     },
-	["prisonpark"] = {
-        label = "Prison Parking",
-        takeVehicle = {x = -746.45, y = 26.36, z = 2.78},
-        spawnPoint = {x = -733.06, y = 19.97, z = 2.89, h = 176.42},
-        putVehicle = {x = -755.43, y = 21.80, z = 2.89},
+    ["shoreparking"] = {
+        label = "Shore Parking",
+        takeVehicle = {x = 1726.21, y = 3707.16, z = 34.17},
+        spawnPoint = {x = 1730.31, y = 3711.07, z = 34.2, h = 20.5},
+        putVehicle = {x = 1737.13, y = 3718.91, z = 34.04},
     },
-	["acterpark"] = {
-        label = "Acter Parking",
-        takeVehicle = {x = -1818.69, y = 664.10, z = 12.04},
-        spawnPoint = {x = -1824.72, y = 668.08, z = 12.04, h = 358.04},
-        putVehicle = {x = -1825.73, y = 673.97, z = 12.12},
+    ["haanparking"] = {
+        label = "Haan Parking",
+        takeVehicle = {x = 78.34, y = 6418.74, z = 31.28},
+        spawnPoint = {x = 70.71, y = 6425.16, z = 30.92, h = 68.5}, 
+        putVehicle = {x = 85.3, y = 6427.52, z = 31.33},
     },
-	["leftwoodpark"] = {
-        label = "Leftwood Park",
-        takeVehicle = {x = -789.47, y = 1903.55, z = 25.81},
-        spawnPoint = {x = -784.96, y = 1908.42, z = 25.68, h = 84.15},
-        putVehicle = {x = -793.67, y = 1906.31, z = 25.68},
+    ["dumbogarage"] = {
+        label = "Dumbo Personeelsgarage",
+        takeVehicle = {x = 157.26, y = -3240.00, z = 7.00},
+        spawnPoint = {x = 165.32, y = -3236.10, z = 5.93, h = 268.5}, 
+        putVehicle = {x = 165.32, y = -3230.00, z = 5.93},
     },
-	["timesquare"] = {
-        label = "Times Square",
-        takeVehicle = {x = -23.75, y = 733.88, z = 14.05},
-        spawnPoint = {x = -26.53, y = 724.93, z = 14.08, h = 358.73},
-        putVehicle = {x = -20.56, y = 729.26, z = 13.62},
-    },
-	
-	["centralpark"] = {
-        label = "Central Park",
-        takeVehicle = {x = -79.51, y = 1691.85, z = 15.16},
-        spawnPoint = {x = -72.67, y = 1685.51, z = 15.01, h = 176.92},
-        putVehicle = {x = -72.67, y = 1685.51, z = 15.01},
-    },
-  
 }
 
 HouseGarages = {}

@@ -115,7 +115,7 @@ GangGarages = {
 
 Depots = {
     ["hayesdepot"] = {
-        label = "Impound",
-        takeVehicle = {x = -382.12, y = 1557.96, z = 9.91, h = 349.90}
+        label = "Hayes Depot",
+        takeVehicle = {x = 491.0, y = -1314.69, z = 29.25, h = 304.5}
     }
 }

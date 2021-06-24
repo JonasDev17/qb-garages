@@ -116,6 +116,6 @@ GangGarages = {
 Depots = {
     ["hayesdepot"] = {
         label = "Hayes Depot",
-        takeVehicle = vector3(491.0, -1314.69, 29.25, 304.5)
+        takeVehicle = vector4(491.0, -1314.69, 29.25, 304.5)
     }
 }

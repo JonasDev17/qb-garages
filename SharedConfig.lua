@@ -78,6 +78,12 @@ Garages = {
         spawnPoint = vector4(165.32, -3236.10, 5.93, 268.5), 
         putVehicle = vector3(165.32, -3230.00, 5.93),
     },
+    ["pillboxgarage"] = {
+        label = "Pillbox Garage Parking",
+        takeVehicle = vector3(215.9499, -809.698, 30.731),
+        spawnPoint = vector4(234.1942, -787.066, 30.193, 159.6),
+        putVehicle = vector3(218.0894, -781.370, 30.389),
+    },
 }
 
 HouseGarages = {}

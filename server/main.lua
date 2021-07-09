@@ -90,7 +90,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleHouseOwner", funct
     local pData = QBCore.Functions.GetPlayer(src)
     exports['ghmattimysql']:execute('SELECT * FROM player_vehicles WHERE plate = @plate', {['@plate'] = plate}, function(result)
         if result[1] ~= nil then
-            local hasHouseKey = exports['qb-houses']:hasKey(result[1].steam, result[1].citizenid, house)
+            local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
             if hasHouseKey then
                 cb(true)
             else

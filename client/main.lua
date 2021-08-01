@@ -650,11 +650,15 @@ Citizen.CreateThread(function()
                                 local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                 local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                 local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+                                local passenger = GetVehicleMaxNumberOfPassengers(curVeh)
+                                CheckPlayers(curVeh)
+                                
+                              
+                                --local TaskLeaveVehicle
                                 TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
                                 TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, k)
                                 --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                QBCore.Functions.DeleteVehicle(curVeh)
+                              
                                 if plate ~= nil then
                                     OutsideVehicles[plate] = veh
                                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -674,6 +678,19 @@ Citizen.CreateThread(function()
         end
     end
 end)
+
+function CheckPlayers(vehicle)
+    for i = -1, 5,1 do                
+        seat = GetPedInVehicleSeat(vehicle,i)
+        if seat ~= 0 then
+            TaskLeaveVehicle(seat,vehicle,0)
+            SetVehicleDoorsLocked(vehicle) -- just in case the player try to enter the vehicle again
+            Wait(1500)
+            QBCore.Functions.DeleteVehicle(vehicle)
+        end
+   end
+end
+
 
 Citizen.CreateThread(function()
     Citizen.Wait(1000)
@@ -729,11 +746,11 @@ Citizen.CreateThread(function()
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+                                    CheckPlayers(curVeh)
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, "ballasgarage")
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, "ballasgarage")
                                     --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                    QBCore.Functions.DeleteVehicle(curVeh)
+                                    
                                     if plate ~= nil then
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -792,11 +809,11 @@ Citizen.CreateThread(function()
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+CheckPlayers(curVeh)
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, "la_familiagarage")
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, "la_familiagarage")
                                     --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                    QBCore.Functions.DeleteVehicle(curVeh)
+                                    
                                     if plate ~= nil then
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -855,11 +872,11 @@ Citizen.CreateThread(function()
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+CheckPlayers(curVeh)
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, "nomadsgarage")
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, "nomadsgarage")
                                     --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                    QBCore.Functions.DeleteVehicle(curVeh)
+                                
                                     if plate ~= nil then
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -918,11 +935,11 @@ Citizen.CreateThread(function()
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+CheckPlayers(curVeh)
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, "cartelgarage")
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, "cartelgarage")
                                     --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                    QBCore.Functions.DeleteVehicle(curVeh)
+                               
                                     if plate ~= nil then
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -978,7 +995,7 @@ Citizen.CreateThread(function()
                                         local bodyDamage = round(GetVehicleBodyHealth(curVeh), 1)
                                         local engineDamage = round(GetVehicleEngineHealth(curVeh), 1)
                                         local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-
+CheckPlayers(curVeh)
                                         TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
                                         TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
                                         QBCore.Functions.DeleteVehicle(curVeh)

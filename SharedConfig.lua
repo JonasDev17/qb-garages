@@ -95,6 +95,7 @@ GangGarages = {
         spawnPoint = vector4(98.50, -1954.49, 20.75, 335.73),
         putVehicle = vector3(94.75, -1959.93, 20.84),
         isHouse = false,
+        job = "ballas"
     },
     ["la_familiagarage"] = {
         label = "La Familia",
@@ -102,13 +103,15 @@ GangGarages = {
         spawnPoint = vector4(-818.43, 184.97, 72.28, 107.85),
         putVehicle = vector3(-811.65, 187.49, 72.48),
         isHouse = false,
+        job = "la_familia"
     },
-    ["nomadsgarage"] = {
+    ["the_lostgarage"] = {
         label = "Lost MC",
         takeVehicle = vector3(957.25, -129.63, 74.39),
         spawnPoint = vector4(957.25, -129.63, 74.39, 199.21),
         putVehicle = vector3(950.47, -122.05, 74.36),
         isHouse = false,
+        job = "the_lost"
     },
     ["cartelgarage"] = {
         label = "Cartel",
@@ -116,8 +119,10 @@ GangGarages = {
         spawnPoint = vector4(1407.18, 1118.04, 114.84, 88.34),
         putVehicle = vector3(1407.18, 1118.04, 114.84),
         isHouse = false,
+        job = "cartel"
     },
 }
+
 
 Depots = {
     ["hayesdepot"] = {

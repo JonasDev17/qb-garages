@@ -787,7 +787,7 @@ Citizen.CreateThread(function()
         local inGarageRange = false
 
         if HouseGarages ~= nil and currentHouseGarage ~= nil then
-            if hasGarageKey and HouseGarages[currentHouseGarage] ~= nil then
+            if hasGarageKey and HouseGarages[currentHouseGarage] ~= nil and HouseGarages[currentHouseGarage].takeVehicle ~= nil then
                 local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
                 if takeDist <= 15 then
                     inGarageRange = true

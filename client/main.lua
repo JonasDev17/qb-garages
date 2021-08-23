@@ -494,6 +494,7 @@ end
 function TakeOutDepotVehicle(vehicle)
     if vehicle.state == "Impound" then
         TriggerServerEvent("qb-garage:server:PayDepotPrice", vehicle)
+        Citizen.Wait(1000)
     end
 end
 

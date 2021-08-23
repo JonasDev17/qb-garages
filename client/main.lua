@@ -145,7 +145,7 @@ DrawText3Ds = function(x, y, z, text)
 end
 
 Citizen.CreateThread(function()
-    for k, v in pairs(Config.Config.Garages) do
+    for k, v in pairs(Config.Garages) do
         Garage = AddBlipForCoord(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z)
 
         SetBlipSprite (Garage, 357)

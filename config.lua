@@ -1,4 +1,6 @@
-Garages = {
+Config = {}
+
+Config.Garages = {
     ["motelgarage"] = {
         label = "Motel Parking",
         takeVehicle = vector3(273.43, -343.99, 44.91),
@@ -86,9 +88,9 @@ Garages = {
     },
 }
 
-HouseGarages = {}
+Config.HouseGarages = {}
 
-GangGarages = {
+Config.GangGarages = {
     ["ballasgarage"] = {
         label = "Ballas",
         takeVehicle = vector3(98.50, -1954.49, 20.84),
@@ -124,7 +126,7 @@ GangGarages = {
 }
 
 
-Depots = {
+Config.Depots = {
     ["hayesdepot"] = {
         label = "Hayes Depot",
         takeVehicle = vector4(491.0, -1314.69, 29.25, 304.5)

@@ -146,31 +146,35 @@ end
 
 Citizen.CreateThread(function()
     for k, v in pairs(Config.Garages) do
-        Garage = AddBlipForCoord(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z)
+        if v.showBlip then
+            local Garage = AddBlipForCoord(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z)
 
-        SetBlipSprite (Garage, 357)
-        SetBlipDisplay(Garage, 4)
-        SetBlipScale  (Garage, 0.65)
-        SetBlipAsShortRange(Garage, true)
-        SetBlipColour(Garage, 3)
+            SetBlipSprite (Garage, 357)
+            SetBlipDisplay(Garage, 4)
+            SetBlipScale  (Garage, 0.65)
+            SetBlipAsShortRange(Garage, true)
+            SetBlipColour(Garage, 3)
 
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName(Config.Garages[k].label)
-        EndTextCommandSetBlipName(Garage)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentSubstringPlayerName(Config.Garages[k].label)
+            EndTextCommandSetBlipName(Garage)
+        end
     end
 
     for k, v in pairs(Config.Depots) do
-        Depot = AddBlipForCoord(Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z)
+        if v.showBlip then
+            local Depot = AddBlipForCoord(Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z)
 
-        SetBlipSprite (Depot, 68)
-        SetBlipDisplay(Depot, 4)
-        SetBlipScale  (Depot, 0.7)
-        SetBlipAsShortRange(Depot, true)
-        SetBlipColour(Depot, 5)
+            SetBlipSprite (Depot, 68)
+            SetBlipDisplay(Depot, 4)
+            SetBlipScale  (Depot, 0.7)
+            SetBlipAsShortRange(Depot, true)
+            SetBlipColour(Depot, 5)
 
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName(Config.Depots[k].label)
-        EndTextCommandSetBlipName(Depot)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentSubstringPlayerName(Config.Depots[k].label)
+            EndTextCommandSetBlipName(Depot)
+        end
     end
 end)
 

@@ -166,35 +166,31 @@ end
 
 Citizen.CreateThread(function()
     for k, v in pairs(Garages) do
-        if v.showBlip then
-            Garage = AddBlipForCoord(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z)
+        Garage = AddBlipForCoord(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z)
 
-            SetBlipSprite (Garage, 357)
-            SetBlipDisplay(Garage, 4)
-            SetBlipScale  (Garage, 0.65)
-            SetBlipAsShortRange(Garage, true)
-            SetBlipColour(Garage, 3)
+        SetBlipSprite (Garage, 357)
+        SetBlipDisplay(Garage, 4)
+        SetBlipScale  (Garage, 0.65)
+        SetBlipAsShortRange(Garage, true)
+        SetBlipColour(Garage, 3)
 
-            BeginTextCommandSetBlipName("STRING")
-            AddTextComponentSubstringPlayerName(Garages[k].label)
-            EndTextCommandSetBlipName(Garage)
-        end
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName(Garages[k].label)
+        EndTextCommandSetBlipName(Garage)
     end
 
     for k, v in pairs(Depots) do
-        if v.showBlip then
-            Depot = AddBlipForCoord(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z)
+        Depot = AddBlipForCoord(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z)
 
-            SetBlipSprite (Depot, 68)
-            SetBlipDisplay(Depot, 4)
-            SetBlipScale  (Depot, 0.7)
-            SetBlipAsShortRange(Depot, true)
-            SetBlipColour(Depot, 5)
+        SetBlipSprite (Depot, 68)
+        SetBlipDisplay(Depot, 4)
+        SetBlipScale  (Depot, 0.7)
+        SetBlipAsShortRange(Depot, true)
+        SetBlipColour(Depot, 5)
 
-            BeginTextCommandSetBlipName("STRING")
-            AddTextComponentSubstringPlayerName(Depots[k].label)
-            EndTextCommandSetBlipName(Depot)
-        end
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName(Depots[k].label)
+        EndTextCommandSetBlipName(Depot)
     end
 end)
 

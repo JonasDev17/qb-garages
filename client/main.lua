@@ -4,17 +4,6 @@ local currentGarage = nil
 local OutsideVehicles = {}
 local PlayerGang = {}
 
--- RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
--- AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
---     QBCore.Functions.TriggerCallback('qb-garage:server:GetOutsideVehicles', function(result)
---         if result ~= nil then
---             OutsideVehicles = result
---         else
---             OutsideVehicles = {}
---         end
---     end)
--- end)
-
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     PlayerGang = QBCore.Functions.GetPlayerData().gang
@@ -33,58 +22,49 @@ end)
 
 RegisterNetEvent('qb-garages:client:houseGarageConfig')
 AddEventHandler('qb-garages:client:houseGarageConfig', function(garageConfig)
-    HouseGarages = garageConfig
+    Config.HouseGarages = garageConfig
 end)
 
 RegisterNetEvent('qb-garages:client:addHouseGarage')
 AddEventHandler('qb-garages:client:addHouseGarage', function(house, garageInfo)
-    HouseGarages[house] = garageInfo
+    Config.HouseGarages[house] = garageInfo
 end)
-
--- function AddOutsideVehicle(plate, veh)
---     OutsideVehicles[plate] = veh
---     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
--- end
 
 RegisterNetEvent('qb-garages:client:takeOutDepot')
 AddEventHandler('qb-garages:client:takeOutDepot', function(vehicle)
     if OutsideVehicles ~= nil and next(OutsideVehicles) ~= nil then
         if OutsideVehicles[vehicle.plate] ~= nil then
             local Engine = GetVehicleEngineHealth(OutsideVehicles[vehicle.plate])
-            -- if Engine <= 50.0 then
-                QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                    QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                        QBCore.Functions.SetVehicleProperties(veh, properties)
-                        enginePercent = round(vehicle.engine / 10, 0)
-                        bodyPercent = round(vehicle.body / 10, 0)
-                        currentFuel = vehicle.fuel
+            QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                    QBCore.Functions.SetVehicleProperties(veh, properties)
+                    enginePercent = round(vehicle.engine / 10, 0)
+                    bodyPercent = round(vehicle.body / 10, 0)
+                    currentFuel = vehicle.fuel
 
-                        if vehicle.plate ~= nil then
-                            DeleteVehicle(OutsideVehicles[vehicle.plate])
-                            OutsideVehicles[vehicle.plate] = veh
-                            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-                        end
+                    if vehicle.plate ~= nil then
+                        DeleteVehicle(OutsideVehicles[vehicle.plate])
+                        OutsideVehicles[vehicle.plate] = veh
+                        TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                    end
 
-                        SetVehicleNumberPlateText(veh, vehicle.plate)
-                        SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
-                        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                        exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
-                        SetEntityAsMissionEntity(veh, true, true)
-                        doCarDamage(veh, vehicle)
-                        TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                        QBCore.Functions.Notify("Vehicle Off:Engine " .. enginePercent .. "% Body: " .. bodyPercent.. "% Fuel: "..currentFuel.. "%", "primary", 4500)
-                        TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
-                        closeMenuFull()
-                        SetVehicleEngineOn(veh, true, true)
-                    end, vehicle.plate)
-                    TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-                end, Depots[currentGarage].spawnPoint, true)
-                SetTimeout(250, function()
-                    TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false)))
-                end)
-            -- else
-            --     QBCore.Functions.Notify("You cannot duplicate this vehicle")
-            -- end
+                    SetVehicleNumberPlateText(veh, vehicle.plate)
+                    SetEntityHeading(veh, Config.Depots[currentGarage].takeVehicle.w)
+                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                    exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
+                    SetEntityAsMissionEntity(veh, true, true)
+                    doCarDamage(veh, vehicle)
+                    TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                    QBCore.Functions.Notify("Vehicle Off:Engine " .. enginePercent .. "% Body: " .. bodyPercent.. "% Fuel: "..currentFuel.. "%", "primary", 4500)
+                    TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
+                    closeMenuFull()
+                    SetVehicleEngineOn(veh, true, true)
+                end, vehicle.plate)
+                TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
+            end, Config.Depots[currentGarage].spawnPoint, true)
+            SetTimeout(250, function()
+                TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false)))
+            end)
         else
             QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
@@ -99,7 +79,7 @@ AddEventHandler('qb-garages:client:takeOutDepot', function(vehicle)
                     end
 
                     SetVehicleNumberPlateText(veh, vehicle.plate)
-                    SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
+                    SetEntityHeading(veh, Config.Depots[currentGarage].takeVehicle.w)
                     TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
                     exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                     SetEntityAsMissionEntity(veh, true, true)
@@ -111,7 +91,7 @@ AddEventHandler('qb-garages:client:takeOutDepot', function(vehicle)
                     SetVehicleEngineOn(veh, true, true)
                 end, vehicle.plate)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-            end, Depots[currentGarage].spawnPoint, true)
+            end, Config.Depots[currentGarage].spawnPoint, true)
             SetTimeout(250, function()
                 TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false)))
             end)
@@ -130,7 +110,7 @@ AddEventHandler('qb-garages:client:takeOutDepot', function(vehicle)
                 end
 
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
+                SetEntityHeading(veh, Config.Depots[currentGarage].takeVehicle.w)
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -142,7 +122,7 @@ AddEventHandler('qb-garages:client:takeOutDepot', function(vehicle)
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
             TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-        end, Depots[currentGarage].spawnPoint, true)
+        end, Config.Depots[currentGarage].spawnPoint, true)
         SetTimeout(250, function()
             TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(GetVehiclePedIsIn(PlayerPedId(), false)))
         end)
@@ -165,8 +145,8 @@ DrawText3Ds = function(x, y, z, text)
 end
 
 Citizen.CreateThread(function()
-    for k, v in pairs(Garages) do
-        Garage = AddBlipForCoord(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z)
+    for k, v in pairs(Config.Garages) do
+        Garage = AddBlipForCoord(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z)
 
         SetBlipSprite (Garage, 357)
         SetBlipDisplay(Garage, 4)
@@ -175,12 +155,12 @@ Citizen.CreateThread(function()
         SetBlipColour(Garage, 3)
 
         BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName(Garages[k].label)
+        AddTextComponentSubstringPlayerName(Config.Garages[k].label)
         EndTextCommandSetBlipName(Garage)
     end
 
-    for k, v in pairs(Depots) do
-        Depot = AddBlipForCoord(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z)
+    for k, v in pairs(Config.Depots) do
+        Depot = AddBlipForCoord(Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z)
 
         SetBlipSprite (Depot, 68)
         SetBlipDisplay(Depot, 4)
@@ -189,7 +169,7 @@ Citizen.CreateThread(function()
         SetBlipColour(Depot, 5)
 
         BeginTextCommandSetBlipName("STRING")
-        AddTextComponentSubstringPlayerName(Depots[k].label)
+        AddTextComponentSubstringPlayerName(Config.Depots[k].label)
         EndTextCommandSetBlipName(Depot)
     end
 end)
@@ -220,7 +200,7 @@ end
 
 function MenuHouseGarage(house)
     ped = PlayerPedId();
-    MenuTitle = HouseGarages[house].label
+    MenuTitle = Config.HouseGarages[house].label
     ClearMenu()
     Menu.addButton("My Vehicles", "HouseGarage", house)
     Menu.addButton("Close Menu", "close", nil)
@@ -236,13 +216,13 @@ function HouseGarage(house)
             QBCore.Functions.Notify("You have no vehicles in your garage", "error", 5000)
             closeMenuFull()
         else
-            Menu.addButton(HouseGarages[house].label, "HouseGarage", HouseGarages[house].label)
+            Menu.addButton(Config.HouseGarages[house].label, "HouseGarage", Config.HouseGarages[house].label)
 
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
-                curGarage = HouseGarages[house].label
+                curGarage = Config.HouseGarages[house].label
 
                 if v.state == 0 then
                     v.state = "Out"
@@ -252,11 +232,7 @@ function HouseGarage(house)
                     v.state = "Impound"
                 end
 
-                if v.vehicle ~= "yFiat595ssB" then
-                    Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGarageVehicle", v, v.state, " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
-                else
-                    Menu.addButton("Sydney Mobile", "TakeOutGarageVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                end
+                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGarageVehicle", v, v.state, " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
             end
         end
 
@@ -280,7 +256,7 @@ function DepotList()
             QBCore.Functions.Notify("There are no vehicles in the Impound", "error", 5000)
             closeMenuFull()
         else
-            Menu.addButton(Depots[currentGarage].label, "DepotList", Depots[currentGarage].label)
+            Menu.addButton(Config.Depots[currentGarage].label, "DepotList", Config.Depots[currentGarage].label)
 
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
@@ -292,11 +268,7 @@ function DepotList()
                     v.state = "Impound"
                 end
 
-                if v.vehicle ~= "yFiat595ssB" then
-                    Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutDepotVehicle", v, v.state .. " ($"..v.depotprice..",-)", " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
-                else
-                    Menu.addButton("Sydney Mobile", "TakeOutDepotVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                end
+                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutDepotVehicle", v, v.state .. " ($"..v.depotprice..",-)", " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
             end
         end
 
@@ -314,13 +286,13 @@ function VehicleList()
             QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
             closeMenuFull()
         else
-            Menu.addButton(Garages[currentGarage].label, "VehicleList", Garages[currentGarage].label)
+            Menu.addButton(Config.Garages[currentGarage].label, "VehicleList", Config.Garages[currentGarage].label)
 
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
-                curGarage = Garages[v.garage].label
+                curGarage = Config.Garages[v.garage].label
 
 
                 if v.state == 0 then
@@ -331,11 +303,7 @@ function VehicleList()
                     v.state = "Impound"
                 end
 
-                if v.vehicle ~= "yFiat595ssB" then
-                    Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                else
-                    Menu.addButton("Sydney Mobile", "TakeOutVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                end
+                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
             end
         end
 
@@ -353,13 +321,13 @@ function GangVehicleList()
             QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
             closeMenuFull()
         else
-            Menu.addButton(GangGarages[currentGarage].label, "GangVehicleList", GangGarages[currentGarage].label)
+            Menu.addButton(Config.GangGarages[currentGarage].label, "GangVehicleList", Config.GangGarages[currentGarage].label)
 
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
-                curGarage = GangGarages[v.garage].label
+                curGarage = Config.GangGarages[v.garage].label
 
 
 
@@ -371,28 +339,13 @@ function GangVehicleList()
                     v.state = "Impound"
                 end
 
-                if v.vehicle ~= "yFiat595ssB" then
-                    Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGangVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                else
-                    Menu.addButton("Sydney Mobile", "TakeOutGangVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
-                end
+                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGangVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
             end
         end
 
         Menu.addButton("Back", "MenuGarage",nil)
     end, currentGarage)
 end
-
--- Citizen.CreateThread(function()
---     while true do
---         if VehPlate ~= nil then
---             local veh = OutsideVehicles[VehPlate]
---             local Damage = GetVehicleBodyHealth(veh)
---         end
-
---         Citizen.Wait(1000)
---     end
--- end)
 
 function TakeOutVehicle(vehicle)
     if vehicle.state == "Garaged" then
@@ -410,7 +363,7 @@ function TakeOutVehicle(vehicle)
 
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetEntityHeading(veh, Garages[currentGarage].spawnPoint.w)
+                SetEntityHeading(veh, Config.Garages[currentGarage].spawnPoint.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -422,38 +375,13 @@ function TakeOutVehicle(vehicle)
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
 
-        end, Garages[currentGarage].spawnPoint, true)
+        end, Config.Garages[currentGarage].spawnPoint, true)
     elseif vehicle.state == "Out" then
         QBCore.Functions.Notify("Is your vehicle in the Depot", "error", 2500)
     elseif vehicle.state == "Impound" then
         QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
     end
 end
-
-function tprint (tbl, indent)
-    if not indent then indent = 0 end
-    local toprint = string.rep(" ", indent) .. "{\r\n"
-    indent = indent + 2
-    for k, v in pairs(tbl) do
-      toprint = toprint .. string.rep(" ", indent)
-      if (type(k) == "number") then
-        toprint = toprint .. "[" .. k .. "] = "
-      elseif (type(k) == "string") then
-        toprint = toprint  .. k ..  "= "
-      end
-      if (type(v) == "number") then
-        toprint = toprint .. v .. ",\r\n"
-      elseif (type(v) == "string") then
-        toprint = toprint .. "\"" .. v .. "\",\r\n"
-      elseif (type(v) == "table") then
-        toprint = toprint .. tprint(v, indent + 2) .. ",\r\n"
-      else
-        toprint = toprint .. "\"" .. tostring(v) .. "\",\r\n"
-      end
-    end
-    toprint = toprint .. string.rep(" ", indent-2) .. "}"
-    return toprint
-  end
 
 function TakeOutGangVehicle(vehicle)
     if vehicle.state == "Garaged" then
@@ -471,7 +399,7 @@ function TakeOutGangVehicle(vehicle)
 
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetEntityHeading(veh, GangGarages[currentGarage].spawnPoint.w)
+                SetEntityHeading(veh, Config.GangGarages[currentGarage].spawnPoint.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -483,7 +411,7 @@ function TakeOutGangVehicle(vehicle)
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
 
-        end, GangGarages[currentGarage].spawnPoint, true)
+        end, Config.GangGarages[currentGarage].spawnPoint, true)
     elseif vehicle.state == "Out" then
         QBCore.Functions.Notify("Is your vehicle in the Depot", "error", 2500)
     elseif vehicle.state == "Impound" then
@@ -512,7 +440,7 @@ function TakeOutGarageVehicle(vehicle)
                 end
 
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetEntityHeading(veh, HouseGarages[currentHouseGarage].takeVehicle.w)
+                SetEntityHeading(veh, Config.HouseGarages[currentHouseGarage].takeVehicle.w)
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 SetEntityAsMissionEntity(veh, true, true)
@@ -523,7 +451,7 @@ function TakeOutGarageVehicle(vehicle)
                 TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
-        end, HouseGarages[currentHouseGarage].takeVehicle, true)
+        end, Config.HouseGarages[currentHouseGarage].takeVehicle, true)
     end
 end
 
@@ -592,7 +520,6 @@ function closeMenuFull()
 end
 
 function ClearMenu()
-	--Menu = {}
 	Menu.GUI = {}
 	Menu.buttonCount = 0
 	Menu.selection = 0
@@ -606,14 +533,14 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
 
-        for k, v in pairs(Garages) do
-            local takeDist = #(pos - vector3(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z))
+        for k, v in pairs(Config.Garages) do
+            local takeDist = #(pos - vector3(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z))
             if takeDist <= 15 then
                 inGarageRange = true
-                DrawMarker(2, Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+                DrawMarker(2, Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                 if takeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
-                        DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                        DrawText3Ds(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
                         if IsControlJustPressed(1, 177) and not Menu.hidden then
                             close()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
@@ -624,7 +551,7 @@ Citizen.CreateThread(function()
                             currentGarage = k
                         end
                     else
-                        DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z, Garages[k].label)
+                        DrawText3Ds(Config.Garages[k].takeVehicle.x, Config.Garages[k].takeVehicle.y, Config.Garages[k].takeVehicle.z, Config.Garages[k].label)
                     end
                 end
 
@@ -635,13 +562,13 @@ Citizen.CreateThread(function()
                 end
             end
 
-            local putDist = #(pos - vector3(Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z))
+            local putDist = #(pos - vector3(Config.Garages[k].putVehicle.x, Config.Garages[k].putVehicle.y, Config.Garages[k].putVehicle.z))
 
             if putDist <= 25 and IsPedInAnyVehicle(ped) then
                 inGarageRange = true
-                DrawMarker(2, Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
+                DrawMarker(2, Config.Garages[k].putVehicle.x, Config.Garages[k].putVehicle.y, Config.Garages[k].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
                 if putDist <= 1.5 then
-                    DrawText3Ds(Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
+                    DrawText3Ds(Config.Garages[k].putVehicle.x, Config.Garages[k].putVehicle.y, Config.Garages[k].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
                     if IsControlJustPressed(0, 38) then
                         local curVeh = GetVehiclePedIsIn(ped)
                         local plate = GetVehicleNumberPlateText(curVeh)
@@ -652,18 +579,14 @@ Citizen.CreateThread(function()
                                 local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
                                 local passenger = GetVehicleMaxNumberOfPassengers(curVeh)
                                 CheckPlayers(curVeh)
-                                
-                              
-                                --local TaskLeaveVehicle
                                 TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
                                 TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, k)
-                                --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
                               
                                 if plate ~= nil then
                                     OutsideVehicles[plate] = veh
                                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                 end
-                                QBCore.Functions.Notify("Vehicle Parked In, "..Garages[k].label, "primary", 4500)
+                                QBCore.Functions.Notify("Vehicle Parked In, "..Config.Garages[k].label, "primary", 4500)
                             else
                                 QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
                             end
@@ -684,7 +607,7 @@ function CheckPlayers(vehicle)
         seat = GetPedInVehicleSeat(vehicle,i)
         if seat ~= 0 then
             TaskLeaveVehicle(seat,vehicle,0)
-            SetVehicleDoorsLocked(vehicle) -- just in case the player try to enter the vehicle again
+            SetVehicleDoorsLocked(vehicle)
             Wait(1500)
             QBCore.Functions.DeleteVehicle(vehicle)
         end
@@ -702,16 +625,16 @@ Citizen.CreateThread(function()
         if PlayerGang.name ~= nil then
         Name = PlayerGang.name.."garage"
         end
-         for k, v in pairs(GangGarages) do
+         for k, v in pairs(Config.GangGarages) do
             
-            if PlayerGang.name == GangGarages[k].job then
-                local ballasDist = #(pos - vector3(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z))
+            if PlayerGang.name == Config.GangGarages[k].job then
+                local ballasDist = #(pos - vector3(Config.GangGarages[Name].takeVehicle.x, Config.GangGarages[Name].takeVehicle.y, Config.GangGarages[Name].takeVehicle.z))
                 if ballasDist <= 15 then
                     inGarageRange = true
-                    DrawMarker(2, GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+                    DrawMarker(2, Config.GangGarages[Name].takeVehicle.x, Config.GangGarages[Name].takeVehicle.y, Config.GangGarages[Name].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if ballasDist <= 1.5 then
                         if not IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                            DrawText3Ds(Config.GangGarages[Name].takeVehicle.x, Config.GangGarages[Name].takeVehicle.y, Config.GangGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
                             if IsControlJustPressed(1, 177) and not Menu.hidden then
                                 close()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
@@ -722,7 +645,7 @@ Citizen.CreateThread(function()
                                 currentGarage = Name
                             end
                         else
-                            DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z, GangGarages[Name].label)
+                            DrawText3Ds(Config.GangGarages[Name].takeVehicle.x, Config.GangGarages[Name].takeVehicle.y, Config.GangGarages[Name].takeVehicle.z, Config.GangGarages[Name].label)
                         end
                     end
 
@@ -733,13 +656,13 @@ Citizen.CreateThread(function()
                     end
                 end
 
-                local putDist = #(pos - vector3(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z))
+                local putDist = #(pos - vector3(Config.GangGarages[Name].putVehicle.x, Config.GangGarages[Name].putVehicle.y, Config.GangGarages[Name].putVehicle.z))
 
                 if putDist <= 25 and IsPedInAnyVehicle(ped) then
                     inGarageRange = true
-                    DrawMarker(2, GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
+                    DrawMarker(2, Config.GangGarages[Name].putVehicle.x, Config.GangGarages[Name].putVehicle.y, Config.GangGarages[Name].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
                     if putDist <= 1.5 then
-                        DrawText3Ds(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
+                        DrawText3Ds(Config.GangGarages[Name].putVehicle.x, Config.GangGarages[Name].putVehicle.y, Config.GangGarages[Name].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
                             local plate = GetVehicleNumberPlateText(curVeh)
@@ -754,14 +677,12 @@ Citizen.CreateThread(function()
                                         QBCore.Functions.Notify("The wasn't deleted, please check if is someone inside the car.", "error", 4500)
                                     else
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
-                                    TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, Name)
-                                    --TriggerServerEvent('vehiclemod:server:saveStatus', plate)
-                                    
+                                    TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, Name)                                    
                                     if plate ~= nil then
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                     end
-                                    QBCore.Functions.Notify("Vehicle Parked In, "..GangGarages[Name].label, "primary", 4500)
+                                    QBCore.Functions.Notify("Vehicle Parked In, "..Config.GangGarages[Name].label, "primary", 4500)
                                 end
                                 else
                                     QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
@@ -786,15 +707,15 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
 
-        if HouseGarages ~= nil and currentHouseGarage ~= nil then
-            if hasGarageKey and HouseGarages[currentHouseGarage] ~= nil and HouseGarages[currentHouseGarage].takeVehicle ~= nil then
-                local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
+        if Config.HouseGarages ~= nil and currentHouseGarage ~= nil then
+            if hasGarageKey and Config.HouseGarages[currentHouseGarage] ~= nil and Config.HouseGarages[currentHouseGarage].takeVehicle ~= nil then
+                local takeDist = #(pos - vector3(Config.HouseGarages[currentHouseGarage].takeVehicle.x, Config.HouseGarages[currentHouseGarage].takeVehicle.y, Config.HouseGarages[currentHouseGarage].takeVehicle.z))
                 if takeDist <= 15 then
                     inGarageRange = true
-                    DrawMarker(2, HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+                    DrawMarker(2, Config.HouseGarages[currentHouseGarage].takeVehicle.x, Config.HouseGarages[currentHouseGarage].takeVehicle.y, Config.HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if takeDist < 2.0 then
                         if not IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                            DrawText3Ds(Config.HouseGarages[currentHouseGarage].takeVehicle.x, Config.HouseGarages[currentHouseGarage].takeVehicle.y, Config.HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
                             if IsControlJustPressed(1, 177) and not Menu.hidden then
                                 close()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
@@ -804,7 +725,7 @@ Citizen.CreateThread(function()
                                 Menu.hidden = not Menu.hidden
                             end
                         elseif IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
+                            DrawText3Ds(Config.HouseGarages[currentHouseGarage].takeVehicle.x, Config.HouseGarages[currentHouseGarage].takeVehicle.y, Config.HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
                             if IsControlJustPressed(0, 38) then
                                 local curVeh = GetVehiclePedIsIn(ped)
                                 local plate = GetVehicleNumberPlateText(curVeh)
@@ -824,7 +745,7 @@ Citizen.CreateThread(function()
                                             OutsideVehicles[plate] = veh
                                             TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                         end
-                                        QBCore.Functions.Notify("Vehicle Parked In, "..HouseGarages[currentHouseGarage], "primary", 4500)
+                                        QBCore.Functions.Notify("Vehicle Parked In, "..Config.HouseGarages[currentHouseGarage], "primary", 4500)
                                     end
                                     else
                                         QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
@@ -858,14 +779,14 @@ Citizen.CreateThread(function()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
 
-        for k, v in pairs(Depots) do
-            local takeDist = #(pos - vector3(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z))
+        for k, v in pairs(Config.Depots) do
+            local takeDist = #(pos - vector3(Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z))
             if takeDist <= 15 then
                 inGarageRange = true
-                DrawMarker(2, Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+                DrawMarker(2, Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                 if takeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
-                        DrawText3Ds(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                        DrawText3Ds(Config.Depots[k].takeVehicle.x, Config.Depots[k].takeVehicle.y, Config.Depots[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
                         if IsControlJustPressed(1, 177) and not Menu.hidden then
                             close()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)

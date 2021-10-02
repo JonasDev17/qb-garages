@@ -144,7 +144,7 @@ DrawText3Ds = function(x, y, z, text)
     ClearDrawOrigin()
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
     for k, v in pairs(Garages) do
         if v.showBlip then
             local Garage = AddBlipForCoord(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z)
@@ -426,7 +426,7 @@ end
 function TakeOutDepotVehicle(vehicle)
     if vehicle.state == "Impound" then
         TriggerServerEvent("qb-garage:server:PayDepotPrice", vehicle)
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end
 
@@ -489,7 +489,7 @@ function doCarDamage(currentVehicle, veh)
 		damageOutside2 = true
 	end
 
-    Citizen.Wait(100)
+    Wait(100)
     SetVehicleEngineHealth(currentVehicle, engine)
 	if smash then
 		SmashVehicleWindow(currentVehicle, 0)
@@ -530,10 +530,10 @@ function ClearMenu()
 	Menu.selection = 0
 end
 
-Citizen.CreateThread(function()
-    Citizen.Wait(1000)
+CreateThread(function()
+    Wait(1000)
     while true do
-        Citizen.Wait(5)
+        Wait(5)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
@@ -602,7 +602,7 @@ Citizen.CreateThread(function()
         end
 
         if not inGarageRange then
-            Citizen.Wait(1000)
+            Wait(1000)
         end
     end
 end)
@@ -620,10 +620,10 @@ function CheckPlayers(vehicle)
 end
 
 
-Citizen.CreateThread(function()
-    Citizen.Wait(1000)
+CreateThread(function()
+    Wait(1000)
     while true do
-        Citizen.Wait(5)
+        Wait(5)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
@@ -699,21 +699,20 @@ Citizen.CreateThread(function()
             end
         end
         if not inGarageRange then
-            Citizen.Wait(1000)
+            Wait(1000)
         end
     end
 end)
 
-Citizen.CreateThread(function()
-    Citizen.Wait(2000)
+CreateThread(function()
+    Wait(2000)
     while true do
-        Citizen.Wait(5)
+        Wait(5)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
-
-        if HouseGarages ~= nil and currentHouseGarage ~= nil then
-            if hasGarageKey and HouseGarages[currentHouseGarage] ~= nil and HouseGarages[currentHouseGarage].takeVehicle ~= nil then
+        if HouseGarages and currentHouseGarage then
+            if hasGarageKey and HouseGarages[currentHouseGarage] and HouseGarages[currentHouseGarage].takeVehicle and HouseGarages[currentHouseGarage].takeVehicle.x then
                 local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
                 if takeDist <= 15 then
                     inGarageRange = true
@@ -771,15 +770,15 @@ Citizen.CreateThread(function()
         end
 
         if not inGarageRange then
-            Citizen.Wait(5000)
+            Wait(5000)
         end
     end
 end)
 
-Citizen.CreateThread(function()
-    Citizen.Wait(1000)
+CreateThread(function()
+    Wait(1000)
     while true do
-        Citizen.Wait(5)
+        Wait(5)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inGarageRange = false
@@ -813,7 +812,7 @@ Citizen.CreateThread(function()
         end
 
         if not inGarageRange then
-            Citizen.Wait(5000)
+            Wait(5000)
         end
     end
 end)

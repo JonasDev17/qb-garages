@@ -703,75 +703,72 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-    Wait(2000)
     while true do
-        Wait(5)
-        local ped = PlayerPedId()
-        local pos = GetEntityCoords(ped)
-        local inGarageRange = false
-        if HouseGarages and currentHouseGarage then
-            if hasGarageKey and HouseGarages[currentHouseGarage] and HouseGarages[currentHouseGarage].takeVehicle and HouseGarages[currentHouseGarage].takeVehicle.x then
-                local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
-                if takeDist <= 15 then
-                    inGarageRange = true
-                    DrawMarker(2, HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
-                    if takeDist < 2.0 then
-                        if not IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                            if IsControlJustPressed(1, 177) and not Menu.hidden then
-                                close()
-                                PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
-                            end
-                            if IsControlJustPressed(0, 38) then
-                                MenuHouseGarage(currentHouseGarage)
-                                Menu.hidden = not Menu.hidden
-                            end
-                        elseif IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
-                            if IsControlJustPressed(0, 38) then
-                                local curVeh = GetVehiclePedIsIn(ped)
-                                local plate = GetVehicleNumberPlateText(curVeh)
-                                QBCore.Functions.TriggerCallback('qb-garage:server:checkVehicleHouseOwner', function(owned)
-                                    if owned then
-                                        local bodyDamage = round(GetVehicleBodyHealth(curVeh), 1)
-                                        local engineDamage = round(GetVehicleEngineHealth(curVeh), 1)
-                                        local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-                                        local vehProperties = QBCore.Functions.GetVehicleProperties(curVeh)
-                                            CheckPlayers(curVeh)
-                                        if DoesEntityExist(curVeh) then
-                                                QBCore.Functions.Notify("The Vehicle wasn't deleted, please check if is someone inside the car.", "error", 4500)
-                                        else
-                                        TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
-                                        TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
-                                        TriggerServerEvent('qb-vehicletuning:server:SaveVehicleProps', vehProperties)
-                                        QBCore.Functions.DeleteVehicle(curVeh)
-                                        if plate ~= nil then
-                                            OutsideVehicles[plate] = veh
-                                            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+        sleep = 1000
+        if LocalPlayer.state['isLoggedIn'] then
+            local ped = PlayerPedId()
+            local pos = GetEntityCoords(ped)
+            inGarageRange = false
+            if HouseGarages and currentHouseGarage then
+                if hasGarageKey and HouseGarages[currentHouseGarage] and HouseGarages[currentHouseGarage].takeVehicle and HouseGarages[currentHouseGarage].takeVehicle.x then
+                    local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
+                    if takeDist <= 15 then
+                        sleep = 5
+                        inGarageRange = true
+                        DrawMarker(2, HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
+                        if takeDist < 2.0 then
+                            if not IsPedInAnyVehicle(ped) then
+                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                                if IsControlJustPressed(1, 177) and not Menu.hidden then
+                                    close()
+                                    PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
+                                end
+                                if IsControlJustPressed(0, 38) then
+                                    MenuHouseGarage(currentHouseGarage)
+                                    Menu.hidden = not Menu.hidden
+                                end
+                            elseif IsPedInAnyVehicle(ped) then
+                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
+                                if IsControlJustPressed(0, 38) then
+                                    local curVeh = GetVehiclePedIsIn(ped)
+                                    local plate = GetVehicleNumberPlateText(curVeh)
+                                    QBCore.Functions.TriggerCallback('qb-garage:server:checkVehicleHouseOwner', function(owned)
+                                        if owned then
+                                            local bodyDamage = round(GetVehicleBodyHealth(curVeh), 1)
+                                            local engineDamage = round(GetVehicleEngineHealth(curVeh), 1)
+                                            local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
+                                            local vehProperties = QBCore.Functions.GetVehicleProperties(curVeh)
+                                                CheckPlayers(curVeh)
+                                            if DoesEntityExist(curVeh) then
+                                                    QBCore.Functions.Notify("The Vehicle wasn't deleted, please check if is someone inside the car.", "error", 4500)
+                                            else
+                                            TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
+                                            TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
+                                            TriggerServerEvent('qb-vehicletuning:server:SaveVehicleProps', vehProperties)
+                                            QBCore.Functions.DeleteVehicle(curVeh)
+                                            if plate ~= nil then
+                                                OutsideVehicles[plate] = veh
+                                                TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                                            end
+                                            QBCore.Functions.Notify("Vehicle Parked In, "..HouseGarages[currentHouseGarage], "primary", 4500)
                                         end
-                                        QBCore.Functions.Notify("Vehicle Parked In, "..HouseGarages[currentHouseGarage], "primary", 4500)
-                                    end
-                                    else
-                                        QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
-                                    end
-                              
-                                end, plate, currentHouseGarage)
+                                        else
+                                            QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
+                                        end
+                                  
+                                    end, plate, currentHouseGarage)
+                                end
                             end
+                            Menu.renderGUI()
                         end
-
-                        Menu.renderGUI()
-                    end
-
-                    if takeDist > 1.99 and not Menu.hidden then
-                        closeMenuFull()
+                        if takeDist > 1.99 and not Menu.hidden then
+                            closeMenuFull()
+                        end
                     end
                 end
             end
         end
-
-        if not inGarageRange then
-            Wait(5000)
-        end
+        Wait(sleep)
     end
 end)
 

@@ -15,7 +15,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(s
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
 
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',
         {plate, pData.PlayerData.citizenid}, function(result)
             if result[1] ~= nil then
                 cb(true)
@@ -39,21 +39,19 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:GetUserVehicles", function(source, cb, garage)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?',
-        {pData.PlayerData.citizenid, garage}, function(result)
-            if result[1] ~= nil then
-                cb(result)
-            else
-                cb(nil)
-            end
-        end)
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?', {pData.PlayerData.citizenid, garage}, function(result)
+        if result[1] ~= nil then
+            cb(result)
+        else
+            cb(nil)
+        end
+    end)
 end)
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleProperties", function(source, cb, plate)
     local src = source
     local properties = {}
-    local result = exports.oxmysql:fetchSync('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+    local result = exports.oxmysql:executeSync('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
     if result[1] ~= nil then
         properties = json.decode(result[1].mods)
     end
@@ -64,7 +62,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetDepotVehicles", function(so
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
 
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ?',
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ?',
         {pData.PlayerData.citizenid, 0}, function(result)
             if result[1] ~= nil then
                 cb(result)
@@ -78,7 +76,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetHouseVehicles", function(so
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
 
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE garage = ?', {house}, function(result)
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE garage = ?', {house}, function(result)
         if result[1] ~= nil then
             cb(result)
         else
@@ -90,7 +88,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
         if result[1] ~= nil then
             local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
             if hasHouseKey then
@@ -109,7 +107,7 @@ AddEventHandler('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local bankBalance = Player.PlayerData.money["bank"]
-    exports.oxmysql:fetch('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
+    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
         if result[1] ~= nil then
             -- if Player.Functions.RemoveMoney("cash", result[1].depotprice, "paid-depot") then
             --     TriggerClientEvent("qb-garages:client:takeOutDepot", src, vehicle, garage)

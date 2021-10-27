@@ -25,6 +25,7 @@
 - [qb-houses](https://github.com/qbcore-framework/qb-houses) - For house garages
 - [LegacyFuel](https://github.com/qbcore-framework/LegacyFuel) - For fuel physics and saving the fuel
 - [qb-vehiclekeys](https://github.com/qbcore-framework/qb-vehiclekeys) - For vehicle ownership
+- [qb-menu](https://github.com/qbcore-framework/qb-menu) - For Menu
 
 ## Screenshots
 ![Take Out Vehicle](https://imgur.com/dSoE1mZ.png)

@@ -1,6 +1,4 @@
 # qb-garages
-    This is the modifies version of qb-garages. From default menu to qb-menu.
-    Note: The screenshots are wrong.
 
 # License
 
@@ -22,11 +20,10 @@
 
 
 ## Dependencies
-- [qb-core](https://github.com/qbcore-framework/qb-core) - Core Server
+- [qb-core](https://github.com/qbcore-framework/qb-core)
 - [qb-houses](https://github.com/qbcore-framework/qb-houses) - For house garages
 - [LegacyFuel](https://github.com/qbcore-framework/LegacyFuel) - For fuel physics and saving the fuel
 - [qb-vehiclekeys](https://github.com/qbcore-framework/qb-vehiclekeys) - For vehicle ownership
-- [qb-menu](https://github.com/qbcore-framework/qb-menu) - For Menu
 
 ## Screenshots
 ![Take Out Vehicle](https://imgur.com/dSoE1mZ.png)

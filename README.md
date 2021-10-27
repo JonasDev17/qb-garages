@@ -21,7 +21,7 @@
 
 
 ## Dependencies
-- [qb-core](https://github.com/qbcore-framework/qb-core)
+- [qb-core](https://github.com/qbcore-framework/qb-core) - Core Server
 - [qb-houses](https://github.com/qbcore-framework/qb-houses) - For house garages
 - [LegacyFuel](https://github.com/qbcore-framework/LegacyFuel) - For fuel physics and saving the fuel
 - [qb-vehiclekeys](https://github.com/qbcore-framework/qb-vehiclekeys) - For vehicle ownership

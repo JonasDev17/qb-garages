@@ -254,7 +254,7 @@ function MenuHouseGarage(house)
             header = "My Vehicles",
             txt = "Vehicle List",
             params = {
-                event = "qb-garages:client:HouseGarage"
+                event = "qb-garages:client:HouseGarage",
                 args = house
             }
         },
@@ -313,7 +313,7 @@ RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
             exports['qb-menu']:openMenu(MenuHouseGarageOptions)
         end
     end, house)
-end
+end)
 
 function getPlayerVehicles(garage)
     local vehicles = {}

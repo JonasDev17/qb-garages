@@ -1,5 +1,5 @@
 # qb-garages
-    This is the modifies version of qb-garages. From default menu to qb-menu!
+    This is the modifies version of qb-garages. From default menu to qb-menu.
 
 # License
 

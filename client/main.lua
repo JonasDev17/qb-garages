@@ -417,7 +417,7 @@ RegisterNetEvent("qb-garages:client:GangVehicleList", function()
         else
             local MenuGangGarageOptions = {
                 {
-                    header = "Garage: "..Garages[currentGarage].label,
+                    header = "Garage: "..GangGarages[currentGarage].label,
                     isMenuHeader = true
                 },
             }

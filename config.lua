@@ -114,14 +114,14 @@ GangGarages = {
         takeVehicle = vector3(-811.65, 187.49, 72.48),
         spawnPoint = vector4(-818.43, 184.97, 72.28, 107.85),
         putVehicle = vector3(-811.65, 187.49, 72.48),
-        job = "la_familia"
+        job = "families"
     },
     ["the_lostgarage"] = {
         label = "Lost MC",
         takeVehicle = vector3(957.25, -129.63, 74.39),
         spawnPoint = vector4(957.25, -129.63, 74.39, 199.21),
         putVehicle = vector3(950.47, -122.05, 74.36),
-        job = "the_lost"
+        job = "lostmc"
     },
     ["cartelgarage"] = {
         label = "Cartel",

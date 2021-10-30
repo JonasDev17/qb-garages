@@ -102,28 +102,28 @@ Garages = {
 HouseGarages = {}
 
 GangGarages = {
-    ["ballasgarage"] = {
+    ["ballas"] = {
         label = "Ballas",
         takeVehicle = vector3(98.50, -1954.49, 20.84),
         spawnPoint = vector4(98.50, -1954.49, 20.75, 335.73),
         putVehicle = vector3(94.75, -1959.93, 20.84),
         job = "ballas"
     },
-    ["la_familiagarage"] = {
+    ["families"] = {
         label = "La Familia",
         takeVehicle = vector3(-811.65, 187.49, 72.48),
         spawnPoint = vector4(-818.43, 184.97, 72.28, 107.85),
         putVehicle = vector3(-811.65, 187.49, 72.48),
         job = "families"
     },
-    ["the_lostgarage"] = {
+    ["lostmc"] = {
         label = "Lost MC",
         takeVehicle = vector3(957.25, -129.63, 74.39),
         spawnPoint = vector4(957.25, -129.63, 74.39, 199.21),
         putVehicle = vector3(950.47, -122.05, 74.36),
         job = "lostmc"
     },
-    ["cartelgarage"] = {
+    ["cartel"] = {
         label = "Cartel",
         takeVehicle = vector3(1407.18, 1118.04, 114.84),
         spawnPoint = vector4(1407.18, 1118.04, 114.84, 88.34),

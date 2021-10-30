@@ -63,13 +63,13 @@ local function MenuGarage()
         },
         {
             header = "My Vehicles",
-            txt = "Vehicle List",
+            txt = "View your stored vehicles!",
             params = {
                 event = "qb-garages:client:VehicleList"
             }
         },
         {
-            header = "Close",
+            header = "⬅ Leave Garage",
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -86,13 +86,13 @@ local function GangMenuGarage()
         },
         {
             header = "My Vehicles",
-            txt = "Gang Vehicle List",
+            txt = "View your stored vehicles!",
             params = {
                 event = "qb-garages:client:GangVehicleList"
             }
         },
         {
-            header = "Close",
+            header = "⬅ Leave Garage",
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -109,13 +109,13 @@ local function JobMenuGarage()
         },
         {
             header = "My Vehicles",
-            txt = "Job Vehicle List",
+            txt = "View your stored vehicles!",
             params = {
                 event = "qb-garages:client:JobVehicleList"
             }
         },
         {
-            header = "Close",
+            header = "⬅ Leave Garage",
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -131,14 +131,14 @@ local function MenuDepot()
             isMenuHeader = true
         },
         {
-            header = "Depot Vehicles",
-            txt = "Depot List",
+            header = "My Vehicles",
+            txt = "View your impounded vehicles!",
             params = {
                 event = "qb-garages:client:DepotList"
             }
         },
         {
-            header = "Close",
+            header = "⬅ Leave Depot",
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -155,14 +155,14 @@ local function MenuHouseGarage(house)
         },
         {
             header = "My Vehicles",
-            txt = "Vehicle List",
+            txt = "View your stored vehicles!",
             params = {
                 event = "qb-garages:client:HouseGarage",
                 args = house
             }
         },
         {
-            header = "Close",
+            header = "⬅ Leave Garage",
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -346,7 +346,7 @@ end)
 RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
     QBCore.Functions.TriggerCallback("qb-garage:server:GetHouseVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You have no vehicles in your garage", "error", 5000)
+            QBCore.Functions.Notify("You don't have any vehicles in your garage!", "error", 5000)
         else
             local MenuHouseGarageOptions = {
                 {
@@ -360,18 +360,19 @@ RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = HouseGarages[house].label
+                vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = "Out"
                 elseif v.state == 1 then
                     v.state = "Garaged"
                 elseif v.state == 2 then
-                    v.state = "Impound"
+                    v.state = "Impounded By Police"
                 end
 
                 MenuHouseGarageOptions[#MenuHouseGarageOptions+1] = {
-                    header = vname.." ["..v.depotprice.."]",
-                    txt = "Plate: "..v.plate.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    header = vname.." ["..v.plate.."]",
+                    txt = "State: "..v.state.. "<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
                     params = {
                         event = "qb-garages:client:TakeOutHouseGarage",
                         args = v
@@ -380,7 +381,7 @@ RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
             end
 
             MenuHouseGarageOptions[#MenuHouseGarageOptions+1] = {
-                header = "Close",
+                header = "⬅ Leave Garage",
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -394,7 +395,7 @@ end)
 RegisterNetEvent("qb-garages:client:DepotList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetDepotVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("There are no vehicles in the Impound", "error", 5000)
+            QBCore.Functions.Notify("You don't have any impounded vehicles!", "error", 5000)
         else
             local MenuDepotOptions = {
                 {
@@ -423,7 +424,7 @@ RegisterNetEvent("qb-garages:client:DepotList", function()
             end
 
             MenuDepotOptions[#MenuDepotOptions+1] = {
-                header = "Close",
+                header = "⬅ Leave Depot",
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -437,7 +438,7 @@ end)
 RegisterNetEvent("qb-garages:client:VehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
+            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
         else
             local MenuPublicGarageOptions = {
                 {
@@ -457,7 +458,7 @@ RegisterNetEvent("qb-garages:client:VehicleList", function()
                 elseif v.state == 1 then
                     v.state = "Garaged"
                 elseif v.state == 2 then
-                    v.state = "Impound"
+                    v.state = "Impounded By Police"
                 end
 
                 MenuPublicGarageOptions[#MenuPublicGarageOptions+1] = {
@@ -471,7 +472,7 @@ RegisterNetEvent("qb-garages:client:VehicleList", function()
             end
 
             MenuPublicGarageOptions[#MenuPublicGarageOptions+1] = {
-                header = "Close",
+                header = "⬅ Leave Garage",
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -485,7 +486,7 @@ end)
 RegisterNetEvent("qb-garages:client:GangVehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
+            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
         else
             local MenuGangGarageOptions = {
                 {
@@ -505,7 +506,7 @@ RegisterNetEvent("qb-garages:client:GangVehicleList", function()
                 elseif v.state == 1 then
                     v.state = "Garaged"
                 elseif v.state == 2 then
-                    v.state = "Impound"
+                    v.state = "Impounded By Police"
                 end
 
                 MenuGangGarageOptions[#MenuGangGarageOptions+1] = {
@@ -519,7 +520,7 @@ RegisterNetEvent("qb-garages:client:GangVehicleList", function()
             end
 
             MenuGangGarageOptions[#MenuGangGarageOptions+1] = {
-                header = "Close",
+                header = "⬅ Leave Garage",
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -533,7 +534,7 @@ end)
 RegisterNetEvent("qb-garages:client:JobVehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
+            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
         else
             local MenuJobGarageOptions = {
                 {
@@ -553,7 +554,7 @@ RegisterNetEvent("qb-garages:client:JobVehicleList", function()
                 elseif v.state == 1 then
                     v.state = "Garaged"
                 elseif v.state == 2 then
-                    v.state = "Impound"
+                    v.state = "Impounded By Police"
                 end
 
                 MenuJobGarageOptions[#MenuJobGarageOptions+1] = {
@@ -567,7 +568,7 @@ RegisterNetEvent("qb-garages:client:JobVehicleList", function()
             end
 
             MenuJobGarageOptions[#MenuJobGarageOptions+1] = {
-                header = "Close",
+                header = "⬅ Leave Garage",
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -607,9 +608,9 @@ RegisterNetEvent('qb-garages:client:takeOutPublicGarage', function(vehicle)
 
         end, Garages[currentGarage].spawnPoint, true)
     elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Is your vehicle in the Depot", "error", 2500)
+        QBCore.Functions.Notify("Your vehicle may be at the depot!", "error", 2500)
     elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
+        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
     end
 end)
 
@@ -642,9 +643,9 @@ RegisterNetEvent('qb-garages:client:takeOutGangGarage', function(vehicle)
 
         end, GangGarages[currentGarage].spawnPoint, true)
     elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Is your vehicle in the Depot", "error", 2500)
+        QBCore.Functions.Notify("Your vehicle may be in the depot!", "error", 2500)
     elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
+        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
     end
 end)
 
@@ -673,9 +674,9 @@ RegisterNetEvent('qb-garages:client:takeOutJobGarage', function(vehicle)
             end, vehicle.plate)
         end, JobGarages[currentGarage].spawnPoint, true)
     elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Is your vehicle in the Depot", "error", 2500)
+        QBCore.Functions.Notify("Your vehicle may be in the depot!", "error", 2500)
     elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
+        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
     end
 end)
 

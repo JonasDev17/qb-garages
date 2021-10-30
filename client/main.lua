@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local currentHouseGarage = nil
 local hasGarageKey = nil
 local currentGarage = nil
@@ -617,12 +619,7 @@ function doCarDamage(currentVehicle, veh)
 	end
 end
 
-function close()
-    Menu.hidden = true
-end
-
 function closeMenuFull()
-    Menu.hidden = true
     currentGarage = nil
     ClearMenu()
 end
@@ -647,13 +644,12 @@ CreateThread(function()
                 if takeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
                         DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                        if IsControlJustPressed(1, 177) and not Menu.hidden then
-                            close()
+                        if IsControlJustPressed(1, 177) then
+                            closeMenuFull()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                         end
                         if IsControlJustPressed(0, 38) then
                             MenuGarage()
-                            Menu.hidden = not Menu.hidden
                             currentGarage = k
                         end
                     else
@@ -661,7 +657,7 @@ CreateThread(function()
                     end
                 end
 
-                if takeDist >= 4 and not Menu.hidden then
+                if takeDist >= 4 then
                     closeMenuFull()
                 end
             end
@@ -687,7 +683,7 @@ CreateThread(function()
                                 TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
                                 TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, k)
                                 TriggerServerEvent('qb-vehicletuning:server:SaveVehicleProps', vehProperties)
-                              
+
                                 if plate ~= nil then
                                     OutsideVehicles[plate] = veh
                                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -709,7 +705,7 @@ CreateThread(function()
 end)
 
 function CheckPlayers(vehicle)
-    for i = -1, 5,1 do                
+    for i = -1, 5,1 do
         seat = GetPedInVehicleSeat(vehicle,i)
         if seat ~= 0 then
             TaskLeaveVehicle(seat,vehicle,0)
@@ -732,7 +728,7 @@ CreateThread(function()
         Name = PlayerGang.name.."garage"
         end
          for k, v in pairs(GangGarages) do
-            
+
             if PlayerGang.name == GangGarages[k].job then
                 local ballasDist = #(pos - vector3(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z))
                 if ballasDist <= 15 then
@@ -741,13 +737,12 @@ CreateThread(function()
                     if ballasDist <= 1.5 then
                         if not IsPedInAnyVehicle(ped) then
                             DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                            if IsControlJustPressed(1, 177) and not Menu.hidden then
-                                close()
+                            if IsControlJustPressed(1, 177) then
+                                closeMenuFull()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                             end
                             if IsControlJustPressed(0, 38) then
                                 GangMenuGarage()
-                                Menu.hidden = not Menu.hidden
                                 currentGarage = Name
                             end
                         else
@@ -755,7 +750,7 @@ CreateThread(function()
                         end
                     end
 
-                    if ballasDist >= 4 and not Menu.hidden then
+                    if ballasDist >= 4 then
                         closeMenuFull()
                     end
                 end
@@ -822,13 +817,13 @@ CreateThread(function()
                         if takehouseDist < 2.0 then
                             if not IsPedInAnyVehicle(ped) then
                                 DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                                if IsControlJustPressed(1, 177) and not Menu.hidden then
-                                    close()
+                                if IsControlJustPressed(1, 177) then
+                                    closeMenuFull()
                                     PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                                 end
                                 if IsControlJustPressed(0, 38) then
                                     MenuHouseGarage(currentHouseGarage)
-                                    Menu.hidden = not Menu.hidden
+
                                 end
                             elseif IsPedInAnyVehicle(ped) then
                                 DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
@@ -858,12 +853,12 @@ CreateThread(function()
                                         else
                                             QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
                                         end
-                                  
+
                                     end, plate, currentHouseGarage)
                                 end
                             end
                         end
-                        if takehouseDist > 1.99 and not Menu.hidden then
+                        if takehouseDist > 1.99 then
                             closeMenuFull()
                         end
                     end
@@ -890,19 +885,18 @@ CreateThread(function()
                 if depottakeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
                         DrawText3Ds(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                        if IsControlJustPressed(1, 177) and not Menu.hidden then
-                            close()
+                        if IsControlJustPressed(1, 177) then
+                            closeMenuFull()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                         end
                         if IsControlJustPressed(0, 38) then
                             MenuDepot()
-                            Menu.hidden = not Menu.hidden
                             currentGarage = k
                         end
                     end
                 end
 
-                if depottakeDist >= 4 and not Menu.hidden then
+                if depottakeDist >= 4 then
                     closeMenuFull()
                 end
             end

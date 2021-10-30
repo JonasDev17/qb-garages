@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local currentHouseGarage = nil
 local hasGarageKey = nil
 local currentGarage = nil
@@ -176,48 +178,109 @@ CreateThread(function()
 end)
 
 function MenuGarage()
-    ped = PlayerPedId();
-    MenuTitle = "Garage"
-    ClearMenu()
-    Menu.addButton("My Vehicles", "VehicleList", nil)
-    Menu.addButton("Close Menu", "close", nil)
+    exports['qb-menu']:openMenu({
+        {
+            header = "Public Garage",
+            isMenuHeader = true
+        },
+        {
+            header = "My Vehicles",
+            txt = "Vehicle List",
+            params = {
+                event = "qb-garages:client:VehicleList"
+            }
+        },
+        {
+            header = "Close",
+            txt = "",
+            params = {
+                event = "qb-menu:closeMenu"
+            }
+        },
+    })
 end
 
 function GangMenuGarage()
-    ped = PlayerPedId();
-    MenuTitle = "Garage"
-    ClearMenu()
-    Menu.addButton("My Vehicles", "GangVehicleList", nil)
-    Menu.addButton("Close Menu", "close", nil)
+    exports['qb-menu']:openMenu({
+        {
+            header = "Gang Garage",
+            isMenuHeader = true
+        },
+        {
+            header = "My Vehicles",
+            txt = "Gang Vehicle List",
+            params = {
+                event = "qb-garages:client:GangVehicleList"
+            }
+        },
+        {
+            header = "Close",
+            txt = "",
+            params = {
+                event = "qb-menu:closeMenu"
+            }
+        },
+    })
 end
 
 function MenuDepot()
-    ped = PlayerPedId();
-    MenuTitle = "Impound"
-    ClearMenu()
-    Menu.addButton("Depot Vehicles", "DepotList", nil)
-    Menu.addButton("Close Menu", "close", nil)
+    exports['qb-menu']:openMenu({
+        {
+            header = "Impound",
+            isMenuHeader = true
+        },
+        {
+            header = "Depot Vehicles",
+            txt = "Depot List",
+            params = {
+                event = "qb-garages:client:DepotList"
+            }
+        },
+        {
+            header = "Close",
+            txt = "",
+            params = {
+                event = "qb-menu:closeMenu"
+            }
+        },
+    })
 end
 
 function MenuHouseGarage(house)
-    ped = PlayerPedId();
-    MenuTitle = HouseGarages[house].label
-    ClearMenu()
-    Menu.addButton("My Vehicles", "HouseGarage", house)
-    Menu.addButton("Close Menu", "close", nil)
+    exports['qb-menu']:openMenu({
+        {
+            header = "House Garage",
+            isMenuHeader = true
+        },
+        {
+            header = "My Vehicles",
+            txt = "Vehicle List",
+            params = {
+                event = "qb-garages:client:HouseGarage",
+                args = house
+            }
+        },
+        {
+            header = "Close",
+            txt = "",
+            params = {
+                event = "qb-menu:closeMenu"
+            }
+        },
+    })
 end
 
-function HouseGarage(house)
+RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
     QBCore.Functions.TriggerCallback("qb-garage:server:GetHouseVehicles", function(result)
-        ped = PlayerPedId();
-        MenuTitle = "Depot Vehicles :"
-        ClearMenu()
-
         if result == nil then
             QBCore.Functions.Notify("You have no vehicles in your garage", "error", 5000)
-            closeMenuFull()
         else
-            Menu.addButton(HouseGarages[house].label, "HouseGarage", HouseGarages[house].label)
+            local MenuHouseGarageOptions = {
+                {
+                    header = "Garage: "..HouseGarages[house].label,
+                    isMenuHeader = true
+                },
+            }
 
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
@@ -233,13 +296,26 @@ function HouseGarage(house)
                     v.state = "Impound"
                 end
 
-                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGarageVehicle", v, v.state, " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
+                table.insert(MenuHouseGarageOptions, {
+                    header = vname.." ["..v.depotprice.."]",
+                    txt = "Plate: "..v.plate.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    params = {
+                        event = "qb-garages:client:TakeOutHouseGarage",
+                        args = v
+                    }
+                })
             end
+            table.insert(MenuHouseGarageOptions, {
+                header = "Close",
+                txt = "",
+                params = {
+                    event = "qb-menu:closeMenu",
+                }
+            })
+            exports['qb-menu']:openMenu(MenuHouseGarageOptions)
         end
-
-        Menu.addButton("Back", "MenuHouseGarage", house)
     end, house)
-end
+end)
 
 function getPlayerVehicles(garage)
     local vehicles = {}
@@ -247,54 +323,65 @@ function getPlayerVehicles(garage)
     return vehicles
 end
 
-function DepotList()
+RegisterNetEvent("qb-garages:client:DepotList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetDepotVehicles", function(result)
-        ped = PlayerPedId();
-        MenuTitle = "Impounded Vehicles :"
-        ClearMenu()
-
         if result == nil then
             QBCore.Functions.Notify("There are no vehicles in the Impound", "error", 5000)
-            closeMenuFull()
         else
-            Menu.addButton(Depots[currentGarage].label, "DepotList", Depots[currentGarage].label)
-
+            local MenuDepotOptions = {
+                {
+                    header = "Depot: "..Depots[currentGarage].label,
+                    isMenuHeader = true
+                },
+            }
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
-
+                vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = "Impound"
                 end
 
-                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutDepotVehicle", v, v.state .. " ($"..v.depotprice..",-)", " Motor: " .. enginePercent.."%", " Body: " .. bodyPercent.."%", " Fuel: "..currentFuel.."%")
+                table.insert(MenuDepotOptions, {
+                    header = vname.." ["..v.depotprice.."]",
+                    txt = "Plate: "..v.plate.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    params = {
+                        event = "qb-garages:client:TakeOutDepotVehicle",
+                        args = v
+                    }
+                })
             end
+            table.insert(MenuDepotOptions, {
+                header = "Close",
+                txt = "",
+                params = {
+                    event = "qb-menu:closeMenu",
+                }
+            })
+            exports['qb-menu']:openMenu(MenuDepotOptions)
         end
-
-        Menu.addButton("Back", "MenuDepot",nil)
     end)
-end
+end)
 
-function VehicleList()
+RegisterNetEvent("qb-garages:client:VehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
-        ped = PlayerPedId();
-        MenuTitle = "My Vehicles :"
-        ClearMenu()
-
         if result == nil then
             QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
-            closeMenuFull()
         else
-            Menu.addButton(Garages[currentGarage].label, "VehicleList", Garages[currentGarage].label)
-
+            local MenuPublicGarageOptions = {
+                {
+                    header = "Garage: "..Garages[currentGarage].label,
+                    isMenuHeader = true
+                },
+            }
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = Garages[v.garage].label
-
+                vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = "Out"
@@ -304,33 +391,44 @@ function VehicleList()
                     v.state = "Impound"
                 end
 
-                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
+                table.insert(MenuPublicGarageOptions, {
+                    header = vname.." ["..v.plate.."]",
+                    txt = "State: "..v.state.." <br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    params = {
+                        event = "qb-garages:client:takeOutPublicGarage",
+                        args = v,
+                    }
+                })
             end
+            table.insert(MenuPublicGarageOptions, {
+                header = "Close",
+                txt = "",
+                params = {
+                    event = "qb-menu:closeMenu",
+                }
+            })
+            exports['qb-menu']:openMenu(MenuPublicGarageOptions)
         end
-
-        Menu.addButton("Back", "MenuGarage",nil)
     end, currentGarage)
-end
+end)
 
-function GangVehicleList()
+RegisterNetEvent("qb-garages:client:GangVehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
-        ped = PlayerPedId();
-        MenuTitle = "My Vehicles :"
-        ClearMenu()
-
         if result == nil then
             QBCore.Functions.Notify("You have no vehicles in this garage", "error", 5000)
-            closeMenuFull()
         else
-            Menu.addButton(GangGarages[currentGarage].label, "GangVehicleList", GangGarages[currentGarage].label)
-
+            local MenuGangGarageOptions = {
+                {
+                    header = "Garage: "..GangGarages[currentGarage].label,
+                    isMenuHeader = true
+                },
+            }
             for k, v in pairs(result) do
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = GangGarages[v.garage].label
-
-
+                vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = "Out"
@@ -340,15 +438,28 @@ function GangVehicleList()
                     v.state = "Impound"
                 end
 
-                Menu.addButton(QBCore.Shared.Vehicles[v.vehicle]["name"], "TakeOutGangVehicle", v, v.state, " Motor: " .. enginePercent .. "%", " Body: " .. bodyPercent.. "%", " Fuel: "..currentFuel.. "%")
+                table.insert(MenuGangGarageOptions, {
+                    header = vname.." ["..v.plate.."]",
+                    txt = "State: "..v.state.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    params = {
+                        event = "qb-garages:client:takeOutGangGarage",
+                        args = v
+                    }
+                })
             end
+            table.insert(MenuGangGarageOptions, {
+                header = "Close",
+                txt = "",
+                params = {
+                    event = "qb-menu:closeMenu",
+                }
+            })
+            exports['qb-menu']:openMenu(MenuGangGarageOptions)
         end
-
-        Menu.addButton("Back", "MenuGarage",nil)
     end, currentGarage)
-end
+end)
 
-function TakeOutVehicle(vehicle)
+RegisterNetEvent('qb-garages:client:takeOutPublicGarage', function(vehicle)
     if vehicle.state == "Garaged" then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
@@ -381,9 +492,9 @@ function TakeOutVehicle(vehicle)
     elseif vehicle.state == "Impound" then
         QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
     end
-end
+end)
 
-function TakeOutGangVehicle(vehicle)
+RegisterNetEvent('qb-garages:client:takeOutGangGarage', function(vehicle)
     if vehicle.state == "Garaged" then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
@@ -416,16 +527,16 @@ function TakeOutGangVehicle(vehicle)
     elseif vehicle.state == "Impound" then
         QBCore.Functions.Notify("This vehicle was impounded by the Police", "error", 4000)
     end
-end
+end)
 
-function TakeOutDepotVehicle(vehicle)
+RegisterNetEvent('qb-garages:client:TakeOutDepotVehicle', function(vehicle)
     if vehicle.state == "Impound" then
         TriggerServerEvent("qb-garage:server:PayDepotPrice", vehicle)
         Wait(1000)
     end
-end
+end)
 
-function TakeOutGarageVehicle(vehicle)
+RegisterNetEvent('qb-garages:client:TakeOutHouseGarage', function(vehicle)
     if vehicle.state == "Garaged" then
         QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
             QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
@@ -452,7 +563,7 @@ function TakeOutGarageVehicle(vehicle)
             end, vehicle.plate)
         end, HouseGarages[currentHouseGarage].takeVehicle, true)
     end
-end
+end)
 
 function doCarDamage(currentVehicle, veh)
 	smash = false
@@ -508,20 +619,13 @@ function doCarDamage(currentVehicle, veh)
 	end
 end
 
-function close()
-    Menu.hidden = true
-end
-
 function closeMenuFull()
-    Menu.hidden = true
     currentGarage = nil
     ClearMenu()
 end
 
 function ClearMenu()
-	Menu.GUI = {}
-	Menu.buttonCount = 0
-	Menu.selection = 0
+	TriggerEvent("qb-menu:closeMenu")
 end
 
 CreateThread(function()
@@ -540,13 +644,12 @@ CreateThread(function()
                 if takeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
                         DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                        if IsControlJustPressed(1, 177) and not Menu.hidden then
-                            close()
+                        if IsControlJustPressed(1, 177) then
+                            closeMenuFull()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                         end
                         if IsControlJustPressed(0, 38) then
                             MenuGarage()
-                            Menu.hidden = not Menu.hidden
                             currentGarage = k
                         end
                     else
@@ -554,9 +657,7 @@ CreateThread(function()
                     end
                 end
 
-                Menu.renderGUI()
-
-                if takeDist >= 4 and not Menu.hidden then
+                if takeDist >= 4 then
                     closeMenuFull()
                 end
             end
@@ -582,7 +683,7 @@ CreateThread(function()
                                 TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
                                 TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, k)
                                 TriggerServerEvent('qb-vehicletuning:server:SaveVehicleProps', vehProperties)
-                              
+
                                 if plate ~= nil then
                                     OutsideVehicles[plate] = veh
                                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
@@ -604,7 +705,7 @@ CreateThread(function()
 end)
 
 function CheckPlayers(vehicle)
-    for i = -1, 5,1 do                
+    for i = -1, 5,1 do
         seat = GetPedInVehicleSeat(vehicle,i)
         if seat ~= 0 then
             TaskLeaveVehicle(seat,vehicle,0)
@@ -627,7 +728,7 @@ CreateThread(function()
         Name = PlayerGang.name.."garage"
         end
          for k, v in pairs(GangGarages) do
-            
+
             if PlayerGang.name == GangGarages[k].job then
                 local ballasDist = #(pos - vector3(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z))
                 if ballasDist <= 15 then
@@ -636,13 +737,12 @@ CreateThread(function()
                     if ballasDist <= 1.5 then
                         if not IsPedInAnyVehicle(ped) then
                             DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                            if IsControlJustPressed(1, 177) and not Menu.hidden then
-                                close()
+                            if IsControlJustPressed(1, 177) then
+                                closeMenuFull()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                             end
                             if IsControlJustPressed(0, 38) then
                                 GangMenuGarage()
-                                Menu.hidden = not Menu.hidden
                                 currentGarage = Name
                             end
                         else
@@ -650,19 +750,17 @@ CreateThread(function()
                         end
                     end
 
-                    Menu.renderGUI()
-
-                    if ballasDist >= 4 and not Menu.hidden then
+                    if ballasDist >= 4 then
                         closeMenuFull()
                     end
                 end
 
-                local putDist = #(pos - vector3(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z))
+                local ballasputDist = #(pos - vector3(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z))
 
-                if putDist <= 25 and IsPedInAnyVehicle(ped) then
+                if ballasputDist <= 25 and IsPedInAnyVehicle(ped) then
                     inGarageRange = true
                     DrawMarker(2, GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
-                    if putDist <= 1.5 then
+                    if ballasputDist <= 1.5 then
                         DrawText3Ds(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
@@ -711,21 +809,21 @@ CreateThread(function()
             inGarageRange = false
             if HouseGarages and currentHouseGarage then
                 if hasGarageKey and HouseGarages[currentHouseGarage] and HouseGarages[currentHouseGarage].takeVehicle and HouseGarages[currentHouseGarage].takeVehicle.x then
-                    local takeDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
-                    if takeDist <= 15 then
+                    local takehouseDist = #(pos - vector3(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z))
+                    if takehouseDist <= 15 then
                         sleep = 5
                         inGarageRange = true
                         DrawMarker(2, HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
-                        if takeDist < 2.0 then
+                        if takehouseDist < 2.0 then
                             if not IsPedInAnyVehicle(ped) then
                                 DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                                if IsControlJustPressed(1, 177) and not Menu.hidden then
-                                    close()
+                                if IsControlJustPressed(1, 177) then
+                                    closeMenuFull()
                                     PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                                 end
                                 if IsControlJustPressed(0, 38) then
                                     MenuHouseGarage(currentHouseGarage)
-                                    Menu.hidden = not Menu.hidden
+
                                 end
                             elseif IsPedInAnyVehicle(ped) then
                                 DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
@@ -755,13 +853,12 @@ CreateThread(function()
                                         else
                                             QBCore.Functions.Notify("Nobody owns this vehicle", "error", 3500)
                                         end
-                                  
+
                                     end, plate, currentHouseGarage)
                                 end
                             end
-                            Menu.renderGUI()
                         end
-                        if takeDist > 1.99 and not Menu.hidden then
+                        if takehouseDist > 1.99 then
                             closeMenuFull()
                         end
                     end
@@ -781,28 +878,25 @@ CreateThread(function()
         local inGarageRange = false
 
         for k, v in pairs(Depots) do
-            local takeDist = #(pos - vector3(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z))
-            if takeDist <= 15 then
+            local depottakeDist = #(pos - vector3(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z))
+            if depottakeDist <= 15 then
                 inGarageRange = true
                 DrawMarker(2, Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
-                if takeDist <= 1.5 then
+                if depottakeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
                         DrawText3Ds(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
-                        if IsControlJustPressed(1, 177) and not Menu.hidden then
-                            close()
+                        if IsControlJustPressed(1, 177) then
+                            closeMenuFull()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                         end
                         if IsControlJustPressed(0, 38) then
                             MenuDepot()
-                            Menu.hidden = not Menu.hidden
                             currentGarage = k
                         end
                     end
                 end
 
-                Menu.renderGUI()
-
-                if takeDist >= 4 and not Menu.hidden then
+                if depottakeDist >= 4 then
                     closeMenuFull()
                 end
             end

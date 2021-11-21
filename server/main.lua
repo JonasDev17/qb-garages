@@ -3,14 +3,14 @@ local OutsideVehicles = {}
 
 -- Events
 
-RegisterServerEvent('qb-garages:server:UpdateOutsideVehicles', function(Vehicles)
+RegisterNetEvent('qb-garages:server:UpdateOutsideVehicles', function(Vehicles)
     local src = source
     local Ply = QBCore.Functions.GetPlayer(src)
     local CitizenId = Ply.PlayerData.citizenid
     OutsideVehicles[CitizenId] = Vehicles
 end)
 
-RegisterServerEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
+RegisterNetEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local cashBalance = Player.PlayerData.money["cash"]
@@ -30,11 +30,11 @@ RegisterServerEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     end)
 end)
 
-RegisterServerEvent('qb-garage:server:updateVehicleState', function(state, plate, garage)
+RegisterNetEvent('qb-garage:server:updateVehicleState', function(state, plate, garage)
     exports.oxmysql:execute('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
 end)
 
-RegisterServerEvent('qb-garage:server:updateVehicleStatus', function(fuel, engine, body, plate, garage)
+RegisterNetEvent('qb-garage:server:updateVehicleStatus', function(fuel, engine, body, plate, garage)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
 

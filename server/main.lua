@@ -13,7 +13,7 @@ end)
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
         Wait(100)
-        if Config.AutoRespawn then
+        if AutoRespawn then
             exports.oxmysql:execute('UPDATE player_vehicles SET state = 1 WHERE state = 0', {})
         end
     end

@@ -10,6 +10,15 @@ RegisterNetEvent('qb-garages:server:UpdateOutsideVehicles', function(Vehicles)
     OutsideVehicles[CitizenId] = Vehicles
 end)
 
+AddEventHandler('onResourceStart', function(resource)
+    if resource == GetCurrentResourceName() then
+        Wait(100)
+        if AutoRespawn then
+            exports.oxmysql:execute('UPDATE player_vehicles SET state = 1 WHERE state = 0', {})
+        end
+    end
+end)
+
 RegisterNetEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)

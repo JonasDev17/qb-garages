@@ -249,38 +249,70 @@ end
 -- Events
 
 RegisterNetEvent('qb-garages:client:takeOutDepot', function(vehicle)
-    if OutsideVehicles and next(OutsideVehicles) then
-        if OutsideVehicles[vehicle.plate] then
-            local Engine = GetVehicleEngineHealth(OutsideVehicles[vehicle.plate])
-            QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                    QBCore.Functions.SetVehicleProperties(veh, properties)
-                    enginePercent = round(vehicle.engine / 10, 0)
-                    bodyPercent = round(vehicle.body / 10, 0)
-                    currentFuel = vehicle.fuel
+    local VehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
+    if not VehExists then
+        if OutsideVehicles and next(OutsideVehicles) then
+            if OutsideVehicles[vehicle.plate] then
+                local Engine = GetVehicleEngineHealth(OutsideVehicles[vehicle.plate])
+                QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                    QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                        QBCore.Functions.SetVehicleProperties(veh, properties)
+                        enginePercent = round(vehicle.engine / 10, 0)
+                        bodyPercent = round(vehicle.body / 10, 0)
+                        currentFuel = vehicle.fuel
 
-                    if vehicle.plate then
-                        DeleteVehicle(OutsideVehicles[vehicle.plate])
-                        OutsideVehicles[vehicle.plate] = veh
-                        TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-                    end
+                        if vehicle.plate then
+                            DeleteVehicle(OutsideVehicles[vehicle.plate])
+                            OutsideVehicles[vehicle.plate] = veh
+                            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                        end
 
-                    SetVehicleNumberPlateText(veh, vehicle.plate)
-                    SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
-                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                    exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
-                    SetEntityAsMissionEntity(veh, true, true)
-                    doCarDamage(veh, vehicle)
-                    TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                    closeMenuFull()
-                    SetVehicleEngineOn(veh, true, true)
-                end, vehicle.plate)
-                TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-            end, Depots[currentGarage].spawnPoint, true)
-            SetTimeout(250, function()
-                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
-            end)
+                        SetVehicleNumberPlateText(veh, vehicle.plate)
+                        SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
+                        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                        exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
+                        SetEntityAsMissionEntity(veh, true, true)
+                        doCarDamage(veh, vehicle)
+                        TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                        closeMenuFull()
+                        SetVehicleEngineOn(veh, true, true)
+                    end, vehicle.plate)
+                    TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
+                end, Depots[currentGarage].spawnPoint, true)
+                SetTimeout(250, function()
+                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
+                end)
+            else
+                QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                    QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                        QBCore.Functions.SetVehicleProperties(veh, properties)
+                        enginePercent = round(vehicle.engine / 10, 0)
+                        bodyPercent = round(vehicle.body / 10, 0)
+                        currentFuel = vehicle.fuel
+
+                        if vehicle.plate then
+                            OutsideVehicles[vehicle.plate] = veh
+                            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                        end
+
+                        SetVehicleNumberPlateText(veh, vehicle.plate)
+                        SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
+                        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                        exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
+                        SetEntityAsMissionEntity(veh, true, true)
+                        doCarDamage(veh, vehicle)
+                        TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                        closeMenuFull()
+                        SetVehicleEngineOn(veh, true, true)
+                    end, vehicle.plate)
+                    TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
+                end, Depots[currentGarage].spawnPoint, true)
+                SetTimeout(250, function()
+                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
+                end)
+            end
         else
             QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
@@ -312,34 +344,7 @@ RegisterNetEvent('qb-garages:client:takeOutDepot', function(vehicle)
             end)
         end
     else
-        QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                QBCore.Functions.SetVehicleProperties(veh, properties)
-                enginePercent = round(vehicle.engine / 10, 0)
-                bodyPercent = round(vehicle.body / 10, 0)
-                currentFuel = vehicle.fuel
-
-                if vehicle.plate then
-                    OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-                end
-
-                SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetEntityHeading(veh, Depots[currentGarage].takeVehicle.w)
-                TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
-                SetEntityAsMissionEntity(veh, true, true)
-                doCarDamage(veh, vehicle)
-                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                closeMenuFull()
-                SetVehicleEngineOn(veh, true, true)
-            end, vehicle.plate)
-            TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-        end, Depots[currentGarage].spawnPoint, true)
-        SetTimeout(250, function()
-            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
-        end)
+        QBCore.Functions.Notify("Your car is not in impound", "error", 5000)
     end
 end)
 

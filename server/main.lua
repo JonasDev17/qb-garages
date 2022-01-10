@@ -24,7 +24,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     local Player = QBCore.Functions.GetPlayer(src)
     local cashBalance = Player.PlayerData.money["cash"]
     local bankBalance = Player.PlayerData.money["bank"]
-    MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
         if result[1] then
             if cashBalance >= result[1].depotprice then
                 Player.Functions.RemoveMoney("cash", result[1].depotprice, "paid-depot")

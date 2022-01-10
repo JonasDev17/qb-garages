@@ -14,7 +14,7 @@ AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
         Wait(100)
         if AutoRespawn then
-            exports.oxmysql:execute('UPDATE player_vehicles SET state = 1 WHERE state = 0', {})
+            MySQL.Async.execute('UPDATE player_vehicles SET state = 1 WHERE state = 0', {})
         end
     end
 end)
@@ -24,7 +24,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
     local Player = QBCore.Functions.GetPlayer(src)
     local cashBalance = Player.PlayerData.money["cash"]
     local bankBalance = Player.PlayerData.money["bank"]
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
+    MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
         if result[1] then
             if cashBalance >= result[1].depotprice then
                 Player.Functions.RemoveMoney("cash", result[1].depotprice, "paid-depot")
@@ -40,7 +40,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(vehicle, garage)
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicleState', function(state, plate, garage)
-    exports.oxmysql:execute('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
+    MySQL.Async.execute('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicleStatus', function(fuel, engine, body, plate, garage)
@@ -55,7 +55,7 @@ RegisterNetEvent('qb-garage:server:updateVehicleStatus', function(fuel, engine, 
         body = body / 1000
     end
 
-    exports.oxmysql:execute('UPDATE player_vehicles SET fuel = ?, engine = ?, body = ? WHERE plate = ? AND citizenid = ? AND garage = ?',{fuel, engine, body, plate, pData.PlayerData.citizenid, garage})
+    MySQL.Async.execute('UPDATE player_vehicles SET fuel = ?, engine = ?, body = ? WHERE plate = ? AND citizenid = ? AND garage = ?',{fuel, engine, body, plate, pData.PlayerData.citizenid, garage})
 end)
 
 -- Callbacks
@@ -63,7 +63,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(source, cb, plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
         if result[1] then
             cb(true, result[1].balance)
         else
@@ -85,7 +85,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:GetUserVehicles", function(source, cb, garage)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?', {pData.PlayerData.citizenid, garage}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?', {pData.PlayerData.citizenid, garage}, function(result)
         if result[1] then
             cb(result)
         else
@@ -97,7 +97,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleProperties", function(source, cb, plate)
     local src = source
     local properties = {}
-    local result = exports.oxmysql:executeSync('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+    local result = MySQL.Sync.fetchAll('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
     if result[1] then
         properties = json.decode(result[1].mods)
     end
@@ -107,7 +107,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:GetDepotVehicles", function(source, cb)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ?',{pData.PlayerData.citizenid, 0}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ?',{pData.PlayerData.citizenid, 0}, function(result)
         if result[1] then
             cb(result)
         else
@@ -119,7 +119,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:GetHouseVehicles", function(source, cb, house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE garage = ?', {house}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ?', {house}, function(result)
         if result[1] then
             cb(result)
         else
@@ -131,7 +131,7 @@ end)
 QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    exports.oxmysql:execute('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
         if result[1] then
             local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
             if hasHouseKey then

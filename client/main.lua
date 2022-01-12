@@ -58,18 +58,18 @@ end
 local function MenuGarage()
     exports['qb-menu']:openMenu({
         {
-            header = "Public Garage",
+            header = Lang:t("info.public_garage"),
             isMenuHeader = true
         },
         {
-            header = "My Vehicles",
-            txt = "View your stored vehicles!",
+            header = Lang:t("info.my_vehicles"),
+            txt = Lang:t("info.view_stored"),
             params = {
                 event = "qb-garages:client:VehicleList"
             }
         },
         {
-            header = "⬅ Leave Garage",
+            header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -81,18 +81,18 @@ end
 local function GangMenuGarage()
     exports['qb-menu']:openMenu({
         {
-            header = "Gang Garage",
+            header = Lang:t("info.gang_garage"),
             isMenuHeader = true
         },
         {
-            header = "My Vehicles",
-            txt = "View your stored vehicles!",
+            header = Lang:t("info.my_vehicles"),
+            txt = Lang:t("info.view_stored"),
             params = {
                 event = "qb-garages:client:GangVehicleList"
             }
         },
         {
-            header = "⬅ Leave Garage",
+            header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -104,18 +104,18 @@ end
 local function JobMenuGarage()
     exports['qb-menu']:openMenu({
         {
-            header = "Job Garage",
+            header = Lang:t("info.job_garage"),
             isMenuHeader = true
         },
         {
-            header = "My Vehicles",
-            txt = "View your stored vehicles!",
+            header = Lang:t("info.my_vehicles"),
+            txt = Lang:t("info.view_stored"),
             params = {
                 event = "qb-garages:client:JobVehicleList"
             }
         },
         {
-            header = "⬅ Leave Garage",
+            header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -127,18 +127,18 @@ end
 local function MenuDepot()
     exports['qb-menu']:openMenu({
         {
-            header = "Impound",
+            header = Lang:t("info.impound"),
             isMenuHeader = true
         },
         {
-            header = "My Vehicles",
-            txt = "View your impounded vehicles!",
+            header = Lang:t("info.my_vehicles"),
+            txt = Lang:t("info.view_stored"),
             params = {
                 event = "qb-garages:client:DepotList"
             }
         },
         {
-            header = "⬅ Leave Depot",
+            header = Lang:t("info.leave_depot"),
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -150,19 +150,19 @@ end
 local function MenuHouseGarage(house)
     exports['qb-menu']:openMenu({
         {
-            header = "House Garage",
+            header = Lang:t("info.job_garage"),
             isMenuHeader = true
         },
         {
-            header = "My Vehicles",
-            txt = "View your stored vehicles!",
+            header = Lang:t("info.my_vehicles"),
+            txt = Lang:t("info.view_stored"),
             params = {
                 event = "qb-garages:client:HouseGarage",
                 args = house
             }
         },
         {
-            header = "⬅ Leave Garage",
+            header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
                 event = "qb-menu:closeMenu"
@@ -344,18 +344,18 @@ RegisterNetEvent('qb-garages:client:takeOutDepot', function(vehicle)
             end)
         end
     else
-        QBCore.Functions.Notify("Your car is not in impound", "error", 5000)
+        QBCore.Functions.Notify(Lang:t("error.not_impound"), "error", 5000)
     end
 end)
 
 RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
     QBCore.Functions.TriggerCallback("qb-garage:server:GetHouseVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You don't have any vehicles in your garage!", "error", 5000)
+            QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuHouseGarageOptions = {
                 {
-                    header = "Garage: "..HouseGarages[house].label,
+                    header = Lang:t('info.garage', {value = HouseGarages[house].label}),
                     isMenuHeader = true
                 },
             }
@@ -368,16 +368,16 @@ RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = "Out"
+                    v.state = Lang:t("info.out")
                 elseif v.state == 1 then
-                    v.state = "Garaged"
+                    v.state = Lang:t("info.garaged")
                 elseif v.state == 2 then
-                    v.state = "Impounded By Police"
+                    v.state = Lang:t("info.impounded")
                 end
 
                 MenuHouseGarageOptions[#MenuHouseGarageOptions+1] = {
                     header = vname.." ["..v.plate.."]",
-                    txt = "State: "..v.state.. "<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
                         event = "qb-garages:client:TakeOutHouseGarage",
                         args = v
@@ -386,7 +386,7 @@ RegisterNetEvent("qb-garages:client:HouseGarage", function(house)
             end
 
             MenuHouseGarageOptions[#MenuHouseGarageOptions+1] = {
-                header = "⬅ Leave Garage",
+                header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -400,11 +400,11 @@ end)
 RegisterNetEvent("qb-garages:client:DepotList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetDepotVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You don't have any impounded vehicles!", "error", 5000)
+            QBCore.Functions.Notify(Lang:t("error.no_vehicles_impounded"), "error", 5000)
         else
             local MenuDepotOptions = {
                 {
-                    header = "Depot: "..Depots[currentGarage].label,
+                    header = Lang:t('info.depot', {value = Depots[currentGarage].label}),
                     isMenuHeader = true
                 },
             }
@@ -415,12 +415,12 @@ RegisterNetEvent("qb-garages:client:DepotList", function()
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = "Impound"
+                    v.state = Lang:t("info.impound")
                 end
 
                 MenuDepotOptions[#MenuDepotOptions+1] = {
                     header = vname.." ["..v.depotprice.."]",
-                    txt = "Plate: "..v.plate.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    txt = Lang:t('info.depot_line', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
                         event = "qb-garages:client:TakeOutDepotVehicle",
                         args = v
@@ -429,7 +429,7 @@ RegisterNetEvent("qb-garages:client:DepotList", function()
             end
 
             MenuDepotOptions[#MenuDepotOptions+1] = {
-                header = "⬅ Leave Depot",
+                header = Lang:t("info.leave_depot"),
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -443,11 +443,11 @@ end)
 RegisterNetEvent("qb-garages:client:VehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
+            QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuPublicGarageOptions = {
                 {
-                    header = "Garage: "..Garages[currentGarage].label,
+                    header = Lang:t('info.garage', {value = Garages[currentGarage].label}),
                     isMenuHeader = true
                 },
             }
@@ -459,16 +459,16 @@ RegisterNetEvent("qb-garages:client:VehicleList", function()
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = "Out"
+                    v.state = Lang:t("info.out")
                 elseif v.state == 1 then
-                    v.state = "Garaged"
+                    v.state = Lang:t("info.garaged")
                 elseif v.state == 2 then
-                    v.state = "Impounded By Police"
+                    v.state = Lang:t("info.impounded")
                 end
 
                 MenuPublicGarageOptions[#MenuPublicGarageOptions+1] = {
                     header = vname.." ["..v.plate.."]",
-                    txt = "State: "..v.state.." <br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
                         event = "qb-garages:client:takeOutPublicGarage",
                         args = v,
@@ -477,7 +477,7 @@ RegisterNetEvent("qb-garages:client:VehicleList", function()
             end
 
             MenuPublicGarageOptions[#MenuPublicGarageOptions+1] = {
-                header = "⬅ Leave Garage",
+                header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -491,11 +491,11 @@ end)
 RegisterNetEvent("qb-garages:client:GangVehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
+            QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuGangGarageOptions = {
                 {
-                    header = "Garage: "..GangGarages[currentGarage].label,
+                    header = Lang:t('info.garage', {value = GangGarages[currentGarage].label}),
                     isMenuHeader = true
                 },
             }
@@ -507,16 +507,16 @@ RegisterNetEvent("qb-garages:client:GangVehicleList", function()
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = "Out"
+                    v.state = Lang:t("info.out")
                 elseif v.state == 1 then
-                    v.state = "Garaged"
+                    v.state = Lang:t("info.garaged")
                 elseif v.state == 2 then
-                    v.state = "Impounded By Police"
+                    v.state = Lang:t("info.impounded")
                 end
 
                 MenuGangGarageOptions[#MenuGangGarageOptions+1] = {
                     header = vname.." ["..v.plate.."]",
-                    txt = "State: "..v.state.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
                         event = "qb-garages:client:takeOutGangGarage",
                         args = v
@@ -525,7 +525,7 @@ RegisterNetEvent("qb-garages:client:GangVehicleList", function()
             end
 
             MenuGangGarageOptions[#MenuGangGarageOptions+1] = {
-                header = "⬅ Leave Garage",
+                header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -539,11 +539,11 @@ end)
 RegisterNetEvent("qb-garages:client:JobVehicleList", function()
     QBCore.Functions.TriggerCallback("qb-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            QBCore.Functions.Notify("You don't have any vehicles in this garage!", "error", 5000)
+            QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuJobGarageOptions = {
                 {
-                    header = "Garage: "..JobGarages[currentGarage].label,
+                    header = Lang:t('info.garage', {value = JobGarages[currentGarage].label}),
                     isMenuHeader = true
                 },
             }
@@ -555,16 +555,16 @@ RegisterNetEvent("qb-garages:client:JobVehicleList", function()
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = "Out"
+                    v.state = Lang:t("info.out")
                 elseif v.state == 1 then
-                    v.state = "Garaged"
+                    v.state = Lang:t("info.garaged")
                 elseif v.state == 2 then
-                    v.state = "Impounded By Police"
+                    v.state = Lang:t("info.impounded")
                 end
 
                 MenuJobGarageOptions[#MenuJobGarageOptions+1] = {
                     header = vname.." ["..v.plate.."]",
-                    txt = "State: "..v.state.."<br>Fuel: "..currentFuel.." | Engine: "..enginePercent.." | Body: "..bodyPercent,
+                    txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
                         event = "qb-garages:client:takeOutJobGarage",
                         args = v
@@ -573,7 +573,7 @@ RegisterNetEvent("qb-garages:client:JobVehicleList", function()
             end
 
             MenuJobGarageOptions[#MenuJobGarageOptions+1] = {
-                header = "⬅ Leave Garage",
+                header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
                     event = "qb-menu:closeMenu",
@@ -585,7 +585,7 @@ RegisterNetEvent("qb-garages:client:JobVehicleList", function()
 end)
 
 RegisterNetEvent('qb-garages:client:takeOutPublicGarage', function(vehicle)
-    if vehicle.state == "Garaged" then
+    if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
@@ -612,15 +612,15 @@ RegisterNetEvent('qb-garages:client:takeOutPublicGarage', function(vehicle)
             end, vehicle.plate)
 
         end, Garages[currentGarage].spawnPoint, true)
-    elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Your vehicle may be at the depot!", "error", 2500)
-    elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
+    elseif vehicle.state == Lang:t("info.out") then
+        QBCore.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+    elseif vehicle.state == Lang:t("info.impounded") then
+        QBCore.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
 RegisterNetEvent('qb-garages:client:takeOutGangGarage', function(vehicle)
-    if vehicle.state == "Garaged" then
+    if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
@@ -647,15 +647,15 @@ RegisterNetEvent('qb-garages:client:takeOutGangGarage', function(vehicle)
             end, vehicle.plate)
 
         end, GangGarages[currentGarage].spawnPoint, true)
-    elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Your vehicle may be in the depot!", "error", 2500)
-    elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
+    elseif vehicle.state == Lang:t("info.out") then
+        QBCore.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+    elseif vehicle.state == Lang:t("info.impounded") then
+        QBCore.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
 RegisterNetEvent('qb-garages:client:takeOutJobGarage', function(vehicle)
-    if vehicle.state == "Garaged" then
+    if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
@@ -678,22 +678,22 @@ RegisterNetEvent('qb-garages:client:takeOutJobGarage', function(vehicle)
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
         end, JobGarages[currentGarage].spawnPoint, true)
-    elseif vehicle.state == "Out" then
-        QBCore.Functions.Notify("Your vehicle may be in the depot!", "error", 2500)
-    elseif vehicle.state == "Impound" then
-        QBCore.Functions.Notify("This vehicle was impounded by the police!", "error", 4000)
+    elseif vehicle.state == Lang:t("info.out") then
+        QBCore.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+    elseif vehicle.state == Lang:t("info.impounded") then
+        QBCore.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
 RegisterNetEvent('qb-garages:client:TakeOutDepotVehicle', function(vehicle)
-    if vehicle.state == "Impound" then
+    if vehicle.state == Lang:t("info.impounded") then
         TriggerServerEvent("qb-garage:server:PayDepotPrice", vehicle)
         Wait(1000)
     end
 end)
 
 RegisterNetEvent('qb-garages:client:TakeOutHouseGarage', function(vehicle)
-    if vehicle.state == "Garaged" then
+    if vehicle.state == Lang:t("info.garaged") then
         QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
             QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
@@ -737,7 +737,7 @@ CreateThread(function()
                 DrawMarker(2, Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                 if takeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
-                        DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                        DrawText3Ds(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z + 0.5, Lang:t("info.garage_e"))
                         if IsControlJustPressed(0, 38) then
                             MenuGarage()
                             currentGarage = k
@@ -755,7 +755,7 @@ CreateThread(function()
                 inGarageRange = true
                 DrawMarker(2, Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
                 if putDist <= 1.5 then
-                    DrawText3Ds(Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
+                    DrawText3Ds(Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z + 0.5, Lang:t("info.park_e"))
                     if IsControlJustPressed(0, 38) then
                         local curVeh = GetVehiclePedIsIn(ped)
                         local plate = QBCore.Functions.GetPlate(curVeh)
@@ -773,9 +773,9 @@ CreateThread(function()
                                     OutsideVehicles[plate] = veh
                                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                 end
-                                QBCore.Functions.Notify("Vehicle Parked", "primary", 4500)
+                                QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                             else
-                                QBCore.Functions.Notify("Vehicle not owned", "error", 3500)
+                                QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                             end
                         end, plate)
                     end
@@ -804,7 +804,7 @@ CreateThread(function()
                     DrawMarker(2, GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if takeDist <= 1.5 then
                         if not IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                            DrawText3Ds(GangGarages[Name].takeVehicle.x, GangGarages[Name].takeVehicle.y, GangGarages[Name].takeVehicle.z + 0.5, Lang:t("info.garage_e"))
                             if IsControlJustPressed(0, 38) then
                                 GangMenuGarage()
                                 currentGarage = Name
@@ -822,7 +822,7 @@ CreateThread(function()
                     inGarageRange = true
                     DrawMarker(2, GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
                     if putDist <= 1.5 then
-                        DrawText3Ds(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
+                        DrawText3Ds(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z + 0.5, Lang:t("info.park_e"))
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
                             local plate = QBCore.Functions.GetPlate(curVeh)
@@ -835,7 +835,7 @@ CreateThread(function()
                                     CheckPlayers(curVeh)
                                     Wait(500)
                                     if DoesEntityExist(curVeh) then
-                                        QBCore.Functions.Notify("Vehicle not stored, please check if is someone inside the car.", "error", 4500)
+                                        QBCore.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                     else
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, Name)
@@ -844,10 +844,10 @@ CreateThread(function()
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                     end
-                                    QBCore.Functions.Notify("Vehicle Parked", "primary", 4500)
+                                    QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                 end
                                 else
-                                    QBCore.Functions.Notify("Vehicle not owned", "error", 3500)
+                                    QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                 end
                             end, plate)
                         end
@@ -877,7 +877,7 @@ CreateThread(function()
                     DrawMarker(2, JobGarages[Name].takeVehicle.x, JobGarages[Name].takeVehicle.y, JobGarages[Name].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if takeDist <= 1.5 then
                         if not IsPedInAnyVehicle(ped) then
-                            DrawText3Ds(JobGarages[Name].takeVehicle.x, JobGarages[Name].takeVehicle.y, JobGarages[Name].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                            DrawText3Ds(JobGarages[Name].takeVehicle.x, JobGarages[Name].takeVehicle.y, JobGarages[Name].takeVehicle.z + 0.5, Lang:t("info.garage_e"))
                             if IsControlJustPressed(0, 38) then
                                 JobMenuGarage()
                                 currentGarage = Name
@@ -895,7 +895,7 @@ CreateThread(function()
                     inGarageRange = true
                     DrawMarker(2, JobGarages[Name].putVehicle.x, JobGarages[Name].putVehicle.y, JobGarages[Name].putVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 255, 255, 255, 255, false, false, false, true, false, false, false)
                     if putDist <= 1.5 then
-                        DrawText3Ds(JobGarages[Name].putVehicle.x, JobGarages[Name].putVehicle.y, JobGarages[Name].putVehicle.z + 0.5, '~g~E~w~ - Park Vehicle')
+                        DrawText3Ds(JobGarages[Name].putVehicle.x, JobGarages[Name].putVehicle.y, JobGarages[Name].putVehicle.z + 0.5, Lang:t("info.park_e"))
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
                             local plate = QBCore.Functions.GetPlate(curVeh)
@@ -908,7 +908,7 @@ CreateThread(function()
                                     CheckPlayers(curVeh)
                                     Wait(500)
                                     if DoesEntityExist(curVeh) then
-                                        QBCore.Functions.Notify("Vehicle not stored, please check if is someone inside the car.", "error", 4500)
+                                        QBCore.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                     else
                                     TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
                                     TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, Name)
@@ -917,10 +917,10 @@ CreateThread(function()
                                         OutsideVehicles[plate] = veh
                                         TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                     end
-                                    QBCore.Functions.Notify("Vehicle Parked", "primary", 4500)
+                                    QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                 end
                                 else
-                                    QBCore.Functions.Notify("Vehicle not owned", "error", 3500)
+                                    QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                 end
                             end, plate)
                         end
@@ -950,13 +950,13 @@ CreateThread(function()
                         DrawMarker(2, HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                         if takehouseDist < 2.0 then
                             if not IsPedInAnyVehicle(ped) then
-                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, Lang:t("info.garage_e"))
                                 if IsControlJustPressed(0, 38) then
                                     MenuHouseGarage(currentHouseGarage)
 
                                 end
                             elseif IsPedInAnyVehicle(ped) then
-                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, '~g~E~w~ - To Park')
+                                DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, Lang:t("info.park_e"))
                                 if IsControlJustPressed(0, 38) then
                                     local curVeh = GetVehiclePedIsIn(ped)
                                     local plate = QBCore.Functions.GetPlate(curVeh)
@@ -968,7 +968,7 @@ CreateThread(function()
                                             local vehProperties = QBCore.Functions.GetVehicleProperties(curVeh)
                                                 CheckPlayers(curVeh)
                                             if DoesEntityExist(curVeh) then
-                                                    QBCore.Functions.Notify("The Vehicle wasn't deleted, please check if is someone inside the car.", "error", 4500)
+                                                    QBCore.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                             else
                                             TriggerServerEvent('qb-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
                                             TriggerServerEvent('qb-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
@@ -978,10 +978,10 @@ CreateThread(function()
                                                 OutsideVehicles[plate] = veh
                                                 TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                             end
-                                            QBCore.Functions.Notify("Vehicle Parked", "primary", 4500)
+                                            QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                         end
                                         else
-                                            QBCore.Functions.Notify("Vehicle not owned", "error", 3500)
+                                            QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                         end
 
                                     end, plate, currentHouseGarage)
@@ -1013,7 +1013,7 @@ CreateThread(function()
                 DrawMarker(2, Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                 if depottakeDist <= 1.5 then
                     if not IsPedInAnyVehicle(ped) then
-                        DrawText3Ds(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z + 0.5, '~g~E~w~ - Garage')
+                        DrawText3Ds(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z + 0.5, Lang:t("info.garage_e"))
                         if IsControlJustPressed(0, 38) then
                             MenuDepot()
                             currentGarage = k

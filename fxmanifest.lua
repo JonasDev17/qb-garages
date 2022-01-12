@@ -4,7 +4,12 @@ game 'gta5'
 description 'QB-Garages'
 version '1.0.0'
 
-shared_script 'config.lua'
+shared_scripts {
+	'config.lua',
+	'@qb-core/shared/import.lua',
+    '@qb-core/shared/locale.lua',
+	'locales/*.lua'
+}
 client_script'client/main.lua'
 server_scripts {	
     '@oxmysql/lib/MySQL.lua',

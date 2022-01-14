@@ -5,13 +5,16 @@ description 'QB-Garages'
 version '1.0.0'
 
 shared_scripts {
-	'config.lua',
+    'config.lua',
     '@qb-core/shared/locale.lua',
-	'locales/*.lua'
+    'locales/en.lua'
 }
-client_script'client/main.lua'
+
+client_script 'client/main.lua'
+
 server_scripts {	
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua'
 }
+
 lua54 'yes'

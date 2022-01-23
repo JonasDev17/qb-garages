@@ -415,7 +415,7 @@ RegisterNetEvent("qb-garages:client:DepotList", function()
                 vname = QBCore.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
-                    v.state = Lang:t("info.impound")
+                    v.state = Lang:t("info.impounded")
                 end
 
                 MenuDepotOptions[#MenuDepotOptions+1] = {

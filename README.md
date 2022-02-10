@@ -1,7 +1,8 @@
 # qb-garages
 
-**Public Depot**
-* Park owned cars in public garages. Configure the garages on config.lua.
+**Public Garages**
+* Park owned cars in public garages.
+* You can only parks vehicles that you own in public garages. 
 
 ![image](https://user-images.githubusercontent.com/82112471/149678987-02ec660f-76c9-4414-af7b-bac284ed58b7.png)
 
@@ -11,50 +12,35 @@
 
 **House Garages**
 * Park owned cars in house garages. To add a house garage, you must have the realestate job and do /addgarage.
+* You can only parks vehicles from persons that have the key in a house garage. 
+* You can take every vehicle from the house garages to which you have the key. 
+* You can only parks ground vehicles in house garages. 
 
 **Gang Garages**
-* Allows for gangs to have their own garages. Configure the garages on config.lua.
+* Allows for gangs to have their own garages.
+* You can parks every vehicle that is owned by gang members in gang garages. 
+* You can take every vehicle from the gang garages. 
 
 **Job Garages**
-* Allows jobs to have garage specific. Configure the garages on config.lua.
+* Allows jobs to have garage specific.
+* You can parks every vehicle that is owned by someone in job garages. 
+* You can take every vehicle from the job garages. 
 
 **Depot Garages**
-* Allows depot cars to be retreived from here. Cops can do /depot [price] to send a car to the depot. Configure the garages on config.lua.
+* Allows depot cars to be retreived from here. Cops can do /depot [price] to send a car to the depot.
 
 **Auto Respawn Config**
-* If set to true, cars that are currently outside will be placed in the depot.
+* If set to true, cars that are currently outside will be placed in the last garage used.
+* If set to false, cars that are currently outside will be placed in the depot.
 
-**Common Error Messages**
-* "Vehicle not owned" - You can only parks vehicles that you own (needs to be in the database). 
+**Configurations**
+* You can only parks ground vehicles in garages of type "car" in config. 
+* You can only parks water vehicles in garages of type "sea" in config. 
+* You can only parks air vehicles in garages of type "air" in config. 
+* Vehicle types and jobs or gang can be mixed in config.
 
-**OPTIONAL** qb-target by Berkie - https://github.com/BerkieBb/qb-targe
-* If using qb-target, here's some triggers you can use to open the public garage and depot. (Make sure to add the following code to client.lua)
-
-
-# Public Garage Trigger
-    RegisterNetEvent('qb-garages:client:menuGarage', function() 
-    local pos = GetEntityCoords(PlayerPedId())
-    for k, v in pairs(Garages) do
-        local takeDist = #(pos - vector3(Garages[k].takeVehicle.x, Garages[k].takeVehicle.y, Garages[k].takeVehicle.z))
-        if takeDist <= 15 then
-            MenuGarage()
-            currentGarage = k
-        end
-    end
-    end)
-
-# Depot Garage Trigger
-    RegisterNetEvent('qb-garages:client:menuDepot', function() 
-    local pos = GetEntityCoords(PlayerPedId())
-    for k, v in pairs(Depots) do
-        local depottakeDist = #(pos - vector3(Depots[k].takeVehicle.x, Depots[k].takeVehicle.y, Depots[k].takeVehicle.z))
-        if depottakeDist <= 15 then
-            MenuDepot()
-            currentGarage = k
-        end
-    end
-    end)
-
+**Blips and names**
+* Blips and names are modifiable for each garage. 
 
 
 # License
@@ -74,3 +60,4 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>
+

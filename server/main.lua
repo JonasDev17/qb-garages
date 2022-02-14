@@ -31,8 +31,12 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                 cb(nil)
             end
         end)
-    else                            --House, Job and Gang, give all cars in the garage
-        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?', {garage, 1}, function(result)
+    else                            --House give all cars in the garage, Job and Gang depend of config
+        local shared = ''
+        if not SharedGarages and type ~= "house" then
+            shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
+        end
+        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)
             if result[1] then
                 cb(result)
             else
@@ -85,8 +89,12 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
                 cb(false)
             end
         end)
-    else                            --Job garages only for cars that are owned by someone (for sharing and service)
-        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
+    else                            --Job garages only for cars that are owned by someone (for sharing and service) or only by player depending of config
+        local shared = ''
+        if not SharedGarages then
+            shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
+        end
+        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?'..shared, {plate}, function(result)
             if result[1] then
                 cb(true)
             else
@@ -107,10 +115,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleProperties", functio
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicle', function(state, fuel, engine, body, plate, garage)
-    local src = source
-    local pData = QBCore.Functions.GetPlayer(src)
-
-    MySQL.Async.execute('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ? WHERE plate = ? AND citizenid = ?',{state, garage, fuel, engine, body, plate, pData.PlayerData.citizenid})
+    MySQL.Async.execute('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ? WHERE plate = ?',{state, garage, fuel, engine, body, plate})
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicleState', function(state, plate, garage)

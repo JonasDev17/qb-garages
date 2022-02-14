@@ -293,8 +293,8 @@ local function enterVehicle(veh, indexgarage, type, garage)
             local engineDamage = math.ceil(GetVehicleEngineHealth(veh))
             local totalFuel = exports['LegacyFuel']:GetFuel(veh)
             local vehProperties = QBCore.Functions.GetVehicleProperties(veh)
-            CheckPlayers(veh, garage)
             TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, indexgarage)
+            CheckPlayers(veh, garage)
             if plate then
                 OutsideVehicles[plate] = nil
                 TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)

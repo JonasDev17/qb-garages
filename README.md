@@ -33,6 +33,10 @@
 * If set to true, cars that are currently outside will be placed in the last garage used.
 * If set to false, cars that are currently outside will be placed in the depot.
 
+**Shared garages Config**
+* If set to true, Gang and job garages are shared.
+* If set to false, Gang and Job garages are personal.
+
 **Configurations**
 * You can only parks ground vehicles in garages of type "car" in config. 
 * You can only parks water vehicles in garages of type "sea" in config. 

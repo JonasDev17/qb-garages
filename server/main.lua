@@ -13,7 +13,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
             end
         end)
     elseif type == "depot" then    --Depot give player cars that are not in garage only
-        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ? OR state = ?', {pData.PlayerData.citizenid, 0, 2}, function(result)
+        MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND (state = ? OR state = ?)', {pData.PlayerData.citizenid, 0, 2}, function(result)
             local tosend = {}
             if result[1] then
                 --Check vehicle type against depot type

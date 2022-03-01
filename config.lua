@@ -140,12 +140,19 @@ JobGarages = {
         putVehicle = vector3(454.6, -1017.4, 28.4),
         job = "police"
     },
+    ['mechanic'] = {
+        label = 'LS Customs',
+        takeVehicle = vector3(-317.84, -157.36, 36.21),
+        spawnPoint = vector4(-325.55, -156.63, 36.21, 278.01),
+        putVehicle = vector3(-328.18, -150.38, 36.21),
+        job = 'mechanic'
+    } 
 }
 
 Depots = {
     ["hayesdepot"] = {
-        label = "Hayes Depot",
-        takeVehicle = vector4(491.0, -1314.69, 29.25, 304.5),
+        label = "Impound Lot",
+        takeVehicle = vector4(401.01, -1633.02, 28.5, 142.09),
         showBlip = true
     }
 }

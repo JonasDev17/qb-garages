@@ -28,7 +28,7 @@ PolyGarages = {
         },
         label = "Motel Parking",
         showBlip = true,
-        blipcoords = 
+        blipcoords = vector3(273.43, -343.99, 44.91),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -60,6 +60,7 @@ PolyGarages = {
         },
         label = "San Andreas Parking",
         showBlip = true,
+        blipcoords = vector3(-330.01, -780.33, 33.96),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -78,6 +79,7 @@ PolyGarages = {
         },
         label = "Spanish Ave Parking",
         showBlip = true,
+        blipcoords = vector3(-1160.86, -741.41, 19.63),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -98,6 +100,7 @@ PolyGarages = {
         },
         label = "Caears 24 Parking",
         showBlip = true,
+        blipcoords = vector3(69.84, 12.6, 68.96),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -118,6 +121,7 @@ PolyGarages = {
         },
         label = "Caears 24 Parking",
         showBlip = true,
+        blipcoords = vector3(-475.31, -818.73, 30.46),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -142,6 +146,7 @@ PolyGarages = {
         },
         label = "Laguna Parking",
         showBlip = true,
+        blipcoords = vector3(364.37, 297.83, 103.49),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -212,6 +217,7 @@ PolyGarages = {
         },
         label = "Airport Parking",
         showBlip = true,
+        blipcoords = vector3(-796.86, -2024.85, 8.88),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -242,6 +248,7 @@ PolyGarages = {
         },
         label = "Beach Parking",
         showBlip = true,
+        blipcoords = vector3(-1183.1, -1511.11, 4.36),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -264,6 +271,7 @@ PolyGarages = {
         },
         label = "The Motor Hotel Parking",
         showBlip = true,
+        blipcoords = vector3(1137.77, 2663.54, 37.9),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -282,6 +290,7 @@ PolyGarages = {
         },
         label = "Liqour Parking",
         showBlip = true,
+        blipcoords = vector3(934.95, 3606.59, 32.81),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -324,6 +333,7 @@ PolyGarages = {
         },
         label = "Bell Farms Parking",
         showBlip = true,
+        blipcoords = vector3(78.34, 6418.74, 31.28),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -345,6 +355,7 @@ PolyGarages = {
         },
         label = "Pillbox Garage Parking",
         showBlip = true,
+        blipcoords = vector3(215.9499, -809.698, 30.731),
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
@@ -372,6 +383,7 @@ PolyGarages = {
         },
         label = "Impound Lot",
         showBlip = true,
+        blipcoords = vector3(410.26, -1641.74, 29.29),
         blipName = "Impound Lot",
         blipNumber = 68,
         type = 'depot',                --public, job, gang, depot

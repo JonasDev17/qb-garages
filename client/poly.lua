@@ -48,7 +48,6 @@ local function createGarageZones(garageShape, name)
                                 local job = garages.job
                                 if PlayerJob.name == job then
                                     if IsPedInAnyVehicle(Player) then
-                                        --print('inveh')
                                         exports['qb-radialmenu']:AddOption(5, {
                                             id = 'put_up_vehicle',
                                             title = 'Put Up Vehicle',
@@ -58,7 +57,6 @@ local function createGarageZones(garageShape, name)
                                             shouldClose = true
                                         }) 
                                     else
-                                        --print('notinveh')
                                         exports['qb-radialmenu']:AddOption(5, {
                                             id = 'open_garage_menu',
                                             title = 'Open Garage Menu',
@@ -71,7 +69,6 @@ local function createGarageZones(garageShape, name)
                                 end
                             elseif garages.type == 'public' then
                                 if IsPedInAnyVehicle(Player) then
-                                    --print('inveh')
                                     exports['qb-radialmenu']:AddOption(5, {
                                         id = 'put_up_vehicle',
                                         title = 'Put Up Vehicle',
@@ -130,7 +127,7 @@ local function CheckPlayers(vehicle, garage)
         if seat then
             TaskLeaveVehicle(seat, vehicle, 0)
             if garage then
-                SetEntityCoords(seat, garage.takeVehicle.x, garage.takeVehicle.y, garage.takeVehicle.z)
+                SetEntityCoords(seat, garage.blipcoords.x, garage.blipcoords.y, garage.blipcoords.z)
             end
         end
     end
@@ -209,3 +206,19 @@ function PublicGarage()
         end
     end
 end
+
+CreateThread(function()
+    for _, garage in pairs(PolyGarages) do
+        if garage.showBlip then
+            local Garage = AddBlipForCoord(garage.blipcoords.x, garage.blipcoords.y, garage.blipcoords.z)
+            SetBlipSprite (Garage, garage.blipNumber)
+            SetBlipDisplay(Garage, 4)
+            SetBlipScale  (Garage, 0.60)
+            SetBlipAsShortRange(Garage, true)
+            SetBlipColour(Garage, 3)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentSubstringPlayerName(garage.blipName)
+            EndTextCommandSetBlipName(Garage)
+        end
+    end
+end)

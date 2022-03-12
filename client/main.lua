@@ -232,8 +232,12 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
             location = garage.takeVehicle
             heading = garage.takeVehicle.h
         else
-            location = garage.spawnPoint
-            heading = garage.spawnPoint.w
+            local ped = GetEntityCoords(PlayerPedId())
+            local pedheadin = GetEntityHeading(PlayerPedId())
+            --location = garage.spawnPoint
+            --heading = garage.spawnPoint.w
+            location = ped 
+            heading = pedheadin
         end
     
         QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
@@ -243,7 +247,7 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
                     OutsideVehicles[vehicle.plate] = veh
                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
-    
+                
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, heading)

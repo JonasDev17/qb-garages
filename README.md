@@ -1,5 +1,17 @@
 # qb-garages
 
+**BAMA94#1994 Edits:**
+If you dont already have it, you need to add the following to your qb-radialmenu for this to work:
+```
+exports('AddOption', function(id, data)
+    Config.MenuItems[id] = data
+end)
+
+exports('RemoveOption', function(id)
+    Config.MenuItems[id] = nil
+end)
+```
+
 **Public Garages**
 * Park owned cars in public garages.
 * You can only parks vehicles that you own in public garages. 

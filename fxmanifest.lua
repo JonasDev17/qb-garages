@@ -16,12 +16,18 @@ client_scripts {
     '@PolyZone/EntityZone.lua',
     '@PolyZone/CircleZone.lua',
     '@PolyZone/ComboZone.lua',
-     'client/*.lua',
+    'client/poly.lua',
+    'client/main.lua'
 }
 
 server_scripts {	
     '@oxmysql/lib/MySQL.lua',
     'server/main.lua'
+}
+
+dependencies {
+    'lj-fuel',
+    'zx-fakeplate'
 }
 
 lua54 'yes'

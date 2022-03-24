@@ -42,7 +42,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
             else
                 cb(nil)
             end
-        end)    
+        end)
     end
 end)
 
@@ -186,7 +186,6 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
         if result[1] then
             for k, v in pairs(result) do
                 local VehicleData = QBCore.Shared.Vehicles[v.vehicle]
-    
                 local VehicleGarage = Lang:t("error.no_garage")
                 if v.garage ~= nil then
                     if Garages[v.garage] ~= nil then
@@ -225,6 +224,21 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
             cb(Vehicles)
         else
             cb(nil)
+        end
+    end)
+end)
+
+QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
+        if result[1] then
+            local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
+            if hasHouseKey then
+                cb(true)
+            else
+                cb(false)
+            end
+        else
+            cb(false)
         end
     end)
 end)

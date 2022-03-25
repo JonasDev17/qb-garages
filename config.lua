@@ -1,7 +1,9 @@
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn it in front of them
-VehicleHeading = 'driverside'
+FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or any other script
+HouseParkingDrawText = 'Parking' -- text when driving on to the house parking lot
+VehicleHeading = 'driverside' -- only used when no parking spots are defined in the garage config
 --[[^^^^^^^^
     'forward' = will face the sameway as the ped
     'driverside' = will put the driver door closets to the ped
@@ -35,7 +37,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',
         vehicle = 'car',
-        debugPoly = false,
+        drawText = 'Parking',
+        debug = false,
         ['ParkingSpots'] = {
             vector4(342.07, -632.51, 28.87, 340.17),
             vector4(338.89, -631.43, 28.87, 341.89),
@@ -91,7 +94,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',
         vehicle = 'car',
-        debugPoly = false,
+        drawText = 'Parking',
+        debug = false,
         ['ParkingSpots'] = {
             vector4(1023.5, -756.15, 57.48, 225.44),
             vector4(1020.64, -758.19, 57.49, 225.22),
@@ -181,7 +185,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',
         vehicle = 'car',
-        debugPoly = false,
+        drawText = 'Parking',
+        debug = false,
         ['ParkingSpots'] = {
             vector4(874.36, -77.52, 78.34, 326.7),
             vector4(868.22, -74.12, 78.34, 327.6),
@@ -361,7 +366,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',
         vehicle = 'car',
-        debugPoly = false,
+        drawText = 'Parking',
+        debug = false,
         ['ParkingSpots'] = {
             vector4(19.23, -880.71, 29.8, 341.54),
             vector4(22.45, -882.16, 29.79, 340.09),
@@ -429,7 +435,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
         vehicle = 'car',
-        debugPoly = false,                 --car, air, sea
+        drawText = 'Parking',
+        debug = false,                 --car, air, sea
         ['ParkingSpots'] = {
             vector4(277.62, -340.01, 44.5, 70.08),
             vector4(284.0, -342.32, 44.5, 70.09),
@@ -489,7 +496,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
         vehicle = 'car',
-        debugPoly = false,                 --car, air, sea
+        drawText = 'Parking',
+        debug = false,                 --car, air, sea
         ['ParkingSpots'] = {
             vector4(-356.89, -749.29, 33.54, 270.15),
             vector4(-356.83, -753.66, 33.54, 269.64),
@@ -568,8 +576,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false
     },
     [8] = {
         ['Zone'] = {
@@ -591,8 +600,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false,
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false,
         ['ParkingSpots'] = {
             vector4(54.49, 19.49, 69.14, 339.68),
             vector4(57.48, 17.98, 68.92, 340.13),
@@ -620,8 +630,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false,
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false,
         ['ParkingSpots'] = {
             vector4(-477.62, -816.44, 30.05, 271.2),
             vector4(-477.28, -813.29, 30.1, 265.04),
@@ -679,8 +690,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false,
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false,
         ['ParkingSpots'] = {
             vector4(359.53, 270.99, 102.65, 341.37),
             vector4(363.59, 269.88, 102.64, 341.77),
@@ -781,7 +793,8 @@ Garages = {
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
         vehicle = 'car',
-        debugPoly = false
+        drawText = 'Parking',
+        debug = false
     },
     [12] = {
         ['Zone'] = {
@@ -813,8 +826,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false
     },
     ["themotorhotel"] = {
         ['Zone'] = {
@@ -837,8 +851,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false
     },
     [13] = {
         ['Zone'] = {
@@ -858,8 +873,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false
     },
     [14] = {
         ['Zone'] = {
@@ -903,8 +919,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false
     },
     [15] = {
         ['Zone'] = {
@@ -926,8 +943,9 @@ Garages = {
         blipName = "Public Parking",
         blipNumber = 357,
         type = 'public',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false,
+        vehicle = 'car',
+        drawText = 'Parking',                 --car, air, sea
+        debug = false,
         ['ParkingSpots'] = {
             vector4(219.38, -765.95, 30.41, 247.04),
             vector4(218.07, -768.47, 30.41, 248.86),
@@ -1027,7 +1045,7 @@ Garages = {
                 vector2(423.90908813477, -1633.1248779297),
                 vector2(423.13873291016, -1628.1573486328)
             },
-            ['minZ'] = 29.25,  -- min height of the parking zone
+            ['minZ'] = 28.25,  -- min height of the parking zone
             ['maxZ'] = 31.31,  -- max height of the parking zone
             debug = false,
         },
@@ -1038,8 +1056,9 @@ Garages = {
         blipName = "Impound Lot",
         blipNumber = 68,
         type = 'depot',                --public, job, gang, depot
-        vehicle = 'car',                 --car, air, sea
-        debugPoly = false
+        vehicle = 'car',
+        drawText = 'Impound',                 --car, air, sea
+        debug = false
     },
     [17] = {
         ['Zone'] = {
@@ -1064,9 +1083,10 @@ Garages = {
         blipName = "Police",
         blipNumber = 357,
         type = 'job',                --public, job, gang, depot
-        vehicle = 'car',              --car, air, sea
+        vehicle = 'car',
+        drawText = 'Parking',              --car, air, sea
         job = "police",
-        debugPoly = false,
+        debug = false,
         ['ParkingSpots'] = {
             vector4(449.57, -1024.85, 28.06, 5.95),
             vector4(446.04, -1025.62, 28.14, 5.18),
@@ -1093,8 +1113,9 @@ Garages = {
         label = 'LS Customs',
         type = 'job',
         vehicle = 'car',
+        drawText = 'Parking',
         job = 'mechanic',
-        debugPoly = false
+        debug = false
     },
     [19] = {
         ['Zone'] = {
@@ -1112,12 +1133,13 @@ Garages = {
             },
             ['minZ'] = 30.0,  -- min height of the parking zone
             ['maxZ'] = 33.0,  -- max height of the parking zone
-            debug = true,
+            
         },
 		name = 'altaapartments',
         label = 'Alta Apartments',
         type = 'public',
         vehicle = 'car',
+        drawText = 'Parking',
         ["ParkingSpots"] = {
             vector4(-297.71, -990.11, 30.76, 338.79),
             vector4(-301.09, -988.82, 30.76, 339.11),
@@ -1232,7 +1254,7 @@ Garages = {
             vector4(-334.83, -891.72, 30.65, 350.2),
             vector4(-338.6, -891.08, 30.65, 348.34),
         },
-        debugPoly = false
+        debug = false
     
     },
     [20] = {
@@ -1245,12 +1267,12 @@ Garages = {
             },
             ['minZ'] = 35.0,  -- min height of the parking zone
             ['maxZ'] = 39.0,  -- max height of the parking zone
-            debug = true,
         },
 		name = 'cityhall',
         label = 'City Hall Parking',
         type = 'public',
         vehicle = 'car',
+        drawText = 'Parking',
         ["ParkingSpots"] = {
             vector4(-475.26, -219.26, 36.05, 30.12),
             vector4(-478.26, -214.06, 36.21, 30.11),
@@ -1262,7 +1284,7 @@ Garages = {
             vector4(-496.19, -182.75, 37.14, 29.96),
             vector4(-499.21, -177.5, 37.3, 30.1),
         },
-        debugPoly = false
+        debug = false
     },
     [21] = {
         ['Zone'] = {
@@ -1274,13 +1296,14 @@ Garages = {
             },
             ['minZ'] = 28.0,  -- min height of the parking zone
             ['maxZ'] = 31.0,  -- max height of the parking zone
-            debug = true,
+            
         },
 		name = 'pdfront',
         label = 'Front of MRPD',
         type = 'job',
         job = "police",
         vehicle = 'car',
+        drawText = 'Parking',
         ["ParkingSpots"] = {
             vector4(407.44, -997.7, 28.94, 52.87),
             vector4(407.55, -992.85, 28.94, 51.63),
@@ -1288,7 +1311,7 @@ Garages = {
             vector4(407.42, -983.95, 28.94, 51.54),
             vector4(407.68, -979.62, 28.94, 51.69),
         },
-        debugPoly = false
+        debug = false
     },
     [22] = {
         ['Zone'] = {
@@ -1300,13 +1323,13 @@ Garages = {
             },
             ['minZ'] = 24.0,  -- min height of the parking zone
             ['maxZ'] = 27.0,  -- max height of the parking zone
-            debug = true,
         },
 		name = 'pdgarage',
         label = 'MRPD Garage',
         type = 'job',
         job = "police",
         vehicle = 'car',
+        drawText = 'Parking',
         ["ParkingSpots"] = {
             vector4(445.67, -997.0, 24.81, 269.98),
             vector4(445.83, -994.31, 25.21, 267.42),
@@ -1327,9 +1350,8 @@ Garages = {
             vector4(425.68, -978.88, 25.21, 269.76),
             vector4(425.68, -976.24, 25.21, 270.49),
             vector4(442.0, -981.58, 25.21, 90.19),
-            
         },
-        debugPoly = true
+        debug = true
     }
 }
 

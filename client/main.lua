@@ -154,7 +154,15 @@ local function parkVehicle(veh, type)
         if owned then
             local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
             local engineDamage = math.ceil(GetVehicleEngineHealth(veh))
-            local totalFuel = exports['lj-fuel']:GetFuel(veh)
+            
+            local totalFuel = 0
+            
+            if FuelScript then
+                totalFuel = exports[FuelScript]:GetFuel(veh)
+            else
+                totalFuel = exports['LegacyFuel']:GetFuel(veh)
+            end
+
             if not canParkVehicle(veh) then return end
             TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, currentGarage.name)
             ExitAndDeleteVehicle(veh)
@@ -173,7 +181,7 @@ local function createGarageZone(zone, garage)
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then       
             currentGarage = garage
-            exports['qb-core']:DrawText('Parking','left')
+            exports['qb-core']:DrawText(garage['drawText'],'left')
         else
             currentGarage = nil
             if menuItemId ~= nil then
@@ -190,7 +198,7 @@ local function createGaragePolyZone(garage)
         name = garage.name,
         minZ = garage['Zone']['minZ'],
         maxZ = garage['Zone']['maxZ'],
-        debugPoly = garage.debugPoly
+        debugPoly = garage.debug
     })
    createGarageZone(zone, garage)
 end
@@ -220,7 +228,7 @@ local function registerHousePoly(house)
         print(isPpointInside)
         if isPpointInside then
             currentHouseGarage = house
-            exports['qb-core']:DrawText('Parking','left')
+            exports['qb-core']:DrawText(HouseParkingDrawText,'left')
         else
             exports['qb-core']:HideText()
             if menuItemId ~= nil then
@@ -381,7 +389,13 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, exports['zx-fakeplate']:GetFakePlate(vehicle.plate))
                 SetEntityHeading(veh, heading)
-                exports['lj-fuel']:SetFuel(veh, vehicle.fuel)
+               
+                if FuelScript then
+                    exports[FuelScript]:SetFuel(veh, vehicle.fuel)
+                else
+                    exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
+                end
+
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
                 TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
@@ -397,30 +411,33 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
     end
 end)
 
-RegisterNetEvent('qb-garages:client:TakeOutHouseGarage', function(vehicle)
-    if vehicle.state == "Garaged" then
-        QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+RegisterNetEvent('qb-garages:client:TakeOutHouseGarage', function(vehicleToSpawn)
+    if vehicleToSpawn.state == "Garaged" then
+        QBCore.Functions.SpawnVehicle(vehicleToSpawn.vehicle, function(veh)
             QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
-                enginePercent = round(vehicle.engine / 10, 1)
-                bodyPercent = round(vehicle.body / 10, 1)
-                currentFuel = vehicle.fuel
 
-                if vehicle.plate then
-                    OutsideVehicles[vehicle.plate] = veh
+                if vehicleToSpawn.plate then
+                    OutsideVehicles[vehicleToSpawn.plate] = veh
                     TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
 
-                SetVehicleNumberPlateText(veh, vehicle.plate)
+                SetVehicleNumberPlateText(veh, vehicleToSpawn.plate)
                 SetEntityHeading(veh, HouseGarages[currentHouseGarage].takeVehicle.h)
-                exports['lj-fuel']:SetFuel(veh, vehicle.fuel)
+
+                if FuelScript then
+                    exports[FuelScript]:SetFuel(veh, vehicleToSpawn.fuel)
+                else
+                    exports['LegacyFuel']:SetFuel(veh, vehicleToSpawn.fuel)
+                end
+                
                 SetEntityAsMissionEntity(veh, true, true)
-                doCarDamage(veh, vehicle)
-                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                doCarDamage(veh, vehicleToSpawn)
+                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleToSpawn.plate, vehicleToSpawn.garage)
                 closeMenuFull()
                 TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
                 SetPedIntoVehicle(PlayerPedId(), veh, -1)
-            end, vehicle.plate)
+            end, vehicleToSpawn.plate)
         end, HouseGarages[currentHouseGarage].takeVehicle, true)
     end
 end)
@@ -617,7 +634,14 @@ RegisterNetEvent('qb-garages:client:putGarageHouse', function()
         if owned then
             local bodyDamage = round(GetVehicleBodyHealth(curVeh), 1)
             local engineDamage = round(GetVehicleEngineHealth(curVeh), 1)
-            local totalFuel = exports['lj-fuel']:GetFuel(curVeh)
+
+            local totalFuel = 0
+            if FuelScript then
+                totalFuel = exports[FuelScript]:GetFuel(curVeh)
+            else
+                totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
+            end
+
             local vehProperties = QBCore.Functions.GetVehicleProperties(curVeh)
             ExitAndDeleteVehicle(curVeh)
             if DoesEntityExist(curVeh) then
@@ -706,7 +730,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         for _, garage in pairs(Garages) do
-            if garage['ParkingSpots'] ~= nil and garage['debugPoly'] then
+            if garage['ParkingSpots'] ~= nil and garage['debug'] then
                 for _, location in pairs(garage['ParkingSpots']) do
                     DrawMarker(2, location.x, location.y, location.z + 0.98, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.4, 0.2, 255, 255, 255, 255, 0, 0, 0, 1, 0, 0, 0)
                 end

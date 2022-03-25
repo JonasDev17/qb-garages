@@ -149,7 +149,7 @@ local function canParkVehicle(veh)
 end
 
 local function parkVehicle(veh, type)
-    local plate = exports['zx-fakeplate']:GetRealPlate(QBCore.Functions.GetPlate(veh))
+    local plate = QBCore.Functions.GetPlate(veh)
     QBCore.Functions.TriggerCallback('qb-garage:server:checkOwnership', function(owned)
         if owned then
             local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
@@ -387,7 +387,7 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
                 end
                 
                 QBCore.Functions.SetVehicleProperties(veh, properties)
-                SetVehicleNumberPlateText(veh, exports['zx-fakeplate']:GetFakePlate(vehicle.plate))
+                SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, heading)
                
                 if FuelScript then
@@ -403,9 +403,9 @@ RegisterNetEvent('qb-garages:client:takeOutGarage', function(data)
                 if WarpPlayerIntoVehicle or type == 'house' or type == 'gang' or vehicle == 'air' or vehicle == 'sea' then
                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1) 
                 end
-                TriggerEvent("vehiclekeys:client:SetOwner", exports['zx-fakeplate']:GetRealPlate(QBCore.Functions.GetPlate(veh)))
+                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
-            end, exports['zx-fakeplate']:GetRealPlate(vehicle.plate))
+            end, vehicle.plate)
     
         end, location, true)
     end

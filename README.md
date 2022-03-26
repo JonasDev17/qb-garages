@@ -2,7 +2,7 @@
 
 **ATENTION: THIS SCRIPT USES A CUSTOM VERSION OF THE RADIAL MENU AND THE LATEST QB-CORE VERSION (RELEASED ONLY A FEW DAYS AGO)**
 
-[qb-radialmenu](https://github.com/JonasDev99/qb-radialmenu-1/tree/improvements) (Branch: improvements)
+[qb-radialmenu](https://github.com/JonasDev99/qb-radialmenu)
 
 ## Credits
 

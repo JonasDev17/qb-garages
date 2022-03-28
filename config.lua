@@ -33,9 +33,9 @@
         job = "police", -- optional, everyone can use it when not defined
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone
-        debug = false -- will show the polyzone and the parking spots,
         ParkingDistance = 10.0 -- Optional ParkingDistance, to override the global ParkingDistance configured below
         SpawnDistance = 5.0 -- Optional SpawnDistance, to override the global SpawnDistance
+        debug = false -- will show the polyzone and the parking spots, helpful when creating new garages
     },
 ]]
 
@@ -71,6 +71,10 @@ VehicleHeading = 'driverside' -- only used when NO parking spots are defined in 
     'hood' = will face the hood towards ped
     'passengerside' = will put the passenger door closets to the ped
 ]]
+
+SharedJobGarages = { -- define the job garages which are shared
+    --'pdgarage',
+}
 
 Garages = {
     --[[

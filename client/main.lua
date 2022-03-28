@@ -240,7 +240,7 @@ local function ParkVehicle(veh)
         else
             QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
         end
-    end, plate, type, CurrentHouseGarage, gang)
+    end, plate, type, garage, gang)
 end
 
 local function AddRadialParkingOption()

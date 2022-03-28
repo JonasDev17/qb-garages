@@ -57,7 +57,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         end)
     else                            --House give all cars in the garage, Job and Gang depend of config
         local shared = ''
-        if not SharedGarages and type ~= "house" then
+        if not TableContains(SharedJobGarages, garage) and type ~= "house" then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)
@@ -70,7 +70,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
     end
 end)
 
-QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, type, house, gang)
+QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, type, garage, gang)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if type == "public" then        --Public garages only for player cars
@@ -84,7 +84,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif type == "house" then     --House garages only for player cars that have keys of the house
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
+                local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
                 if hasHouseKey then
                     cb(true)
                 else
@@ -115,7 +115,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
         end)
     else                            --Job garages only for cars that are owned by someone (for sharing and service) or only by player depending of config
         local shared = ''
-        if not SharedGarages then
+        if not TableContains(SharedJobGarages, garage) then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?'..shared, {plate}, function(result)

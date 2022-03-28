@@ -25,9 +25,4 @@ server_scripts {
     'server/main.lua'
 }
 
-dependencies {
-    'lj-fuel',
-    'zx-fakeplate'
-}
-
 lua54 'yes'

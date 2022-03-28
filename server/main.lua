@@ -1,6 +1,24 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local OutsideVehicles = {}
 
+local function TableContains (tab, val)
+    if type(val) == "table" then
+        for _, value in ipairs(tab) do
+            if TableContains(val, value) then
+                return true
+            end
+        end
+        return false
+    else
+        for _, value in ipairs(tab) do
+            if value == val then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, type, category)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
@@ -16,7 +34,13 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND (state = ? OR state = ?)', {pData.PlayerData.citizenid, 0, 2}, function(result)
             local tosend = {}
             if result[1] then
-                --Check vehicle type against depot type
+                if type(category) == 'table' then
+                    if TableContains(category, {'plane', 'helicopter'}) then
+                        category = 'air'
+                    elseif TableContains(category, 'boat') then
+                        category = 'sea'
+                    end
+                end
                 for k, vehicle in pairs(result) do
                     if category == "air" and ( QBCore.Shared.Vehicles[vehicle.vehicle].category == "helicopters" or QBCore.Shared.Vehicles[vehicle.vehicle].category == "planes" ) then
                         tosend[#tosend + 1] = vehicle
@@ -224,21 +248,6 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
             cb(Vehicles)
         else
             cb(nil)
-        end
-    end)
-end)
-
-QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
-    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
-        if result[1] then
-            local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, house)
-            if hasHouseKey then
-                cb(true)
-            else
-                cb(false)
-            end
-        else
-            cb(false)
         end
     end)
 end)

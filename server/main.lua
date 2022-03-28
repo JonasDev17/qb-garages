@@ -49,7 +49,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
             local tosend = {}
             if result[1] then
                 if type(category) == 'table' then
-                    if TableContains(category, {'plane', 'helicopter'}) then
+                    if TableContains(category, {'car'}) then
+                        category = 'car'
+                    elseif TableContains(category, {'plane', 'helicopter'}) then
                         category = 'air'
                     elseif TableContains(category, 'boat') then
                         category = 'sea'

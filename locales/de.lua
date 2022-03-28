@@ -1,17 +1,21 @@
 local Translations = {
     error = {
-        no_vehicles = "There is no vehicles in this location!",
+        no_vehicles = "Es befindet sich kein Fahrzeug in dieser Garage!",
         not_impound = "Dein Auto wurde nicht abgeschleppt",
         not_owned = "Das Fahrzeug gehört dir nicht",
         not_correct_type = "Du kannst dieses Fahrzeug hier nicht parken. (Falscher Parkplatz)",
         not_enough = "Nicht genu Geld",
         no_garage = "None",
+        too_far_away = "Zu weit weg von einem Parkfeld",
+        occupied = "Parkplatz ist nicht frei",
+        no_house_keys = "Du besitzt kein Schlüssel für diese Haus Garage",
     },
     success = {
         vehicle_parked = "Auto geparkt",
     },
     menu = {
         header = {
+            house_garage = "Haus Garage",
             house_car = "Haus Garage %{value}",
             public_car = "Öffentliche  Garage %{value}",
             public_sea = "Öffentlichtes Bootshaus %{value}",
@@ -43,15 +47,8 @@ local Translations = {
     status = {
         out = "Ausgeparkt",
         garaged = "Eingeparkt",
-        impound = "Abgeschleppt von der Polizei",
+        impound = "Abgeschleppt",
     },
-    info = {
-        car_e = "~g~E~w~ - Garage",
-        sea_e = "~g~E~w~ - Bootshause",
-        air_e = "~g~E~w~ - Hangar",
-        park_e = "~g~E~w~ - Fahrzeug einparken",
-        house_garage = "Haus Garage",
-    }
 }
 
 Lang = Locale:new({

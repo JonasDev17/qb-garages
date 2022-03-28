@@ -56,9 +56,10 @@ VehicleCategories = {
     ["boat"] = {14},
     ["helicopter"] = {15},
     ["plane"] = {16},
+    ["service"] = {17},
     ["emergency"] = {18},
-    ["other"] = {13} -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in the category other
-    -- you can also create new categories here and use them below. 
+    ["other"] = {13} -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in this category
+    -- you can also create new / delete or update categories, and use them below in the config. 
     -- all vehicle classes can be found here: https://docs.fivem.net/natives/?_0x29439776AAA00A62
 }
 

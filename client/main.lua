@@ -27,17 +27,24 @@ local function TableContains (tab, val) -- helper function
     return false
 end
 
+local function GetSuperCategoryFromCategories(categories)
+    local superCategory = 'car'
+    if TableContains(categories, {'car'}) then
+        superCategory = 'car'
+    elseif TableContains(categories, {'plane', 'helicopter'}) then
+        superCategory = 'air'
+    elseif TableContains(categories, 'boat') then
+        superCategory = 'sea'
+    end
+    return superCategory
+end
+
 --Menus
 local function PublicGarage()
     local garage = Garages[CurrentGarage]
     local type = garage.type
     local categories = garage.vehicleCategories
-    local superCategory = 'car'
-    if TableContains(categories, {'plane', 'helicopter'}) then
-        superCategory = 'air'
-    elseif TableContains(categories, 'boat') then
-        superCategory = 'sea'
-    end
+    local superCategory = GetSuperCategoryFromCategories(categories)
 
     exports['qb-menu']:openMenu({
         {
@@ -70,12 +77,7 @@ local function PublicGarage()
 end
 
 local function MenuHouseGarage()
-    local superCategory = 'car'
-    if TableContains(HouseGarageCategories, {'plane', 'helicopter'}) then
-        superCategory = 'air'
-    elseif TableContains(HouseGarageCategories, 'boat') then
-        superCategory = 'sea'
-    end
+    local superCategory = GetSuperCategoryFromCategories(HouseGarageCategories)
     exports['qb-menu']:openMenu({
         {
             header = Lang:t("menu.header.house_garage"),

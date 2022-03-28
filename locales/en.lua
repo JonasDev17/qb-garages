@@ -47,7 +47,7 @@ local Translations = {
     status = {
         out = "Out",
         garaged = "Garaged",
-        impound = "Impounded By Police",
+        impound = "Impounded",
     },
     info = {
         car_e = "~g~E~w~ - Garage",

@@ -6,12 +6,16 @@ local Translations = {
         not_correct_type = "Du kan inte parkera den här typen av fordon här",
         not_enough = "Inte tillräckligt med pengar",
         no_garage = "Ingen",
+        too_far_away = "Too far away from a parking lot", -- TODO
+        occupied = "Parking lot is already occupied", -- TODO
+        no_house_keys = "You don't have the keys for this house garage", -- TODO
     },
     success = {
         vehicle_parked = "Fordon har parkerats",
     },
     menu = {
         header = {
+            house_garage = "Hus Garage",
             house_car = "Husgarage %{value}",
             public_car = "Offentligt Garage %{value}",
             public_sea = "Offentlig Båthus %{value}",
@@ -45,13 +49,6 @@ local Translations = {
         garaged = "Parkerad",
         impound = "Beslagtaget av Polis",
     },
-    info = {
-        car_e = "~g~E~w~ - Garage",
-        sea_e = "~g~E~w~ - Båthus",
-        air_e = "~g~E~w~ - Hangar",
-        park_e = "~g~E~w~ - Parkera Fordon",
-        house_garage = "Hus Garage",
-    }
 }
 
 Lang = Locale:new({

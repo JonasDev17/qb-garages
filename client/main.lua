@@ -341,7 +341,7 @@ local function RegisterHousePoly(house)
     if GaragePoly[house] then return end
     local coords = HouseGarages[house].takeVehicle
     if not coords or not coords.x then return end
-    local zone = CreateGarageBoxZone(house, coords, true)
+    local zone = CreateGarageBoxZone(house, coords, false)
     GaragePoly[house] = {
         Polyzone = zone,
         coords = coords,

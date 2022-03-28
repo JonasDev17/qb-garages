@@ -30,6 +30,7 @@
         blipName = "Police", -- otional
         blipNumber = 90, -- optional, numbers can be found here: https://docs.fivem.net/docs/game-references/blips/
         blipColor = 69, -- optional, defaults to 3 (Blue), numbers can be found here: https://docs.fivem.net/docs/game-references/blips/
+        blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = "police", -- optional, everyone can use it when not defined
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone
@@ -40,7 +41,7 @@
 ]]
 
 
-FuelScript = 'lj-fuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other script
+FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other script
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn it in front of them
@@ -1435,6 +1436,11 @@ Garages = {
         type = 'public',
         vehicleCategories = {'helicopter'},
         drawText = 'Heli Pad',
+        showBlip = true, 
+        blipName = "Heli Pad",
+        blipNumber = 64,
+        blipColor = 69, 
+        blipcoords = vector3(-745.61, -1468.57, 4.37),
         ["ParkingSpots"] = {
             vector4(-745.53, -1468.68, 5.0, 321.19)
         },

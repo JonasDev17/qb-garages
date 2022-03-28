@@ -38,7 +38,7 @@
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = "police", -- optional, everyone can use it when not defined
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
-        drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone
+        drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
         ParkingDistance = 10.0 -- Optional ParkingDistance, to override the global ParkingDistance configured below
         SpawnDistance = 5.0 -- Optional SpawnDistance, to override the global SpawnDistance
         debug = false -- will show the polyzone and the parking spots, helpful when creating new garages
@@ -47,7 +47,7 @@
 
 
 FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other script
-AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
+-- AutoRespawn = true -- Does not work right now. Cars will alway go to garages after restart. Will be fixed in a future update.  --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn it in front of them
 HouseParkingDrawText = 'Parking' -- text when driving on to the house parking lot

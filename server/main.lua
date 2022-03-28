@@ -22,7 +22,6 @@ end
 QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(source, cb, plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    QBCore.Functions.Debug(OutsideVehicles, 2)
     if not OutsideVehicles[plate] then cb(nil) return end
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? and plate = ?', {pData.PlayerData.citizenid, plate}, function(result)
         if result[1] then

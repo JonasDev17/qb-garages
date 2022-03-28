@@ -393,9 +393,6 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
 
     QBCore.Functions.TriggerCallback("qb-garage:server:GetGarageVehicles", function(result)
         local despawnedOutsideVehicles = GetDespawnedOutsideVehicles()
-        QBCore.Functions.Debug(despawnedOutsideVehicles, 2)
-        QBCore.Functions.Debug(OutsideVehicles, 2)
-
         if result == nil and not next(despawnedOutsideVehicles) then
             QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else

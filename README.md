@@ -1,20 +1,14 @@
 # qb-garages NOT FINISHED YET
 
-**ATENTION: THIS SCRIPT USES CUSTOM EXPORTS IN THE RADIAL MENU. THEY ARE NOT THE SAME AS EXPORTS SEEN IN MOST OTHER SCRIPTS**
-These exports are different to the ones which this script is actually based on. The parameters are switched and the code is a bit different:
-```
-exports('AddOption', function(data, id)
-    local menuId = id ~= nil and id or (#Config.MenuItems + 1)
-    Config.MenuItems[menuId] = data
-    print(menuId)
-    return menuId
- end)
- 
- exports('RemoveOption', function(id)
-    print(id)
-    Config.MenuItems[id] = nil
- end)
-```
+**ATENTION: THIS SCRIPT USES A CUSTOM VERSION OF THE RADIAL MENU AND THE LATEST QB-CORE VERSION (RELEASED ONLY A FEW DAYS AGO)**
+
+[qb-radialmenu](https://github.com/JonasDev99/qb-radialmenu)
+
+## Credits
+
+This script is a combination of [JustLazzy's qb-garages](https://github.com/JustLazzy/qb-garages), [bamablood94's qb-garages](https://github.com/bamablood94/qb-garages) and my own code.
+
+### Description is mostly a placeholder. Will be updated on release.
 
 **Public Garages**
 * Park owned cars in public garages.
@@ -26,43 +20,12 @@ exports('AddOption', function(data, id)
 
 ![image](https://user-images.githubusercontent.com/82112471/149678977-2a574ee9-8ecc-494f-a845-e17281a74594.png)
 
-
-
-**House Garages**
-* Park owned cars in house garages. To add a house garage, you must have the realestate job and do /addgarage.
-* You can only parks vehicles from persons that have the key in a house garage. 
-* You can take every vehicle from the house garages to which you have the key. 
-* You can only park ground vehicles in house garages. 
-
-**Gang Garages**
-* Allows for gangs to have their own garages.
-* You can parks every vehicle that is owned by gang members in gang garages. 
-* You can take every vehicle from the gang garages. 
-
-**Job Garages**
-* You can park every vehicle that is owned by someone with the same job. 
-* You can take every vehicle from the job garage. 
-
-**Depot Garages**
-* Allows depot cars to be retreived from here. Cops can do /depot [price] to send a car to the depot.
-
-**Auto Respawn Config**
-* If set to true, cars that are currently outside will be placed in the last garage used.
-* If set to false, cars that are currently outside will be placed in the depot.
-
-**Shared garages Config**
-* If set to true, Gang and Job garages are shared.
-* If set to false, Gang and Job garages are personal.
-
-**Configurations**
-* You can only park ground vehicles in garages of type "car" in config. 
-* You can only parks water vehicles in garages of type "sea" in config. 
-* You can only parks air vehicles in garages of type "air" in config. 
-* Vehicle types and jobs or gang can be mixed in config.
-
-**Blips and names**
-* Blips and names are modifiable for each garage. 
-
+* House Garages
+* Gang Garages
+* Job Garages
+* Depot Garages
+* Blips and names
+* Custom DrawText
 
 # License
 

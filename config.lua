@@ -2,11 +2,16 @@
 --[[
     Author: JDev17#8160
 
-    Garage Configuration Example
+    TRANSLATION: 
+        To create a new translation file, copy an existing one and rename it to e.g. es (spanish), then translate it and change the imported file in the fxmanifest under shared_scripts.
+
+
+
+    GARAGE CONFIGURATION EXAMPLE:
 
     ['somegarage'] = {
         ['Zone'] = {
-            ['Shape'] = { -- Create a polyzone by using "/pzcreate poly"
+            ['Shape'] = { -- Create a polyzone by using "/pzcreate poly", "/pzadd" and "/pzfinish" or "/pzcancel" to cancel it. the newly created polyzone will be in txData/QBCoreFramework_******.base/polyzone_created_zones.txt
             vector2(-1030.4713134766, -3016.3388671875),
             vector2(-970.09686279296, -2914.7397460938),
             vector2(-948.322265625, -2927.9030761718),
@@ -22,7 +27,7 @@
             },
             ['minZ'] = 12.5,  -- min height of the parking zone, cannot be the same as maxZ, and must be smaller than maxZ
             ['maxZ'] = 20.0,  -- max height of the parking zone
-            -- Important: Make sure the parking zone is high enoug - higher than the talles vehicle...
+            -- Important: Make sure the parking zone is high enoug - higher than the tallest vehicle...
         },
         label = 'Hangar', -- label displayed on phone
         type = 'public', -- 'public', 'job', 'depot' or 'gang'

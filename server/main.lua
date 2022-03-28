@@ -19,10 +19,24 @@ local function TableContains (tab, val)
     return false
 end
 
-QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, type, category)
+QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(source, cb, plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    if type == "public" then        --Public garages give player cars in the garage only
+    QBCore.Functions.Debug(OutsideVehicles, 2)
+    if not OutsideVehicles[plate] then cb(nil) return end
+    MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? and plate = ?', {pData.PlayerData.citizenid, plate}, function(result)
+        if result[1] then
+            cb(result[1])
+        else
+            cb(nil)
+        end
+    end)
+end)
+
+QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, garageType, category)
+    local src = source
+    local pData = QBCore.Functions.GetPlayer(src)
+    if garageType == "public" then        --Public garages give player cars in the garage only
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ? AND state = ?', {pData.PlayerData.citizenid, garage, 1}, function(result)
             if result[1] then
                 cb(result)
@@ -30,7 +44,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                 cb(nil)
             end
         end)
-    elseif type == "depot" then    --Depot give player cars that are not in garage only
+    elseif garageType == "depot" then    --Depot give player cars that are not in garage only
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND (state = ? OR state = ?)', {pData.PlayerData.citizenid, 0, 2}, function(result)
             local tosend = {}
             if result[1] then
@@ -57,7 +71,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         end)
     else                            --House give all cars in the garage, Job and Gang depend of config
         local shared = ''
-        if not TableContains(SharedJobGarages, garage) and type ~= "house" then
+        if not TableContains(SharedJobGarages, garage) and garageType ~= "house" then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)
@@ -148,9 +162,19 @@ end)
 
 RegisterNetEvent('qb-garages:server:UpdateOutsideVehicles', function(Vehicles)
     local src = source
-    local Ply = QBCore.Functions.GetPlayer(src)
-    local CitizenId = Ply.PlayerData.citizenid
-    OutsideVehicles[CitizenId] = Vehicles
+    local ply = QBCore.Functions.GetPlayer(src)
+    local citizenId = ply.PlayerData.citizenid
+    OutsideVehicles[citizenId] = Vehicles
+end)
+
+QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicles", function(source, cb)
+    local ply = QBCore.Functions.GetPlayer(source)
+    local citizenId = ply.PlayerData.citizenid
+    if OutsideVehicles[citizenId] and next(OutsideVehicles[citizenId]) then
+        cb(OutsideVehicles[citizenId])
+    else
+        cb({})
+    end
 end)
 
 AddEventHandler('onResourceStart', function(resource)
@@ -172,12 +196,13 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
 
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
         if result[1] then
-            if cashBalance >= result[1].depotprice then
-                Player.Functions.RemoveMoney("cash", result[1].depotprice, "paid-depot")
-                TriggerClientEvent("qb-garages:client:takeOutGarage", src, data)
-            elseif bankBalance >= result[1].depotprice then
-                Player.Functions.RemoveMoney("bank", result[1].depotprice, "paid-depot")
-                TriggerClientEvent("qb-garages:client:takeOutGarage", src, data)
+            local depotPrice = result[1].depotprice ~= 0 and result[1].depotprice or DepotPrice
+            if cashBalance >= depotPrice then
+                Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
+                TriggerClientEvent("qb-garages:client:TakeOutGarage", src, data)
+            elseif bankBalance >= depotPrice then
+                Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
+                TriggerClientEvent("qb-garages:client:TakeOutGarage", src, data)
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
             end

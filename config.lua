@@ -41,14 +41,14 @@
 ]]
 
 
-FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other script
+FuelScript = 'lj-fuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other script
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn it in front of them
 HouseParkingDrawText = 'Parking' -- text when driving on to the house parking lot
 ParkingDistance = 2.0 -- Distance to the parking lot when trying to park the vehicle
 SpawnDistance = 4.5 -- The maximum distance you can be from a parking spot, to spawn a car
-
+DepotPrice = 500.0 -- The price to take out a despawned vehicle from impound.
 
 VehicleCategories = {
     ["car"] = {0,1,2,3,4,5,6,7,9,10,11,12},

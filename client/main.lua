@@ -9,8 +9,10 @@ local GaragePoly = {}
 local MenuItemId = nil
 local VehicleClassMap = {}
 
-local function TableContains (tab, val) -- helper function
-    if type(val) == "table" then
+-- helper functionw
+
+local function TableContains (tab, val)
+    if type(val) == "table" then -- checks if atleast one the values in val is contained in tab 
         for _, value in ipairs(tab) do
             if TableContains(val, value) then
                 return true
@@ -37,6 +39,23 @@ local function GetSuperCategoryFromCategories(categories)
         superCategory = 'sea'
     end
     return superCategory
+end
+
+local function GetClosestLocation(locations)
+    local closestDistance = -1
+    local closestIndex = -1
+    local closestLocation = nil
+    for i,v in ipairs(locations) do
+        local plyCoords = GetEntityCoords(PlayerPedId(), 0)
+        local location = vector3(v.x, v.y, v.z)
+        local distance = #(plyCoords - location)
+        if(closestDistance == -1 or closestDistance > distance) then
+            closestDistance = distance
+            closestIndex = i
+            closestLocation = v
+        end
+    end
+    return closestIndex, closestDistance, closestLocation
 end
 
 --Menus
@@ -164,10 +183,18 @@ local function Round(num, numDecimalPlaces)
 end
 
 local function ExitAndDeleteVehicle(vehicle)
+    local garage = Garages[CurrentGarage]
+    local exitLocation = nil
+    if garage and garage.ExitWarpLocations and next(garage.ExitWarpLocations) then
+        _, _, exitLocation = GetClosestLocation(garage.ExitWarpLocations)
+    end
     for i = -1, 5, 1 do
         local ped = GetPedInVehicleSeat(vehicle, i)
         if ped then
             TaskLeaveVehicle(ped, vehicle, 0)
+            if exitLocation then
+                SetEntityCoords(ped, exitLocation.x, exitLocation.y, exitLocation.z)
+            end
         end
     end
     SetVehicleDoorsLocked(vehicle)
@@ -182,7 +209,7 @@ end
 local function CanParkVehicle(veh)
     local garage = CurrentGarage and Garages[CurrentGarage] or HouseGarages[CurrentHouseGarage]
     if not garage then return end
-    local parkingDistance =  garage['ParkingDistance'] and  garage['ParkingDistance'] or ParkingDistance
+    local parkingDistance =  garage.ParkingDistance and  garage.ParkingDistance or ParkingDistance
     local vehClass = GetVehicleClass(veh)
     local vehCategory = GetVehicleCategoryFromClass(vehClass)
 
@@ -191,16 +218,9 @@ local function CanParkVehicle(veh)
         return false
     end
 
-    if garage['ParkingSpots'] ~= nil then
-        local closestDistance = -1
-        for _,v in ipairs(Garages[CurrentGarage]['ParkingSpots']) do
-            local plyCoords = GetEntityCoords(PlayerPedId(), 0)
-            local Vcoords = vector3(v.x, v.y, v.z)
-            local distance = #(plyCoords - Vcoords)
-            if(closestDistance == -1 or closestDistance > distance) then
-                closestDistance = distance
-            end
-        end
+    local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
+    if next(parkingSpots) ~= nil then
+        local _, closestDistance, _ = GetClosestLocation(parkingSpots)
         if closestDistance >= parkingDistance then
             QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
             return false
@@ -305,7 +325,7 @@ local function CreateGarageZone(zone, garage)
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
             CurrentGarage = garage
-            exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'],'left')
+            exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'], DrawTextPosition)
         else
             CurrentGarage = nil
             if MenuItemId ~= nil then
@@ -318,10 +338,10 @@ local function CreateGarageZone(zone, garage)
 end
 
 local function CreateGaragePolyZone(garage)
-    local zone = PolyZone:Create(Garages[garage]['Zone']['Shape'], {
+    local zone = PolyZone:Create(Garages[garage].Zone.Shape, {
         name = garage,
-        minZ = Garages[garage]['Zone']['minZ'],
-        maxZ = Garages[garage]['Zone']['maxZ'],
+        minZ = Garages[garage].Zone.minZ,
+        maxZ = Garages[garage].Zone.maxZ,
         debugPoly = Garages[garage].debug
     })
    CreateGarageZone(zone, garage)
@@ -351,7 +371,7 @@ local function RegisterHousePoly(house)
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
             CurrentHouseGarage = house
-            exports['qb-core']:DrawText(HouseParkingDrawText,'left')
+            exports['qb-core']:DrawText(HouseParkingDrawText, DrawTextPosition)
         else
             exports['qb-core']:HideText()
             if MenuItemId ~= nil then
@@ -368,9 +388,8 @@ local function GetDespawnedOutsideVehicles()
     for plate, veh in pairs(OutsideVehicles) do
         if not DoesEntityExist(veh) then
             QBCore.Functions.TriggerCallback("qb-garage:server:GetOutsideVehicle", function(result)
-                
                 if result then
-                    table.insert(despawnedOutsideVehicles, result)
+                    despawnedOutsideVehicles[#despawnedOutsideVehicles+1] = result
                 end
             end, plate)
         end
@@ -468,33 +487,25 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
     local vehicle = data.vehicle
     local garage = data.garage
     local superCategory = data.superCategory
-    local spawnDistance = garage['SpawnDistance'] and garage['SpawnDistance'] or SpawnDistance
+    local spawnDistance = garage.SpawnDistance and garage.SpawnDistance or SpawnDistance
     local location
     local heading
-    
+    local closestDistance = -1
+
     if type == "house" then
         location = garage.takeVehicle
         heading = garage.takeVehicle.w
     else
-        if garage['ParkingSpots'] ~= nil then
-            local closestDistance = -1
-            local closestIndex = -1
-            for i,v in ipairs(garage['ParkingSpots']) do
-                local plyCoords = GetEntityCoords(PlayerPedId(), 0)
-                local Vcoords = vector3(v.x, v.y, v.z)
-                local distance = #(plyCoords - Vcoords)
-                if(closestDistance == -1 or closestDistance > distance) then
-                    closestDistance = distance
-                    closestIndex = i
-                end
-            end
+        print(garage)
+        local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
+        print(next(parkingSpots))
+        if next(parkingSpots) ~= nil then
+            _, closestDistance, location = GetClosestLocation(parkingSpots)
             if closestDistance >= spawnDistance then
                 QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
                 return
             else
-                local spot = garage['ParkingSpots'][closestIndex]
-                location = vector4(spot["x"], spot["y"], spot["z"], spot["w"])
-                heading = spot['w']
+                heading = location.w
             end
         else
             local ped = GetEntityCoords(PlayerPedId())
@@ -534,14 +545,14 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
             if FuelScript then
                 exports[FuelScript]:SetFuel(veh, vehicle.fuel)
             else
-                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
+                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Defaults to legacy fuel if not set in the config
             end
 
             DoCarDamage(veh, vehicle)
             SetEntityAsMissionEntity(veh, true, true)
             TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
             closeMenuFull()
-            if WarpPlayerIntoVehicle then
+            if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             end
             TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
@@ -549,39 +560,6 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
         end, vehicle.plate)
 
     end, location, true)
-end)
-
-RegisterNetEvent('qb-garages:client:TakeOutHouseGarage', function(vehicleToSpawn)
-    if vehicleToSpawn.state == "Garaged" then
-        QBCore.Functions.SpawnVehicle(vehicleToSpawn.vehicle, function(veh)
-            QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                QBCore.Functions.SetVehicleProperties(veh, properties)
-
-                if vehicleToSpawn.plate then
-                    OutsideVehicles[vehicleToSpawn.plate] = veh
-                    TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-                end
-
-                SetVehicleNumberPlateText(veh, vehicleToSpawn.plate)
-                SetEntityHeading(veh, HouseGarages[CurrentHouseGarage].takeVehicle.h)
-
-                if FuelScript then
-                    exports[FuelScript]:SetFuel(veh, vehicleToSpawn.fuel)
-                else
-                    exports['LegacyFuel']:SetFuel(veh, vehicleToSpawn.fuel)
-                end
-
-                SetEntityAsMissionEntity(veh, true, true)
-                DoCarDamage(veh, vehicleToSpawn)
-                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleToSpawn.plate, vehicleToSpawn.garage)
-                closeMenuFull()
-                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                if WarpPlayerIntoVehicle then
-                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                end
-            end, vehicleToSpawn.plate)
-        end, HouseGarages[CurrentHouseGarage].takeVehicle, true)
-    end
 end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
@@ -682,7 +660,7 @@ end)
 
 CreateThread(function()
     for garageName, garage in pairs(Garages) do
-        if(garage.type == 'public' or garage.type == 'depot' or garage.type == 'job') then
+        if(garage.type == 'public' or garage.type == 'depot' or garage.type == 'job' or garage.type == 'gang') then
             CreateGaragePolyZone(garageName)
         end
     end
@@ -691,15 +669,16 @@ end)
 CreateThread(function()
     local debug = false
     for _, garage in pairs(Garages) do
-        if garage['debug'] then
+        if garage.debug then
             debug = true
             break
         end
     end
     while debug do
         for _, garage in pairs(Garages) do
-            if garage['ParkingSpots'] ~= nil and garage['debug'] then
-                for _, location in pairs(garage['ParkingSpots']) do
+            local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
+            if next(parkingSpots) ~= nil and garage.debug then
+                for _, location in pairs(parkingSpots) do
                     DrawMarker(2, location.x, location.y, location.z + 0.98, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.4, 0.2, 255, 255, 255, 255, 0, 0, 0, 1, 0, 0, 0)
                 end
             end

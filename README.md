@@ -1,8 +1,11 @@
-# qb-garages NOT FINISHED YET
+# qb-garages
 
-**ATENTION: THIS SCRIPT USES A CUSTOM VERSION OF THE RADIAL MENU AND THE LATEST QB-CORE VERSION (RELEASED ONLY A FEW DAYS AGO)**
 
-[qb-radialmenu](https://github.com/JonasDev99/qb-radialmenu)
+
+**ATENTION: THIS SCRIPT USES THE LATEST VERSION OF THE RADIAL MENU AND THE QB-CORE (RELEASED ONLY A FEW DAYS AGO)**
+
+ - [qb-radialmenu](https://github.com/qbcore-framework/qb-radialmenu)
+ - [qb-core](https://github.com/qbcore-framework/qb-core)
 
 ## Credits
 

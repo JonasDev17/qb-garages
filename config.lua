@@ -49,7 +49,7 @@
 
 
 
-FuelScript = 'lj-fuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other LegcyFuel compatible script
+FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other LegcyFuel compatible script
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)

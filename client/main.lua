@@ -530,8 +530,8 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         end
     end
 
-    local veh = GetClosestVehicle(location.x, location.y, location.z, 1.0, 0, 70)
-    if veh ~= 0 then
+    local veh, distance = QBCore.Functions.GetClosestVehicle(vector3(location.x,location.y, location.z))
+    if veh ~= -1 and distance <= 1.5 then
         QBCore.Functions.Notify(Lang:t("error.occupied"), "error", 4500)
         do return end
     end

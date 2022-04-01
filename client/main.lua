@@ -29,6 +29,10 @@ local function TableContains (tab, val)
     return false
 end
 
+local function IsStringNilOrEmpty(s)
+    return s == nil or s == ''
+end
+
 local function GetSuperCategoryFromCategories(categories)
     local superCategory = 'car'
     if TableContains(categories, {'car'}) then
@@ -287,29 +291,32 @@ local function AddRadialParkingOption()
     end
 end
 
+local function AddRadialImpoundOption()
+    MenuItemId = exports['qb-radialmenu']:AddOption({
+        id = 'open_garage_menu',
+        title = 'Open Impound Lot',
+        icon = 'warehouse',
+        type = 'client',
+        event = 'qb-garages:client:OpenMenu',
+        shouldClose = true,
+    }, MenuItemId)
+end
+
 local function UpdateRadialMenu()
-    if CurrentGarage ~= nil and Garages[CurrentGarage] ~= nil then
-        if Garages[CurrentGarage].type == 'job' then
-            local job = Garages[CurrentGarage].job
-            if PlayerJob.name == job then
+    local garage = Garages[CurrentGarage]
+    if CurrentGarage ~= nil and garage ~= nil then
+        if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
+            if PlayerJob.name == garage.job then
                 AddRadialParkingOption()
             end
-        elseif Garages[CurrentGarage].type == 'gang' then
-            local gang = Garages[CurrentGarage].gang
-            if PlayerGang.name == gang then
+        elseif garage.type == 'gang' and not IsStringNilOrEmpty(garage.gang) then
+            if PlayerGang.name == garage.gang then
                 AddRadialParkingOption()
             end
-        elseif Garages[CurrentGarage].type == 'public' then
+        elseif garage.type == 'depot' then
+            AddRadialImpoundOption()
+        else
            AddRadialParkingOption()
-        elseif Garages[CurrentGarage].type == 'depot' then
-            MenuItemId = exports['qb-radialmenu']:AddOption({
-                id = 'open_garage_menu',
-                title = 'Open Impound Lot',
-                icon = 'warehouse',
-                type = 'client',
-                event = 'qb-garages:client:OpenMenu',
-                shouldClose = true,
-            }, MenuItemId)
         end
     elseif CurrentHouseGarage ~= nil then
        AddRadialParkingOption()
@@ -321,10 +328,10 @@ local function UpdateRadialMenu()
     end
 end
 
-local function CreateGarageZone(zone, garage)
+local function CreateGarageZone(zone, garageName)
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
-            CurrentGarage = garage
+            CurrentGarage = garageName
             exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'], DrawTextPosition)
         else
             CurrentGarage = nil

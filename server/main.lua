@@ -144,7 +144,6 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
 end)
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleProperties", function(source, cb, plate)
-    local src = source
     local properties = {}
     local result = MySQL.Sync.fetchAll('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
     if result[1] then

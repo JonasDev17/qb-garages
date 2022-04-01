@@ -284,27 +284,27 @@ end
 
 
 -- Command to restore lost cars (garage: 'None' or something similar)
-QBCore.Commands.Add("restorelostcars", "Restores cars that were parked in a grage that no longer exists in the config or is invalid (name change or removed).", {"destination_garage", "(Optional) Garage where the cars are being sent to."}, false,
+QBCore.Commands.Add("restorelostcars", "Restores cars that were parked in a grage that no longer exists in the config or is invalid (name change or removed).", {{name = "destination_garage", help = "(Optional) Garage where the cars are being sent to."}}, false,
 function(source, args)
     local src = source
     if next(Garages) ~= nil then
-        local destinationGarage = args.destination_garage and args.destination_garage or GetRandomPublicGarage()
+        local destinationGarage = args[1] and args[1] or GetRandomPublicGarage()
         if Garages[destinationGarage] == nil then
             TriggerClientEvent('QBCore:Notify', src, 'Invalid garage name provided', 'error', 4500)
             return
         end
 
-        local corruptGarages = {}
+        local invalidGarages = {}
         MySQL.Async.fetchAll('SELECT garage FROM player_vehicles', function(result)
             if result[1] then
                 for _,v in ipairs(result) do
                     if Garages[v.garage] == nil then
                         if v.garage then
-                            corruptGarages[v.garage] = true
+                            invalidGarages[v.garage] = true
                         end
                     end
                 end
-                for garage,_ in pairs(corruptGarages) do
+                for garage,_ in pairs(invalidGarages) do
                     MySQL.Async.execute('UPDATE player_vehicles set garage = ? WHERE garage = ?',{destinationGarage, garage})
                 end
                 MySQL.Async.execute('UPDATE player_vehicles set garage = ? WHERE garage IS NULL OR garage = \'\'',{destinationGarage})

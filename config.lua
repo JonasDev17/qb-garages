@@ -21,7 +21,7 @@
             },
             ['minZ'] = 12.5,  -- min height of the parking zone, cannot be the same as maxZ, and must be smaller than maxZ
             ['maxZ'] = 20.0,  -- max height of the parking zone
-            -- Important: Make sure the parking zone is high enoug - higher than the tallest vehicle and touches the ground (turn on debug to see)
+            -- Important: Make sure the parking zone is high enough - higher than the tallest vehicle and touches the ground (turn on debug to see)
         },
         label = 'Hangar', -- label displayed on phone
         type = 'public', -- 'public', 'job', 'depot' or 'gang'
@@ -1484,7 +1484,7 @@ Garages = {
             vector4(1769.62, 3240.14, 42.01, 60.44),
         },
         ParkingDistance = 100.0,
-        debug = true
+        debug = false
     },
     ['airdepot'] = {
         ['Zone'] = {

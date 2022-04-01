@@ -22,7 +22,7 @@ Almost everything is fully customizable to the last bit!
 * Depot Garages
 * Blips and names
 * Custom DrawText
-* Water Garages with teleportation
+* Water Garages
 * Aircraft Garages
 
 ## Screenshots

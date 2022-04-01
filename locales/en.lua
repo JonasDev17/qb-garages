@@ -49,13 +49,6 @@ local Translations = {
         garaged = "Garaged",
         impound = "Impounded",
     },
-    info = {
-        car_e = "~g~E~w~ - Garage",
-        sea_e = "~g~E~w~ - Boathouse",
-        air_e = "~g~E~w~ - Hangar",
-        park_e = "~g~E~w~ - Store Vehicle",
-        house_garage = "House garage",
-    }
 }
 
 Lang = Locale:new({

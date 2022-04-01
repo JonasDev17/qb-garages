@@ -200,17 +200,14 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
             local depotPrice = result[1].depotprice ~= 0 and result[1].depotprice or DepotPrice
             if cashBalance >= depotPrice then
                 Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
-                TriggerClientEvent("qb-garages:client:TakeOutGarage", src, data)
             elseif bankBalance >= depotPrice then
                 Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
-                TriggerClientEvent("qb-garages:client:TakeOutGarage", src, data)
             else
                 TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
             end
         end
     end)
 end)
-
 
 
 --External Calls
@@ -277,3 +274,42 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
         end
     end)
 end)
+
+local function GetRandomPublicGarage()
+    for garageName, garage in pairs(Garages)do
+        if garage.type == 'public' then
+            return garageName -- return the first garageName
+        end
+    end
+end
+
+
+-- Command to restore lost cars (garage: 'None' or something similar)
+QBCore.Commands.Add("restorelostcars", "Restores cars that were parked in a grage that no longer exists in the config or is invalid (name change or removed).", {"destination_garage", "(Optional) Garage where the cars are being sent to."}, false,
+function(source, args)
+    local src = source
+    if next(Garages) ~= nil then
+        local destinationGarage = args.destination_garage and args.destination_garage or GetRandomPublicGarage()
+        if Garages[destinationGarage] == nil then
+            TriggerClientEvent('QBCore:Notify', src, 'Invalid garage name provided', 'error', 4500)
+            return
+        end
+
+        local corruptGarages = {}
+        MySQL.Async.fetchAll('SELECT garage FROM player_vehicles', function(result)
+            if result[1] then
+                for _,v in ipairs(result) do
+                    if Garages[v.garage] == nil then
+                        if v.garage then
+                            corruptGarages[v.garage] = true
+                        end
+                    end
+                end
+                for garage,_ in pairs(corruptGarages) do
+                    MySQL.Async.execute('UPDATE player_vehicles set garage = ? WHERE garage = ?',{destinationGarage, garage})
+                end
+                MySQL.Async.execute('UPDATE player_vehicles set garage = ? WHERE garage IS NULL OR garage = \'\'',{destinationGarage})
+            end
+        end)
+    end
+end, RestoreCommandPermissionLevel)

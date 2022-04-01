@@ -247,7 +247,7 @@ local function ParkVehicle(veh)
             if FuelScript then
                 totalFuel = exports[FuelScript]:GetFuel(veh)
             else
-                totalFuel = exports['LegacyFuel']:GetFuel(veh)
+                totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the config. Defaults to legacy fuel if not set in the config
             end
 
             if not CanParkVehicle(veh) then return end
@@ -482,7 +482,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
     end, garageId, type, superCategory)
 end)
 
-RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
+RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local type = data.type
     local vehicle = data.vehicle
     local garage = data.garage
@@ -496,9 +496,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
         location = garage.takeVehicle
         heading = garage.takeVehicle.w
     else
-        print(garage)
         local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
-        print(next(parkingSpots))
         if next(parkingSpots) ~= nil then
             _, closestDistance, location = GetClosestLocation(parkingSpots)
             if closestDistance >= spawnDistance then
@@ -545,7 +543,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
             if FuelScript then
                 exports[FuelScript]:SetFuel(veh, vehicle.fuel)
             else
-                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Defaults to legacy fuel if not set in the config
+                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the config. Defaults to legacy fuel if not set in the config
             end
 
             DoCarDamage(veh, vehicle)
@@ -560,6 +558,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data)
         end, vehicle.plate)
 
     end, location, true)
+    if cb then cb(veh) end
 end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
@@ -584,7 +583,11 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
     if not vehExists then
-        TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
+        TriggerEvent("qb-garages:client:TakeOutGarage", data, function(veh)
+            if veh then
+                TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
+            end
+        end)
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
     end

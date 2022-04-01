@@ -996,7 +996,7 @@ Garages = {
         drawText = 'Parking',                 --car, air, sea
         debug = false
     },
-    ['pillboxgarage'] = {
+    ['legionsquare'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
                 vector2(239.88751220703, -820.52038574219),
@@ -1006,10 +1006,10 @@ Garages = {
                 vector2(218.69738769531, -754.69787597656),
                 vector2(200.07238769531, -805.74285888672)
             },
-            ['minZ'] = 30.07,  -- min height of the parking zone
+            ['minZ'] = 29.07,  -- min height of the parking zone
             ['maxZ'] = 40.0,  -- max height of the parking zone
         },
-        label = "Pillbox Garage Parking",
+        label = "Legion Square Parking",
         showBlip = true,
         blipcoords = vector3(215.9499, -809.698, 30.731),
         blipName = "Public Parking",

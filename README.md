@@ -7,6 +7,8 @@
 This is a qb-garages script that uses the radialmenu to retrieve and park vehicles.
 Almost everything is fully customizable to the last bit!
 
+**For screenshots scroll down**
+
 ## Dependencies
  - [qb-radialmenu](https://github.com/qbcore-framework/qb-radialmenu)
  - [qb-core](https://github.com/qbcore-framework/qb-core)

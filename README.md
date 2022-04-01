@@ -2,33 +2,30 @@
 
 
 
-**ATENTION: THIS SCRIPT USES THE LATEST VERSION OF THE RADIAL MENU AND THE QB-CORE (RELEASED ONLY A FEW DAYS AGO)**
+**ATENTION: THIS SCRIPT USES THE LATEST VERSION OF THE [RADIALMENU](https://github.com/qbcore-framework/qb-radialmenu) AND [QB-CORE](https://github.com/qbcore-framework/qb-core)**
 
  - [qb-radialmenu](https://github.com/qbcore-framework/qb-radialmenu)
  - [qb-core](https://github.com/qbcore-framework/qb-core)
 
-## Credits
+Almost everything is fully customizable to the last bit!
 
-This script is a combination of [JustLazzy's qb-garages](https://github.com/JustLazzy/qb-garages), [bamablood94's qb-garages](https://github.com/bamablood94/qb-garages) and my own code.
-
-### Description is mostly a placeholder. Will be updated on release.
-
-**Public Garages**
-* Park owned cars in public garages.
-* You can only parks vehicles that you own in public garages. 
-* You can only park on a designated parking lot
-* You can only retrieve cars on a designated parking lot
-
-![image](https://user-images.githubusercontent.com/82112471/149678987-02ec660f-76c9-4414-af7b-bac284ed58b7.png)
-
-![image](https://user-images.githubusercontent.com/82112471/149678977-2a574ee9-8ecc-494f-a845-e17281a74594.png)
-
+* Public Garages
 * House Garages
 * Gang Garages
 * Job Garages
 * Depot Garages
 * Blips and names
 * Custom DrawText
+* Water Garages with teleportation
+* Air Garages
+
+## Credits
+
+* [ARSSANTO](https://github.com/ARSSANTO)
+* [JustLazzy](https://github.com/JustLazzy)
+* [bamablood94](https://github.com/bamablood94)
+* [QBCore Devs](https://github.com/qbcore-framework/)
+* QBCore Community (Thank you so much for everyone who's been testing this!)
 
 # License
 

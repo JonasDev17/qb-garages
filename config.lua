@@ -1006,7 +1006,7 @@ Garages = {
                 vector2(218.69738769531, -754.69787597656),
                 vector2(200.07238769531, -805.74285888672)
             },
-            ['minZ'] = 30.07,  -- min height of the parking zone
+            ['minZ'] = 29.07,  -- min height of the parking zone
             ['maxZ'] = 40.0,  -- max height of the parking zone
         },
         label = "Pillbox Garage Parking",

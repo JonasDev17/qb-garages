@@ -501,7 +501,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
 
     if type == "house" then
         location = garage.takeVehicle
-        heading = garage.takeVehicle.w
+        heading = garage.takeVehicle.h -- yes its 'h' not 'w'...
     else
         local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
         if next(parkingSpots) ~= nil then

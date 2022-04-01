@@ -996,7 +996,7 @@ Garages = {
         drawText = 'Parking',                 --car, air, sea
         debug = false
     },
-    ['pillboxgarage'] = {
+    ['legionsquare'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
                 vector2(239.88751220703, -820.52038574219),
@@ -1009,7 +1009,7 @@ Garages = {
             ['minZ'] = 29.07,  -- min height of the parking zone
             ['maxZ'] = 40.0,  -- max height of the parking zone
         },
-        label = "Pillbox Garage Parking",
+        label = "Legion Square Parking",
         showBlip = true,
         blipcoords = vector3(215.9499, -809.698, 30.731),
         blipName = "Public Parking",
@@ -1445,12 +1445,12 @@ Garages = {
             ['minZ'] = 4.0,  -- min height of the parking zone
             ['maxZ'] = 8.0,  -- max height of the parking zone
         },
-        label = 'Heli Pad',
+        label = 'Helipad',
         type = 'public',
         vehicleCategories = {'helicopter'},
-        drawText = 'Heli Pad',
+        drawText = 'Helipad',
         showBlip = true, 
-        blipName = "Heli Pad",
+        blipName = "Helipad",
         blipNumber = 64,
         blipColor = 69, 
         blipcoords = vector3(-745.61, -1468.57, 4.37),
@@ -1474,9 +1474,9 @@ Garages = {
         label = 'Sandy Shores Helipad',
         type = 'public',
         vehicleCategories = {'helicopter'},
-        drawText = 'Sandy Shores Helipad Heli Pad',
+        drawText = 'Sandy Shores Helipad',
         showBlip = true, 
-        blipName = 'Heli Pad',
+        blipName = 'Helipad',
         blipNumber = 64,
         blipColor = 50, 
         blipcoords = vector3(1769.62, 3240.14, 42.01),

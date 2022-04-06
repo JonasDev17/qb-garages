@@ -390,20 +390,6 @@ local function RegisterHousePoly(house)
     end)
 end
 
-local function GetDespawnedOutsideVehicles()
-    local despawnedOutsideVehicles = {}
-    for plate, veh in pairs(OutsideVehicles) do
-        if not DoesEntityExist(veh) then
-            QBCore.Functions.TriggerCallback("qb-garage:server:GetOutsideVehicle", function(result)
-                if result then
-                    despawnedOutsideVehicles[#despawnedOutsideVehicles+1] = result
-                end
-            end, plate)
-        end
-    end
-    return despawnedOutsideVehicles
-end
-
 -- Events
 
 RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
@@ -418,8 +404,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
     leave = Lang:t("menu.leave."..superCategory)
 
     QBCore.Functions.TriggerCallback("qb-garage:server:GetGarageVehicles", function(result)
-        local despawnedOutsideVehicles = GetDespawnedOutsideVehicles()
-        if result == nil and not next(despawnedOutsideVehicles) then
+        if result == nil then
             QBCore.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuGarageOptions = {
@@ -429,10 +414,6 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                 },
             }
             result = result and result or {}
-            for _,v in ipairs(despawnedOutsideVehicles) do
-                table.insert(result, v)
-            end
-
             for k, v in pairs(result) do
                 local enginePercent = Round(v.engine / 10, 0)
                 local bodyPercent = Round(v.body / 10, 0)
@@ -447,7 +428,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                     v.state = Lang:t("status.impound")
                 end
 
-                if type == "depot" then        
+                if type == "depot" then
                     MenuGarageOptions[#MenuGarageOptions+1] = {
                         header = Lang:t('menu.header.depot', {value = vname, value2 = v.depotprice}),
                         txt = Lang:t('menu.text.depot', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),

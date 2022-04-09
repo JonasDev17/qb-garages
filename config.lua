@@ -507,7 +507,7 @@ Garages = {
                 vector2(266.080078125, -343.24353027344),
                 vector2(267.49453735352, -344.12811279297)
             },
-            ['minZ'] = 44.0,  -- min height of the parking zone
+            ['minZ'] = 43.5,  -- min height of the parking zone
             ['maxZ'] = 47.15,  -- max height of the parking zone
         },
         label = "Motel Parking",
@@ -892,7 +892,7 @@ Garages = {
                 vector2(-1183.7425537109, -1507.1494140625),
                 vector2(-1182.2048339844, -1508.9814453125)
             },
-            ['minZ'] = 4.20,  -- min height of the parking zone
+            ['minZ'] = 3.20,  -- min height of the parking zone
             ['maxZ'] = 6.53,  -- max height of the parking zone
         },
         label = "Beach Parking",
@@ -938,7 +938,7 @@ Garages = {
                 vector2(954.35180664062, 3626.7893066406),
                 vector2(934.75305175781, 3626.3806152344)
             },
-            ['minZ'] = 32.37,  -- min height of the parking zone
+            ['minZ'] = 31.5,  -- min height of the parking zone
             ['maxZ'] = 35.99,  -- max height of the parking zone
         },
         label = "Liqour Parking",
@@ -983,7 +983,7 @@ Garages = {
                 vector2(68.208351135254, 6355.2939453125),
                 vector2(117.06902313232, 6378.890625)
             },
-            ['minZ'] = 31.00,  -- min height of the parking zone
+            ['minZ'] = 30.00,  -- min height of the parking zone
             ['maxZ'] = 33.38,  -- max height of the parking zone
         },
         label = "Bell Farms Parking",

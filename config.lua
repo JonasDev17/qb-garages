@@ -518,7 +518,7 @@ Garages = {
         type = 'public',                -- public, job, gang, depot
         vehicleCategories = {'car', 'motorcycle', 'other'},                --car, air, sea
         drawText = 'Parking',
-        debug = false,                 
+        debug = false,
         ['ParkingSpots'] = {
             vector4(277.62, -340.01, 44.5, 70.08),
             vector4(284.0, -342.32, 44.5, 70.09),
@@ -1104,26 +1104,18 @@ Garages = {
     ['impoundlot'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
-                vector2(411.67391967773, -1619.7276611328),
-                vector2(406.13690185547, -1626.076171875),
-                vector2(403.39260864258, -1623.6715087891),
-                vector2(391.42221069336, -1638.01171875),
-                vector2(394.69458007812, -1640.2418212891),
-                vector2(391.47198486328, -1644.7924804688),
-                vector2(410.91995239258, -1660.611328125),
-                vector2(418.69522094727, -1650.2218017578),
-                vector2(423.37658691406, -1645.1735839844),
-                vector2(424.03637695312, -1639.5465087891),
-                vector2(423.90908813477, -1633.1248779297),
-                vector2(423.13873291016, -1628.1573486328)
+            vector2(-128.76565551758, -1186.7231445312),
+            vector2(-128.95680236816, -1158.9990234375),
+            vector2(-155.75888061524, -1158.6616210938),
+            vector2(-155.84657287598, -1186.7335205078)
             },
-            ['minZ'] = 28.25,  -- min height of the parking zone
-            ['maxZ'] = 31.31,  -- max height of the parking zone
+            ['minZ'] = 22.25,  -- min height of the parking zone
+            ['maxZ'] = 26.31,  -- max height of the parking zone
             debug = false,
         },
         label = "Impound Lot",
         showBlip = true,
-        blipcoords = vector3(410.26, -1641.74, 29.29),
+        blipcoords = vector3(-143.15, -1175.06, 23.77),
         blipName = "Impound Lot",
         blipNumber = 68,
         type = 'depot',                --public, job, gang, depot
@@ -1131,21 +1123,16 @@ Garages = {
         drawText = 'Impound',                 --car, air, sea
         debug = false,
         ['ParkingSpots'] = {
-            vector4(410.69, -1656.37, 28.87, 319.32),
-            vector4(408.42, -1654.4, 28.87, 319.48),
-            vector4(405.64, -1652.35, 28.87, 319.43),
-            vector4(403.64, -1650.28, 28.87, 319.23),
-            vector4(401.02, -1648.25, 28.87, 320.07),
-            vector4(398.57, -1646.3, 28.87, 319.62),
-            vector4(396.16, -1644.29, 28.87, 319.21),
-            vector4(409.04, -1639.17, 28.87, 228.49),
-            vector4(410.62, -1636.71, 28.87, 229.85),
-            vector4(417.08, -1627.89, 28.87, 319.43),
-            vector4(419.4, -1629.64, 28.87, 320.41),
-            vector4(420.66, -1635.66, 28.87, 268.2),
-            vector4(420.5, -1639.01, 28.87, 268.98),
-            vector4(420.33, -1642.07, 28.87, 88.84),
-            vector4(418.17, -1646.49, 28.87, 50.64),
+            vector4(-152.91, -1170.13, 23.14, 270.11),
+            vector4(-153.26, -1166.51, 23.14, 270.74),
+            vector4(-147.67, -1161.83, 23.14, 179.67),
+            vector4(-144.19, -1161.83, 23.14, 179.02),
+            vector4(-139.1, -1161.6, 23.14, 178.95),
+            vector4(-131.92, -1166.54, 23.14, 89.09),
+            vector4(-132.01, -1170.05, 23.14, 90.24),
+            vector4(-132.03, -1175.15, 23.14, 90.94),
+            vector4(-131.99, -1178.68, 23.14, 90.07),
+            vector4(-131.95, -1182.25, 23.14, 90.11),
         }
     },
     ['police'] = {
@@ -1452,7 +1439,7 @@ Garages = {
         showBlip = true, 
         blipName = "Helipad",
         blipNumber = 64,
-        blipColor = 69, 
+        blipColor = 50, 
         blipcoords = vector3(-745.61, -1468.57, 4.37),
         ["ParkingSpots"] = {
             vector4(-745.53, -1468.68, 5.0, 321.19)
@@ -1548,9 +1535,9 @@ Garages = {
         drawText = 'BOAT HOUSE',
         showBlip = true, 
         blipName = 'Boat House',
-        blipNumber = 569,
-        blipColor = 33, 
-        blipcoords = vector3(-1274.34, -3385.97, 13.94),
+        blipNumber = 427,
+        blipColor = 15,
+        blipcoords = vector3(-784.84, -1498.33, 0.2),
         ParkingDistance = 20.0,
         SpawnDistance = 10.0,
         debug = false,
@@ -1566,7 +1553,50 @@ Garages = {
             vector3(-794.89, -1511.16, 1.6),
             vector3(-800.21, -1513.05, 1.6),
         },
-    }
+    },
+    ['intairport'] = {
+        ['Zone'] = {
+            ['Shape'] = { --polygon that surrounds the parking area
+                vector2(-992.59680175781, -2949.84375),
+                vector2(-1030.8975830078, -3016.2927246094),
+                vector2(-1030.3382568359, -3016.5925292969),
+                vector2(-1029.6291503906, -3017.0434570312),
+                vector2(-1028.7434082031, -3018.0705566406),
+                vector2(-1022.2585449219, -3021.5798339844),
+                vector2(-1021.3436279297, -3020.5522460938),
+                vector2(-1016.1632080078, -3023.6635742188),
+                vector2(-1016.3262329102, -3024.7385253906),
+                vector2(-966.09301757812, -3052.3435058594),
+                vector2(-965.42352294922, -3051.1135253906),
+                vector2(-961.01477050781, -3052.7600097656),
+                vector2(-923.76300048828, -2978.2124023438)
+            },
+            ['minZ'] = 12.00,  -- min height of the parking zone
+            ['maxZ'] = 20.0,  -- max height of the parking zone
+        },
+        label = 'Airport Hangar', 
+        type = 'public',
+        vehicleCategories = {'helicopter', 'plane'},
+        drawText = 'Airport Hangar',
+        showBlip = true, 
+        blipName = 'Hangar',
+        blipNumber = 359,
+        blipColor = 50, 
+        blipcoords = vector3(-930.23, -2995.38, 19.85),
+        ParkingDistance = 100.0,
+        SpawnDistance = 100.0,
+        debug = false,
+        ['ParkingSpots'] = {
+            vector4(-985.04, -2965.05, 14.55, 128.92),
+            vector4(-964.84, -2974.78, 14.55, 125.92),
+            vector4(-945.49, -2985.63, 14.55, 117.77),
+            vector4(-967.17, -3034.71, 14.55, 14.16),
+            vector4(-990.13, -3022.86, 14.55, 15.42),
+            vector4(-1010.91, -3012.56, 14.55, 2.31),
+            vector4(-968.09, -3004.59, 14.55, 62.25)
+
+        },
+    },
 }
 
 HouseGarages = {} -- DO NOT TOUCH!

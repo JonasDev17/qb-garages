@@ -1123,7 +1123,7 @@ Garages = {
         },
         label = "Impound Lot",
         showBlip = true,
-        blipcoords = vector3(-143.15, -1175.06, 23.77),
+        blipcoords = vector3(409.58, -1635.64, 29.29),
         blipName = "Impound Lot",
         blipNumber = 68,
         type = 'depot',                --public, job, gang, depot

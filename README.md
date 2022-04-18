@@ -13,6 +13,13 @@ Almost everything is fully customizable to the last bit!
  - [qb-radialmenu](https://github.com/qbcore-framework/qb-radialmenu)
  - [qb-core](https://github.com/qbcore-framework/qb-core)
 
+## Installation
+
+Drag 'n Drop replace for qb-garages.
+
+- Delete qb-garages.
+- Drag the downloaded qb-garages folder into the [qb] folder.
+
 ## Features
 
 * Public Garages
@@ -58,7 +65,7 @@ Everything that says optional can be omitted.
             },
             ['minZ'] = 12.5,  -- min height of the parking zone, cannot be the same as maxZ, and must be smaller than maxZ
             ['maxZ'] = 20.0,  -- max height of the parking zone
-            -- Important: Make sure the parking zone is high enough - higher than the tallest vehicle and touches the ground (turn on debug to see)
+            -- VERY IMPORTANT: Make sure the parking zone is high enough - higher than the tallest vehicle and LOW ENOUGH / touches the ground (turn on debug to see)
         },
         label = 'Hangar', -- label displayed on phone
         type = 'public', -- 'public', 'job', 'depot' or 'gang'

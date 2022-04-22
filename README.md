@@ -98,6 +98,10 @@ Everything that says optional can be omitted.
 * [QBCore Devs](https://github.com/qbcore-framework/) - For making an awesome framework and enabling me to do this.
 * QBCore Community - Thank you so much for everyone who's been testing this!
 
+## Support
+
+Join my Discord server: https://discord.gg/pqcug3XSQx
+
 # License
 
     QBCore Framework

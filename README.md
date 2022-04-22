@@ -25,7 +25,7 @@ Drag 'n Drop replace for qb-garages.
 * Public Garages
 * House Garages
 * Gang Garages
-* Job Garages
+* Job Garages (Supports only owned cars for now...)
 * Depot Garages
 * Blips and names
 * Custom DrawText

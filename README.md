@@ -90,6 +90,40 @@ Everything that says optional can be omitted.
         } 
     },
 ```
+
+### parking vehicle using target
+```
+local garageName = 'pdgarage'
+    exports['qb-target']:AddBoxZone(garageName, vector3(469.51, -992.35, 26.27), 0.2, 0.2, {
+        name = garageName,
+        debugPoly = true,
+        minZ = 26.80,
+        maxZ = 27.10,
+    }, {
+        options = {
+            {
+                type = "client",
+                action = function ()
+                    TriggerEvent('qb-garages:client:ParkLastVehicle', garageName)
+                end,
+                icon = 'parking',
+                label = 'Park Vehicle',
+            },
+        },
+        distance = 3
+    })
+```
+## loaf_housing
+
+Add this to your loaf_housing/client/functions.lua all the way at the bottom:
+```
+exports('HasHouseKey', function(propertyId)
+    local stringId = tostring(propertyId)
+    local data = cache.ownedHouses[stringId] or cache.houses[stringId]
+    return exports['loaf_keysystem']:HasKey(GetKeyName(propertyId, data.id))
+end)
+```
+
 ## Credits
 
 * [ARSSANTO](https://github.com/ARSSANTO) - For making code style suggestions and helping me improve the performance.

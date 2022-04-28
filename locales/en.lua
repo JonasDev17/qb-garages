@@ -8,6 +8,7 @@ local Translations = {
         no_garage = "None",
         too_far_away = "Too far away from a parking lot",
         occupied = "Parking lot is already occupied",
+        all_occupied = "All parkingspots are occupied",
         no_house_keys = "You don't have the keys for this house garage",
     },
     success = {

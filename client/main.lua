@@ -45,12 +45,12 @@ local function GetSuperCategoryFromCategories(categories)
     return superCategory
 end
 
-local function GetClosestLocation(locations)
+local function GetClosestLocation(locations, loc)
     local closestDistance = -1
     local closestIndex = -1
     local closestLocation = nil
+    local plyCoords = loc or GetEntityCoords(PlayerPedId(), 0)
     for i,v in ipairs(locations) do
-        local plyCoords = GetEntityCoords(PlayerPedId(), 0)
         local location = vector3(v.x, v.y, v.z)
         local distance = #(plyCoords - location)
         if(closestDistance == -1 or closestDistance > distance) then
@@ -63,9 +63,8 @@ local function GetClosestLocation(locations)
 end
 
 --Menus
-local function PublicGarage()
-    local garage = Garages[CurrentGarage]
-    local type = garage.type
+local function PublicGarage(garageName, type)
+    local garage = Garages[garageName]
     local categories = garage.vehicleCategories
     local superCategory = GetSuperCategoryFromCategories(categories)
 
@@ -80,7 +79,7 @@ local function PublicGarage()
             params = {
                 event = "qb-garages:client:GarageMenu",
                 args = {
-                    garageId = CurrentGarage,
+                    garageId = garageName,
                     garage = garage,
                     categories = categories,
                     header =  Lang:t("menu.header."..garage.type.."_"..superCategory, {value = garage.label}),
@@ -210,8 +209,19 @@ local function GetVehicleCategoryFromClass(class)
     return VehicleClassMap[class]
 end
 
-local function CanParkVehicle(veh)
-    local garage = CurrentGarage and Garages[CurrentGarage] or HouseGarages[CurrentHouseGarage]
+local function IsAuthorizedToAccessGarage(garageName)
+    local garage = Garages[garageName]
+    if not garage then return false end
+    if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
+        return PlayerJob.name == garage.job 
+    elseif garage.type == 'gang' and not IsStringNilOrEmpty(garage.gang) then
+        return garage.gang == PlayerGang.name
+    end
+    return true
+end
+
+local function CanParkVehicle(veh, garageName, vehLocation)
+    local garage = garageName and Garages[garageName] or (CurrentGarage and Garages[CurrentGarage]  or HouseGarages[CurrentHouseGarage])
     if not garage then return end
     local parkingDistance =  garage.ParkingDistance and  garage.ParkingDistance or ParkingDistance
     local vehClass = GetVehicleClass(veh)
@@ -224,7 +234,7 @@ local function CanParkVehicle(veh)
 
     local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
     if next(parkingSpots) ~= nil then
-        local _, closestDistance, _ = GetClosestLocation(parkingSpots)
+        local _, closestDistance, _ = GetClosestLocation(parkingSpots, vehLocation)
         if closestDistance >= parkingDistance then
             QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
             return false
@@ -236,11 +246,15 @@ local function CanParkVehicle(veh)
     end
 end
 
-local function ParkVehicle(veh)
+local function ParkVehicle(veh, garageName, vehLocation)
     local plate = QBCore.Functions.GetPlate(veh)
-    local garage = CurrentGarage and CurrentGarage or CurrentHouseGarage
-    local type = CurrentGarage and Garages[garage].type or 'house'
+    local garage = garageName or (CurrentGarage or CurrentHouseGarage)
+    local type = (garageName or CurrentGarage) and Garages[garage].type or 'house'
     local gang = PlayerGang.name;
+    local hasHouseKey = false;
+    if type == 'house' and UseLoafHousing then
+        hasHouseKey = exports['loaf_housing']:HasHouseKey(garage)
+    end
     QBCore.Functions.TriggerCallback('qb-garage:server:checkOwnership', function(owned)
         if owned then
             local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
@@ -254,7 +268,7 @@ local function ParkVehicle(veh)
                 totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the config. Defaults to legacy fuel if not set in the config
             end
 
-            if not CanParkVehicle(veh) then return end
+            if not CanParkVehicle(veh, garageName, vehLocation) then return end
             TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garage)
             ExitAndDeleteVehicle(veh)
             if plate then
@@ -265,7 +279,7 @@ local function ParkVehicle(veh)
         else
             QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
         end
-    end, plate, type, garage, gang)
+    end, plate, type, garage, gang, hasHouseKey)
 end
 
 local function AddRadialParkingOption()
@@ -330,7 +344,7 @@ end
 
 local function CreateGarageZone(zone, garageName)
     zone:onPlayerInOut(function(isPointInside)
-        if isPointInside then
+        if isPointInside and IsAuthorizedToAccessGarage(garageName) then
             CurrentGarage = garageName
             exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'], DrawTextPosition)
         else
@@ -391,6 +405,10 @@ local function RegisterHousePoly(house)
 end
 
 -- Events
+
+RegisterNetEvent('qb-garages:client:OpenPDGarage', function()
+    PublicGarage('pdgarage', 'job')
+end)
 
 RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
     local type = data.type
@@ -479,19 +497,38 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local location
     local heading
     local closestDistance = -1
+    local parkingSpots = garage.ParkingSpots or {}
 
     if type == "house" then
         location = garage.takeVehicle
         heading = garage.takeVehicle.h -- yes its 'h' not 'w'...
     else
-        local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
         if next(parkingSpots) ~= nil then
-            _, closestDistance, location = GetClosestLocation(parkingSpots)
-            if closestDistance >= spawnDistance then
-                QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
-                return
-            else
+            if AllowSpawningFromAnywhere then
+                local freeParkingSpots = {}
+                for _, parkingSpot in ipairs(parkingSpots) do
+                    local veh, distance = QBCore.Functions.GetClosestVehicle(vector3(parkingSpot.x,parkingSpot.y, parkingSpot.z))
+                    if veh == -1 or distance >= 1.5 then
+                        freeParkingSpots[#freeParkingSpots+1] = parkingSpot
+                    end
+                end
+                _, _, location = GetClosestLocation(freeParkingSpots)
+                if location == nil then
+                    QBCore.Functions.Notify(Lang:t("error.all_occupied"), "error", 4500)
+                return end
                 heading = location.w
+            else
+                _, closestDistance, location = GetClosestLocation(parkingSpots)
+                if closestDistance >= spawnDistance then        
+                    QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
+                    return
+                else
+                    local veh, distance = QBCore.Functions.GetClosestVehicle(vector3(location.x,location.y, location.z))
+                    if veh ~= -1 and distance <= 1.5 then
+                        QBCore.Functions.Notify(Lang:t("error.occupied"), "error", 4500)
+                    return end
+                    heading = location.w
+                end
             end
         else
             local ped = GetEntityCoords(PlayerPedId())
@@ -509,12 +546,6 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 heading = pedheadin + 270
             end
         end
-    end
-
-    local veh, distance = QBCore.Functions.GetClosestVehicle(vector3(location.x,location.y, location.z))
-    if veh ~= -1 and distance <= 1.5 then
-        QBCore.Functions.Notify(Lang:t("error.occupied"), "error", 4500)
-        do return end
     end
 
     QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
@@ -555,7 +586,9 @@ end)
 
 RegisterNetEvent('qb-garages:client:OpenMenu', function()
     if CurrentGarage then
-        PublicGarage()
+        local garage = Garages[CurrentGarage]
+        local type = garage.type
+        PublicGarage(CurrentGarage, type)
     elseif CurrentHouseGarage then
         TriggerEvent('qb-garages:client:OpenHouseGarage')
     end
@@ -565,6 +598,13 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     local ped = PlayerPedId()
     local curVeh = GetVehiclePedIsIn(ped)
     ParkVehicle(curVeh)
+end)
+
+RegisterNetEvent('qb-garages:client:ParkLastVehicle', function()
+    local ped = PlayerPedId()
+    local curVeh = GetLastDrivenVehicle(ped)
+    local coords = GetEntityCoords(curVeh)
+    ParkVehicle(curVeh,'pdgarage', coords)
 end)
 
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
@@ -582,13 +622,22 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
 end)
 
 RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()
-    QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(hasKey)
+    if UseLoafHousing then
+        local hasKey = exports['loaf_housing']:HasHouseKey(CurrentHouseGarage)
         if hasKey then
             MenuHouseGarage()
         else
             QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
         end
-    end, CurrentHouseGarage)
+    else
+        QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(hasKey)
+            if hasKey then
+                MenuHouseGarage()
+            else
+                QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
+            end
+        end, CurrentHouseGarage)
+    end
 end)
 
 RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)

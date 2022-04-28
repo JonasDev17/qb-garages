@@ -85,7 +85,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
     end
 end)
 
-QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, type, garage, gang)
+QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, type, garage, gang, hasHouseKey)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if type == "public" then        --Public garages only for player cars
@@ -99,7 +99,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif type == "house" then     --House garages only for player cars that have keys of the house
         MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                local hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
+                if not UseLoafHousing then
+                    hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
+                end
                 if hasHouseKey then
                     cb(true)
                 else
@@ -232,12 +234,13 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
         if result[1] then
             for k, v in pairs(result) do
                 local VehicleData = QBCore.Shared.Vehicles[v.vehicle]
+                if not VehicleData then goto continue end
                 local VehicleGarage = Lang:t("error.no_garage")
                 if v.garage ~= nil then
                     if Garages[v.garage] ~= nil then
                         VehicleGarage = Garages[v.garage].label
-                    else
-                        VehicleGarage = Lang:t("info.house_garage")         -- HouseGarages[v.garage].label
+                    elseif HouseGarages[v.garage] then
+                        VehicleGarage = HouseGarages[v.garage].label
                     end
                 end
 
@@ -266,6 +269,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                     engine = v.engine,
                     body = v.body
                 }
+                ::continue::
             end
             cb(Vehicles)
         else

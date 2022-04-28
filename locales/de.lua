@@ -9,6 +9,7 @@ local Translations = {
         too_far_away = "Zu weit weg von einem Parkfeld",
         occupied = "Parkplatz ist nicht frei",
         all_occupied = "Alle Parkplätze sind besetzt",
+        no_vehicle = "Es gibt kein Fahrezug zu Parken",
         no_house_keys = "Du besitzt kein Schlüssel für diese Haus Garage",
     },
     success = {

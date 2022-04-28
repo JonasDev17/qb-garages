@@ -312,7 +312,7 @@ local function AddRadialImpoundOption()
         icon = 'warehouse',
         type = 'client',
         event = 'qb-garages:client:OpenMenu',
-        shouldClose = true,
+        shouldClose = true
     }, MenuItemId)
 end
 
@@ -600,11 +600,15 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     ParkVehicle(curVeh)
 end)
 
-RegisterNetEvent('qb-garages:client:ParkLastVehicle', function()
+RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
     local ped = PlayerPedId()
     local curVeh = GetLastDrivenVehicle(ped)
-    local coords = GetEntityCoords(curVeh)
-    ParkVehicle(curVeh,'pdgarage', coords)
+    if curVeh then
+        local coords = GetEntityCoords(curVeh)
+        ParkVehicle(curVeh, parkingName, coords)
+    else
+        QBCore.Functions.Notify(Lang:t('error.no_vehicle'), "error", 4500)
+    end
 end)
 
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)

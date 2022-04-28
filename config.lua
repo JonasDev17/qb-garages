@@ -922,7 +922,7 @@ Garages = {
                 vector2(1133.7532958984, 2658.8393554688),
                 vector2(1140.4176025391, 2658.8898925781)
             },
-            ['minZ'] = 37.78,  -- min height of the parking zone
+            ['minZ'] = 36.78,  -- min height of the parking zone
             ['maxZ'] = 39.74,  -- max height of the parking zone
         },
         label = "The Motor Hotel Parking",
@@ -1621,6 +1621,9 @@ Garages = {
             vector4(-990.13, -3022.86, 14.55, 15.42),
             vector4(-1010.91, -3012.56, 14.55, 2.31),
             vector4(-968.09, -3004.59, 14.55, 62.25)
+        },
+    },
+}
 
         },
     },

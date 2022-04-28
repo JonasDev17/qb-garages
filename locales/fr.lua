@@ -9,6 +9,7 @@ local Translations = {
         too_far_away = "Too far away from a parking lot", --TODO
         occupied = "Parking lot is already occupied", --TODO
         all_occupied = "All parkingspots are occupied", -- TODO
+        no_vehicle = "There is no vehicle to park", -- TODO
         no_house_keys = "You don't have the keys for this house garage", --TODO
     },
     success = {

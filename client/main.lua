@@ -448,7 +448,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
 
                 if type == "depot" then
                     MenuGarageOptions[#MenuGarageOptions+1] = {
-                        header = Lang:t('menu.header.depot', {value = vname, value2 = v.depotprice}),
+                        header = Lang:t('menu.header.depot', {value = vname, value2 = (v.depotprice) }),
                         txt = Lang:t('menu.text.depot', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                         params = {
                             event = "qb-garages:client:TakeOutDepot",
@@ -575,9 +575,8 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
             TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true)
         end, vehicle.plate)
-
-    end, location, true)
-    if cb then cb(veh) end
+        if cb then cb(veh) end
+    end, location, true)    
 end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()

@@ -448,7 +448,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
 
                 if type == "depot" then
                     MenuGarageOptions[#MenuGarageOptions+1] = {
-                        header = Lang:t('menu.header.depot', {value = vname, value2 = (v.depotprice) }),
+                        header = Lang:t('menu.header.depot', {value = vname, value2 = v.depotprice }),
                         txt = Lang:t('menu.text.depot', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                         params = {
                             event = "qb-garages:client:TakeOutDepot",

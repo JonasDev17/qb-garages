@@ -61,9 +61,6 @@ SpawnDistance = 4.5 -- The maximum distance you can be from a parking spot, to s
 DepotPrice = 60.0 -- The price to take out a despawned vehicle from impound.
 DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
-EnablePoliceVehicleShop = true
-PoliceVehicleShopCoords = vector4(441.37, -974.91, 25.7, 179.0)
-
 -- '/restorelostcars <destination_garage>' allows you to restore cars that have been parked in garages which no longer exist in the config (garage renamed or removed). The restored cars get sent to the destination garage or if left empty to a random garage in the list.
 RestoreCommandPermissionLevel = 'god' -- sets the permission level for the above mentioned command
 

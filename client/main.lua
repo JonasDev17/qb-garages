@@ -614,11 +614,11 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
     if not vehExists then
-        TriggerEvent("qb-garages:client:TakeOutGarage", data, function(veh)
-            if veh then
-                TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
-            end
-        end)
+        if vehicle.depotprice ~= 0 then
+            TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
+        else
+            TriggerEvent("qb-garages:client:takeOutGarage", data)
+        end
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
     end

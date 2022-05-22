@@ -39,6 +39,7 @@ local Translations = {
             car = "⬅ Quitter le garage",
             sea = "⬅ Quitter le hangar à bateaux",
             air = "⬅ Quitter le Hangar",
+            job = "⬅ Quitter le garage"
         },
         text = {
             vehicles = "Voir les véhicules stockés!",

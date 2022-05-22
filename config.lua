@@ -31,6 +31,7 @@
         blipColor = 69, -- optional, defaults to 3 (Blue), numbers can be found here: https://docs.fivem.net/docs/game-references/blips/
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = 'police', -- optional, everyone can use it when not defined
+        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                            <---  NEW
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
         ParkingDistance = 10.0 -- Optional ParkingDistance, to override the global ParkingDistance
@@ -50,10 +51,9 @@
 
 
 FuelScript = 'LegacyFuel' -- change to lj-fuel if you use lj-fuel or something else if you use any other LegcyFuel compatible script
-UseLoafHousing = false
-AllowSpawningFromAnywhere = false -- if set to true, the car will be spawned in the next 
+UseLoafHousing = true
+AllowSpawningFromAnywhere = true -- if set to true, the car will be spawned in the next 
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
-SharedGarages = false   --True == Gang and job garages are shared, false == Gang and Job garages are personal
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)
 HouseParkingDrawText = 'Parking' -- text when driving on to the HOUSE parking lot
 ParkingDistance = 2.0 -- Distance to the parking lot when trying to park the vehicle  (Global, can be overriden by each garage)
@@ -61,10 +61,73 @@ SpawnDistance = 4.5 -- The maximum distance you can be from a parking spot, to s
 DepotPrice = 60.0 -- The price to take out a despawned vehicle from impound.
 DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
-EnablePoliceVehicleShop = true
-PoliceVehicleShopCoords = vector4(441.37, -974.91, 25.7, 179.0)
+-- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
+JobVehicles = {
+	['police'] = { -- job
+        label = "Police Vehicles",
+        -- Grade 0
+        vehicles = {
+            [0] = {
+                ["police"] = "Police Car 1",
+                ["police2"] = "Police Car 2",
+                ["police3"] = "Police Car 3",
+                ["police4"] = "Police Car 4",
+                ["policeb"] = "Police Car 5",
+                ["policet"] = "Police Car 6",
+                ["sheriff"] = "Sheriff Car 1",
+                ["sheriff2"] = "Sheriff Car 2",
+            },
+            -- Grade 1
+            [1] = {
+                ["police"] = "Police Car 1",
+                ["police2"] = "Police Car 2",
+                ["police3"] = "Police Car 3",
+                ["police4"] = "Police Car 4",
+                ["policeb"] = "Police Car 5",
+                ["policet"] = "Police Car 6",
+                ["sheriff"] = "Sheriff Car 1",
+                ["sheriff2"] = "Sheriff Car 2",
+
+            },
+            -- Grade 2
+            [2] = {
+                ["police"] = "Police Car 1",
+                ["police2"] = "Police Car 2",
+                ["police3"] = "Police Car 3",
+                ["police4"] = "Police Car 4",
+                ["policeb"] = "Police Car 5",
+                ["policet"] = "Police Car 6",
+                ["sheriff"] = "Sheriff Car 1",
+                ["sheriff2"] = "Sheriff Car 2",
+            },
+            -- Grade 3
+            [3] = {
+                ["police"] = "Police Car 1",
+                ["police2"] = "Police Car 2",
+                ["police3"] = "Police Car 3",
+                ["police4"] = "Police Car 4",
+                ["policeb"] = "Police Car 5",
+                ["policet"] = "Police Car 6",
+                ["sheriff"] = "Sheriff Car 1",
+                ["sheriff2"] = "Sheriff Car 2",
+            },
+            -- Grade 4
+            [4] = {
+                ["police"] = "Police Car 1",
+                ["police2"] = "Police Car 2",
+                ["police3"] = "Police Car 3",
+                ["police4"] = "Police Car 4",
+                ["policeb"] = "Police Car 5",
+                ["policet"] = "Police Car 6",
+                ["sheriff"] = "Sheriff Car 1",
+                ["sheriff2"] = "Sheriff Car 2",
+            }
+        }
+    }
+}
 
 -- '/restorelostcars <destination_garage>' allows you to restore cars that have been parked in garages which no longer exist in the config (garage renamed or removed). The restored cars get sent to the destination garage or if left empty to a random garage in the list.
+-- NOTE: This may also send helis and boats to said garaga so choose wisely
 RestoreCommandPermissionLevel = 'god' -- sets the permission level for the above mentioned command
 
 -- Here you can define which category contains which vehicle class. These categories can then be used in the garage config
@@ -93,7 +156,7 @@ VehicleHeading = 'driverside' -- only used when NO parking spots are defined in 
 ]]
 
 SharedJobGarages = { -- define the job garages which are shared
-    --'pdgarage',
+    'pdgarage',
 }
 
 Garages = {
@@ -1173,6 +1236,39 @@ Garages = {
             vector4(435.41, -1026.74, 28.35, 3.84),
         }
     },
+    ['policevinewood'] = {
+        ['Zone'] = {
+            ['Shape'] = { --polygon that surrounds the parking area
+                vector2(635.9017944336, 22.776243209838),
+                vector2(631.24255371094, 20.99640083313),
+                vector2(577.78063964844, 37.087455749512),
+                vector2(575.10681152344, 41.017986297608),
+                vector2(593.0210571289, 39.446407318116)
+            },
+            ['minZ'] = 86.00,  -- min height of the parking zone
+            ['maxZ'] = 98.0,  -- max height of the parking zone
+        },
+        label = "Police Vinewood",
+        showBlip = false,
+        blipName = "Police",
+        blipNumber = 357,
+        type = 'job',                --public, job, gang, depot
+        vehicleCategories = {'emergency'},
+        drawText = 'Parking',              --car, air, sea
+        job = "police",
+        debug = false,
+        ['ParkingSpots'] = {
+            vector4(581.11, 38.73, 92.21, 265.09),
+            vector4(586.74, 37.68, 91.64, 260.63),
+            vector4(591.54, 36.7, 91.16, 256.37),
+            vector4(597.57, 34.71, 90.54, 250.52),
+            vector4(604.28, 32.61, 89.86, 251.49),
+            vector4(609.33, 30.9, 89.33, 251.35),
+            vector4(613.83, 29.36, 88.87, 251.19),
+            vector4(619.65, 27.35, 88.26, 250.98),
+            vector4(627.16, 24.64, 87.48, 247.88)
+        }
+    },
     ['mechanic'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
@@ -1224,7 +1320,6 @@ Garages = {
             vector4(-311.46, -985.08, 30.76, 339.5),
             vector4(-315.07, -983.98, 30.76, 339.18),
             vector4(-318.71, -982.49, 30.76, 338.43),
-            vector4(-277.33, -890.09, 30.75, 339.58),
             vector4(-285.76, -888.04, 30.76, 168.44),
             vector4(-289.39, -887.34, 30.76, 168.59),
             vector4(-292.99, -886.36, 30.76, 167.4),
@@ -1390,10 +1485,10 @@ Garages = {
     ['pdgarage'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
-            vector2(423.15768432618, -1000.2858886718),
-            vector2(423.15740966796, -973.041015625),
-            vector2(459.71978759766, -973.04022216796),
-            vector2(461.55606079102, -998.62860107422),
+                vector2(423.15768432618, -1000.2858886718),
+                vector2(423.15740966796, -973.041015625),
+                vector2(459.71978759766, -973.04022216796),
+                vector2(461.55606079102, -998.62860107422),
             },
             ['minZ'] = 24.0,  -- min height of the parking zone
             ['maxZ'] = 27.0,  -- max height of the parking zone
@@ -1401,6 +1496,7 @@ Garages = {
         label = 'MRPD Garage',
         type = 'job',
         job = "police",
+        --useVehicleSpawner = true,
         vehicleCategories = {'emergency'},
         drawText = 'Parking',
         ["ParkingSpots"] = {
@@ -1422,32 +1518,9 @@ Garages = {
             vector4(425.67, -981.55, 25.21, 269.33),
             vector4(425.68, -978.88, 25.21, 269.76),
             vector4(425.68, -976.24, 25.21, 270.49),
-            vector4(442.0, -981.58, 25.21, 90.19),
         },
         debug = false
     },
-    -- ['pdhelipad'] = {
-    --     ['Zone'] = {
-    --         ['Shape'] = { --polygon that surrounds the parking area
-    --             vector2(455.1078491211, -975.94903564454),
-    --             vector2(444.44055175782, -975.44873046875),
-    --             vector2(443.24258422852, -986.2554321289),
-    --             vector2(455.10995483398, -986.31433105468)
-    --         },
-    --         ['minZ'] = 43.0,  -- min height of the parking zone
-    --         ['maxZ'] = 49.0,  -- max height of the parking zone
-    --     },
-    --     label = 'Helipad',
-    --     type = 'public',
-    --     vehicleCategories = {'helicopter'},
-    --     drawText = 'Helipad',
-    --     showBlip = false, 
-    --     ['ParkingSpots'] = {
-    --         vector4(449.09, -981.19, 42.69, 92.57)
-    --     },
-    --     ParkingDistance = 10.0,
-    --     debug = true    
-    -- },
     ['helipad'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
@@ -1534,7 +1607,7 @@ Garages = {
         blipNumber = 569,
         blipColor = 33, 
         blipcoords = vector3(-1274.34, -3385.97, 13.94),
-        ParkingDistance = 100.0,
+        ParkingDistance = 200.0,
         debug = false,
         ['ParkingSpots'] = {
             vector4(-1286.09, -3363.24, 14.54, 275.59),
@@ -1622,6 +1695,7 @@ Garages = {
             vector4(-1010.91, -3012.56, 14.55, 2.31),
             vector4(-968.09, -3004.59, 14.55, 62.25)
         },
+    
     },
 }
 

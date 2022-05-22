@@ -248,12 +248,14 @@ end
 
 local function ParkVehicle(veh, garageName, vehLocation)
     local plate = QBCore.Functions.GetPlate(veh)
-    local garage = garageName or (CurrentGarage or CurrentHouseGarage)
-    local type = (garageName or CurrentGarage) and Garages[garage].type or 'house'
+    local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
+    local garage = Garages[garageName]
+    local type = (garageName or CurrentGarage) and Garages[garageName].type or 'house'
     local gang = PlayerGang.name;
+    local job = PlayerJob.name;
     local hasHouseKey = false;
     if type == 'house' and UseLoafHousing then
-        hasHouseKey = exports['loaf_housing']:HasHouseKey(garage)
+        hasHouseKey = exports['loaf_housing']:HasHouseKey(garageName)
     end
     QBCore.Functions.TriggerCallback('qb-garage:server:checkOwnership', function(owned)
         if owned then
@@ -265,21 +267,31 @@ local function ParkVehicle(veh, garageName, vehLocation)
             if FuelScript then
                 totalFuel = exports[FuelScript]:GetFuel(veh)
             else
-                totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the config. Defaults to legacy fuel if not set in the config
+                totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
             end
 
-            if not CanParkVehicle(veh, garageName, vehLocation) then return end
-            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garage)
+            if not CanParkVehicle(veh, garageName, vehLocation) and not garageName.useVehicleSpawner then return end
+            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garageName)
             ExitAndDeleteVehicle(veh)
             if plate then
                 OutsideVehicles[plate] = nil
                 TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
             end
-            QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
+            QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "success", 4500)
+        elseif garage.useVehicleSpawner and garage.job == job then
+            QBCore.Functions.TriggerCallback("qb-garage:server:CheckSpawnedVehicle", function (result)
+                local canPark = CanParkVehicle(veh, garageName, vehLocation)
+                if result and canPark then
+                    TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, nil)
+                    ExitAndDeleteVehicle(veh)
+                elseif not result then
+                    QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
+                end
+            end, plate)
         else
             QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
         end
-    end, plate, type, garage, gang, hasHouseKey)
+    end, plate, type, garageName, gang, hasHouseKey)
 end
 
 local function AddRadialParkingOption()
@@ -404,11 +416,47 @@ local function RegisterHousePoly(house)
     end)
 end
 
--- Events
+function JobMenuGarage(garageName)
+    local job = QBCore.Functions.GetPlayerData().job.name
+    local garage = Garages[garageName]
 
-RegisterNetEvent('qb-garages:client:OpenPDGarage', function()
-    PublicGarage('pdgarage', 'job')
-end)
+    if not JobVehicles[job] then
+        return
+    end
+    local vehicleMenu = {
+        {
+            header = JobVehicles[job].label,
+            isMenuHeader = true
+        }
+    }
+
+    local vehicles = JobVehicles[job].vehicles[QBCore.Functions.GetPlayerData().job.grade.level]
+    for veh, label in pairs(vehicles) do
+        vehicleMenu[#vehicleMenu+1] = {
+            header = label,
+            txt = "",
+            params = {
+                event = "qb-garages:client:TakeOutGarage",
+                args = {
+                    vehicleModel = veh,
+                    garage = garage
+                }
+            }
+        }
+    end
+
+    vehicleMenu[#vehicleMenu+1] = {
+        header = Lang:t('menu.leave.job'),
+        txt = "",
+        params = {
+            event = "qb-menu:client:closeMenu"
+        }
+
+    }
+    exports['qb-menu']:openMenu(vehicleMenu)
+end
+
+-- Events
 
 RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
     local type = data.type
@@ -448,12 +496,13 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
 
                 if type == "depot" then
                     MenuGarageOptions[#MenuGarageOptions+1] = {
-                        header = Lang:t('menu.header.depot', {value = vname, value2 = v.depotprice}),
+                        header = Lang:t('menu.header.depot', {value = vname, value2 = (v.depotprice) }),
                         txt = Lang:t('menu.text.depot', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                         params = {
                             event = "qb-garages:client:TakeOutDepot",
                             args = {
                                 vehicle = v,
+                                vehicleModel = v.vehicle,
                                 type = type,
                                 garage = garage,
                             }
@@ -467,6 +516,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                             event = "qb-garages:client:TakeOutGarage",
                             args = {
                                 vehicle = v,
+                                vehicleModel = v.vehicle,
                                 type = type,
                                 garage = garage,
                                 superCategory = superCategory,
@@ -490,6 +540,7 @@ end)
 
 RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local type = data.type
+    local vehicleModel = data.vehicleModel
     local vehicle = data.vehicle
     local garage = data.garage
     local superCategory = data.superCategory
@@ -548,36 +599,50 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         end
     end
 
-    QBCore.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-        QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-            if vehicle.plate then
-                OutsideVehicles[vehicle.plate] = veh
-                TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-            end
+    QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
+        if not garage.useVehicleSpawner then
+            QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                if vehicle.plate then
+                    OutsideVehicles[vehicle.plate] = veh
+                    TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                end
 
-            QBCore.Functions.SetVehicleProperties(veh, properties)
-            SetVehicleNumberPlateText(veh, vehicle.plate)
-            SetEntityHeading(veh, heading)
+                if FuelScript then
+                    exports[FuelScript]:SetFuel(veh, vehicle.fuel)
+                else
+                    exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
+                end
 
+                QBCore.Functions.SetVehicleProperties(veh, properties)
+                SetVehicleNumberPlateText(veh, vehicle.plate)
+               
+                DoCarDamage(veh, vehicle)
+                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
+            end, vehicle.plate)
+        else
+            local plate = QBCore.Functions.GetPlate(veh)
             if FuelScript then
-                exports[FuelScript]:SetFuel(veh, vehicle.fuel)
+                exports[FuelScript]:SetFuel(veh, 100)
             else
-                exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the config. Defaults to legacy fuel if not set in the config
+                exports['LegacyFuel']:SetFuel(veh, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
             end
+            TriggerEvent("vehiclekeys:client:SetOwner", plate)
+            TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
+        end
 
-            DoCarDamage(veh, vehicle)
-            SetEntityAsMissionEntity(veh, true, true)
-            TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-            closeMenuFull()
-            if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
-                TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-            end
-            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-            SetVehicleEngineOn(veh, true, true)
-        end, vehicle.plate)
+        closeMenuFull()
+        SetEntityAsMissionEntity(veh, true, true)
+        SetEntityHeading(veh, heading)
 
+        if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
+            TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+        end
+
+        SetVehicleEngineOn(veh, true, true)
+
+        if cb then cb(veh) end
     end, location, true)
-    if cb then cb(veh) end
 end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
@@ -588,7 +653,11 @@ RegisterNetEvent('qb-garages:client:OpenMenu', function()
     if CurrentGarage then
         local garage = Garages[CurrentGarage]
         local type = garage.type
-        PublicGarage(CurrentGarage, type)
+        if type == 'job' and garage.useVehicleSpawner then
+            JobMenuGarage(CurrentGarage)
+        else
+            PublicGarage(CurrentGarage, type)
+        end
     elseif CurrentHouseGarage then
         TriggerEvent('qb-garages:client:OpenHouseGarage')
     end

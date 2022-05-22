@@ -39,6 +39,7 @@ local Translations = {
             car = "⬅ Verlasse Garage",
             sea = "⬅ Verlasse Bootshaus",
             air = "⬅ Verlasse Hangar",
+            job = "⬅ Verlasse Garage"
         },
         text = {
             vehicles = "Deine geparkten Autos!",

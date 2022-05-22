@@ -6,11 +6,11 @@ local Translations = {
         not_correct_type = "Vous ne pouvez pas stocker ce type de véhicule ici.",
         not_enough = "Pas assez d'argent",
         no_garage = "Aucun",
-        too_far_away = "Too far away from a parking lot", --TODO
-        occupied = "Parking lot is already occupied", --TODO
-        all_occupied = "All parkingspots are occupied", -- TODO
-        no_vehicle = "There is no vehicle to park", -- TODO
-        no_house_keys = "You don't have the keys for this house garage", --TODO
+        too_far_away = "Trop loin d'une place de parking",
+        occupied = "Parking déjà occupé",
+        all_occupied = "Toutes les places de parking sont occupées",
+        no_vehicle = "Il n'y a pas de véhicule a garer",
+        no_house_keys = "Vous n'avez pas les clées de ce garage",
     },
     success = {
         vehicle_parked = "Véhicule garé !",

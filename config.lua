@@ -156,7 +156,7 @@ VehicleHeading = 'driverside' -- only used when NO parking spots are defined in 
 ]]
 
 SharedJobGarages = { -- define the job garages which are shared
-    'pdgarage',
+    --'pdgarage',
 }
 
 Garages = {

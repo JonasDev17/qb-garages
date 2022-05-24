@@ -250,7 +250,7 @@ local function ParkVehicle(veh, garageName, vehLocation)
     local plate = QBCore.Functions.GetPlate(veh)
     local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
     local garage = Garages[garageName]
-    local type = (garageName or CurrentGarage) and Garages[garageName].type or 'house'
+    local type = garage and garage.type or 'house'
     local gang = PlayerGang.name;
     local job = PlayerJob.name;
     local hasHouseKey = false;

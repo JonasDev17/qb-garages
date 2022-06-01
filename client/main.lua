@@ -300,7 +300,7 @@ local function AddRadialParkingOption()
         MenuItemId = exports['qb-radialmenu']:AddOption({
             id = 'put_up_vehicle',
             title = 'Park Vehicle',
-            icon = 'parking',
+            icon = 'square-parking',
             type = 'client',
             event = 'qb-garages:client:ParkVehicle',
             shouldClose = true

@@ -207,7 +207,7 @@ Garages = {
         type = 'public',
         vehicleCategories = {'car', 'motorcycle', 'other'},
         drawText = 'Parking',
-        debug = true,
+        debug = false,
         ['ParkingSpots'] = {
             vector4(48.46, -600.58, 31.05, 339.83),
             vector4(45.27, -598.81, 31.05, 337.94),

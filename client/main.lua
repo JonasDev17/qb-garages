@@ -8,6 +8,7 @@ local CurrentGarage = nil
 local GaragePoly = {}
 local MenuItemId = nil
 local VehicleClassMap = {}
+local GarageZones = {}
 
 -- helper functionw
 
@@ -60,6 +61,16 @@ local function GetClosestLocation(locations, loc)
         end
     end
     return closestIndex, closestDistance, closestLocation
+end
+
+function SetAsMissionEntity(vehicle)
+    SetVehicleHasBeenOwnedByPlayer(vehicle, true)
+    SetEntityAsMissionEntity(vehicle, true, true)
+    SetVehicleIsStolen(vehicle, false)
+    SetVehicleIsWanted(vehicle, false)
+    SetVehRadioStation(vehicle, 'OFF')
+    local id = NetworkGetNetworkIdFromEntity(vehicle)
+	SetNetworkIdCanMigrate(id, true)
 end
 
 --Menus
@@ -140,45 +151,55 @@ end
 
 -- Functions
 
-local function DoCarDamage(currentVehicle, veh)
+local function ApplyVehicleDamage(currentVehicle, veh)
 	local engine = veh.engine + 0.0
 	local body = veh.body + 0.0
+    local damage = veh.damage
+    if damage then
+        if damage.tyres then
+            for k, tyre in pairs(damage.tyres) do
+                if tyre.onRim then
+                    SetVehicleTyreBurst(currentVehicle, tonumber(k), tyre.onRim, 1000.0)
+                elseif tyre.burst then
+                    SetVehicleTyreBurst(currentVehicle, tonumber(k), tyre.onRim, 990.0)
+                end
+            end
+        end
+        if damage.windows then
+            for k, window in pairs(damage.windows) do
+                if window.smashed then
+                    SmashVehicleWindow(currentVehicle, tonumber(k))
+                end
+            end
+        end
 
-    Wait(100)
-    if body < 900.0 then
-		SmashVehicleWindow(currentVehicle, 0)
-		SmashVehicleWindow(currentVehicle, 1)
-		SmashVehicleWindow(currentVehicle, 2)
-		SmashVehicleWindow(currentVehicle, 3)
-		SmashVehicleWindow(currentVehicle, 4)
-		SmashVehicleWindow(currentVehicle, 5)
-		SmashVehicleWindow(currentVehicle, 6)
-		SmashVehicleWindow(currentVehicle, 7)
-	end
-	if body < 800.0 then
-		SetVehicleDoorBroken(currentVehicle, 0, true)
-		SetVehicleDoorBroken(currentVehicle, 1, true)
-		SetVehicleDoorBroken(currentVehicle, 2, true)
-		SetVehicleDoorBroken(currentVehicle, 3, true)
-		SetVehicleDoorBroken(currentVehicle, 4, true)
-		SetVehicleDoorBroken(currentVehicle, 5, true)
-		SetVehicleDoorBroken(currentVehicle, 6, true)
-	end
-	if engine < 700.0 then
-		SetVehicleTyreBurst(currentVehicle, 1, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 2, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 3, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 4, false, 990.0)
-	end
-	if engine < 500.0 then
-		SetVehicleTyreBurst(currentVehicle, 0, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 5, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 6, false, 990.0)
-		SetVehicleTyreBurst(currentVehicle, 7, false, 990.0)
-	end
+        if damage.doors then
+            for k, door in pairs(damage.doors) do
+                if door.damaged then
+                    SetVehicleDoorBroken(currentVehicle, tonumber(k), true)
+                end
+            end
+        end
+    end
+
     SetVehicleEngineHealth(currentVehicle, engine)
     SetVehicleBodyHealth(currentVehicle, body)
+end
 
+local function GetCarDamage(vehicle)
+    local damage = {windows = {}, tyres = {}, doors = {}}
+    local tyreIndexes = {0,1,2,3,4,5,45,47}
+
+    for _,i in pairs(tyreIndexes) do
+        damage.tyres[i] = {burst = IsVehicleTyreBurst(vehicle, i, false) == 1, onRim = IsVehicleTyreBurst(vehicle, i, true) == 1, health = GetTyreHealth(vehicle, i)}
+    end
+    for i=0,7 do
+        damage.windows[i] = {smashed = not IsVehicleWindowIntact(vehicle, i)}
+    end
+    for i=0,5 do
+        damage.doors[i] = {damaged = IsVehicleDoorDamaged(vehicle, i)}
+    end
+    return damage
 end
 
 local function Round(num, numDecimalPlaces)
@@ -202,7 +223,11 @@ local function ExitAndDeleteVehicle(vehicle)
     end
     SetVehicleDoorsLocked(vehicle)
     Wait(1500)
-    QBCore.Functions.DeleteVehicle(vehicle)
+    if UseEnc0dedPersistenVehicles then
+        TriggerEvent('persistent-vehicles/delete-vehicle', vehicle)
+    else
+        QBCore.Functions.DeleteVehicle(vehicle)
+    end
 end
 
 local function GetVehicleCategoryFromClass(class)
@@ -227,6 +252,10 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     local vehClass = GetVehicleClass(veh)
     local vehCategory = GetVehicleCategoryFromClass(vehClass)
 
+    if GetPedInVehicleSeat(veh, -1) ~= PlayerPedId() then
+        return false
+    end
+
     if CurrentGarage and not TableContains(Garages[CurrentGarage].vehicleCategories, vehCategory) then
         QBCore.Functions.Notify(Lang:t("error.not_correct_type"), "error", 4500)
         return false
@@ -234,12 +263,12 @@ local function CanParkVehicle(veh, garageName, vehLocation)
 
     local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
     if next(parkingSpots) ~= nil then
-        local _, closestDistance, _ = GetClosestLocation(parkingSpots, vehLocation)
+        local _, closestDistance, closestLocation = GetClosestLocation(parkingSpots, vehLocation)
         if closestDistance >= parkingDistance then
             QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
             return false
         else
-            return true
+            return true, closestLocation
         end
     else
         return true
@@ -270,8 +299,10 @@ local function ParkVehicle(veh, garageName, vehLocation)
                 totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
             end
 
-            if not CanParkVehicle(veh, garageName, vehLocation) and not garageName.useVehicleSpawner then return end
-            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garageName)
+            local canPark, closestLocation = CanParkVehicle(veh, garageName, vehLocation)
+            local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
+            if not canPark and not garageName.useVehicleSpawner then return end
+            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garageName, StoreParkinglotAccuratly and closestVec3 or nil, StoreDamageAccuratly and GetCarDamage(veh) or nil)
             ExitAndDeleteVehicle(veh)
             if plate then
                 OutsideVehicles[plate] = nil
@@ -280,7 +311,7 @@ local function ParkVehicle(veh, garageName, vehLocation)
             QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "success", 4500)
         elseif garage.useVehicleSpawner and garage.job == job then
             QBCore.Functions.TriggerCallback("qb-garage:server:CheckSpawnedVehicle", function (result)
-                local canPark = CanParkVehicle(veh, garageName, vehLocation)
+                local canPark, _ = CanParkVehicle(veh, garageName, vehLocation)
                 if result and canPark then
                     TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, nil)
                     ExitAndDeleteVehicle(veh)
@@ -354,10 +385,11 @@ local function UpdateRadialMenu()
     end
 end
 
-local function CreateGarageZone(zone, garageName)
-    zone:onPlayerInOut(function(isPointInside)
-        if isPointInside and IsAuthorizedToAccessGarage(garageName) then
-            CurrentGarage = garageName
+local function CreateGarageZone()
+    local combo = ComboZone:Create(GarageZones, {name = 'garages', debugPoly=false}) 
+    combo:onPlayerInOut(function(isPointInside, _, zone)
+        if isPointInside and IsAuthorizedToAccessGarage(zone.name) then
+            CurrentGarage = zone.name
             exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'], DrawTextPosition)
         else
             CurrentGarage = nil
@@ -377,7 +409,8 @@ local function CreateGaragePolyZone(garage)
         maxZ = Garages[garage].Zone.maxZ,
         debugPoly = Garages[garage].debug
     })
-   CreateGarageZone(zone, garage)
+    table.insert(GarageZones, zone)
+    --CreateGarageZone(zone, garage)
 end
 
 local function CreateGarageBoxZone(house, coords, debugPoly)
@@ -555,7 +588,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         heading = garage.takeVehicle.h -- yes its 'h' not 'w'...
     else
         if next(parkingSpots) ~= nil then
-            if AllowSpawningFromAnywhere then
+           if AllowSpawningFromAnywhere then
                 local freeParkingSpots = {}
                 for _, parkingSpot in ipairs(parkingSpots) do
                     local veh, distance = QBCore.Functions.GetClosestVehicle(vector3(parkingSpot.x,parkingSpot.y, parkingSpot.z))
@@ -563,14 +596,19 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                         freeParkingSpots[#freeParkingSpots+1] = parkingSpot
                     end
                 end
-                _, _, location = GetClosestLocation(freeParkingSpots)
+                _, _, location = GetClosestLocation(freeParkingSpots, SpawnAtLastParkinglot and vehicle.parkingspot)
                 if location == nil then
                     QBCore.Functions.Notify(Lang:t("error.all_occupied"), "error", 4500)
                 return end
                 heading = location.w
             else
                 _, closestDistance, location = GetClosestLocation(parkingSpots)
-                if closestDistance >= spawnDistance then        
+                local plyCoords = GetEntityCoords(PlayerPedId(), 0)
+                local dist = #(plyCoords - vehicle.parkingspot)
+                if SpawnAtLastParkinglot and dist >= spawnDistance then
+                    QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
+                    return
+                elseif closestDistance >= spawnDistance then
                     QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
                     return
                 else
@@ -615,8 +653,12 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
 
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-               
-                DoCarDamage(veh, vehicle)
+                SetAsMissionEntity(veh)
+                if UseEnc0dedPersistenVehicles and veh then
+                    TriggerEvent('persistent-vehicles/register-vehicle', veh)
+                end
+
+                ApplyVehicleDamage(veh, vehicle)
                 TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
             end, vehicle.plate)
@@ -631,13 +673,13 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
             TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
         end
         closeMenuFull()
-        SetEntityAsMissionEntity(veh, true, true)
         SetEntityHeading(veh, heading)
 
         if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         end
 
+        SetAsMissionEntity(veh)
         SetVehicleEngineOn(veh, true, true)
 
         if cb then cb(veh) end
@@ -673,7 +715,7 @@ RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
     local curVeh = GetLastDrivenVehicle(ped)
     if curVeh then
         local coords = GetEntityCoords(curVeh)
-        ParkVehicle(curVeh, parkingName, coords)
+        ParkVehicle(curVeh, parkingName or CurrentGarage, coords)
     else
         QBCore.Functions.Notify(Lang:t('error.no_vehicle'), "error", 4500)
     end
@@ -683,6 +725,14 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
     if not vehExists then
+        if UseEnc0dedPersistenVehicles then
+            QBCore.Functions.TriggerCallback('qb-garage:server:checkIsSpawned', function(spawned)
+                if spawned then
+                    QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
+                    return
+                end
+            end, vehicle.plate)
+        end
         TriggerEvent("qb-garages:client:TakeOutGarage", data, function(veh)
             if veh then
                 TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
@@ -764,7 +814,7 @@ CreateThread(function()
             SetBlipAsShortRange(Garage, true)
             SetBlipColour(Garage, blipColor)
             BeginTextCommandSetBlipName("STRING")
-            AddTextComponentSubstringPlayerName(garage.blipName)
+            AddTextComponentSubstringPlayerName(GarageNameAsBlipName and garage.label or garage.blipName)
             EndTextCommandSetBlipName(Garage)
         end
     end
@@ -776,6 +826,7 @@ CreateThread(function()
             CreateGaragePolyZone(garageName)
         end
     end
+    CreateGarageZone()
 end)
 
 CreateThread(function()

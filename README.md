@@ -19,13 +19,14 @@ Drag 'n Drop replace for qb-garages.
 
 - Delete qb-garages.
 - Drag the downloaded qb-garages folder into the [qb] folder.
+- If you want to use the latest features, apply patch1.sql to your DB
 
 ## Features
 
 * Public Garages
 * House Garages
 * Gang Garages
-* Job Garages (Supports only owned cars for now...)
+* Job Garages
 * Depot Garages
 * Blips and names
 * Custom DrawText
@@ -113,6 +114,43 @@ local garageName = 'pdgarage'
         distance = 3
     })
 ```
+### improved phone tracking
+Replace:
+
+```
+RegisterNUICallback('track-vehicle', function(data, cb)
+    local veh = data.veh
+    if findVehFromPlateAndLocate(veh.plate) then
+        QBCore.Functions.Notify("Your vehicle has been marked", "success")
+    else
+        QBCore.Functions.Notify("This vehicle cannot be located", "error")
+    end
+    cb("ok")
+end)
+```
+
+With:
+
+```
+RegisterNUICallback('track-vehicle', function(data, cb)
+    local veh = data.veh
+    if veh.state == 'In' then
+        if veh.parkingspot then
+            SetNewWaypoint(veh.parkingspot.x, veh.parkingspot.y)
+            QBCore.Functions.Notify("Your vehicle has been marked", "success")
+        elseif Garages[veh.garageId].blipcoords then
+            SetNewWaypoint(Garages[veh.garageId].blipcoords .x, Garages[veh.garageId].blipcoords .y)
+            QBCore.Functions.Notify("Your vehicle has been marked", "success")
+        end
+    elseif veh.state == 'Out' and findVehFromPlateAndLocate(veh.plate) then
+        QBCore.Functions.Notify("Your vehicle has been marked", "success")
+    else
+        QBCore.Functions.Notify("This vehicle cannot be located", "error")
+    end
+    cb("ok")
+end)
+```
+
 ## loaf_housing
 
 Add this to your loaf_housing/client/functions.lua all the way at the bottom:

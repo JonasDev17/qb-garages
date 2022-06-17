@@ -138,9 +138,6 @@ RegisterNUICallback('track-vehicle', function(data, cb)
         if veh.parkingspot then
             SetNewWaypoint(veh.parkingspot.x, veh.parkingspot.y)
             QBCore.Functions.Notify("Your vehicle has been marked", "success")
-        elseif Garages[veh.garageId].blipcoords then
-            SetNewWaypoint(Garages[veh.garageId].blipcoords .x, Garages[veh.garageId].blipcoords .y)
-            QBCore.Functions.Notify("Your vehicle has been marked", "success")
         end
     elseif veh.state == 'Out' and findVehFromPlateAndLocate(veh.plate) then
         QBCore.Functions.Notify("Your vehicle has been marked", "success")

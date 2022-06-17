@@ -213,7 +213,7 @@ RegisterNetEvent('qb-garage:server:updateVehicle', function(state, fuel, engine,
         if StoreDamageAccuratly then
             MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, damage = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(damage), plate})
         else
-            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, WHERE plate = ?',{state, garage, fuel, engine, body, plate})
+            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ? WHERE plate = ?',{state, garage, fuel, engine, body, plate})
         end
     end
 end)

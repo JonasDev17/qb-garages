@@ -650,14 +650,12 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 else
                     exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
                 end
-
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetAsMissionEntity(veh)
                 if UseEnc0dedPersistenVehicles and veh then
                     TriggerEvent('persistent-vehicles/register-vehicle', veh)
                 end
-
                 ApplyVehicleDamage(veh, vehicle)
                 TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)

@@ -332,7 +332,7 @@ local function AddRadialParkingOption()
         MenuItemId = exports['qb-radialmenu']:AddOption({
             id = 'put_up_vehicle',
             title = 'Park Vehicle',
-            icon = 'parking',
+            icon = 'square-parking',
             type = 'client',
             event = 'qb-garages:client:ParkVehicle',
             shouldClose = true
@@ -651,18 +651,12 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 else
                     exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
                 end
-                print('test')
-                QBCore.Debug(properties)
                 QBCore.Functions.SetVehicleProperties(veh, properties)
-                print('test2')
                 SetVehicleNumberPlateText(veh, vehicle.plate)
-                print('test3')
                 SetAsMissionEntity(veh)
-                print('test4')
                 if UseEnc0dedPersistenVehicles and veh then
                     TriggerEvent('persistent-vehicles/register-vehicle', veh)
                 end
-                print('test5')
                 ApplyVehicleDamage(veh, vehicle)
                 TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)

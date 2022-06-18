@@ -49,15 +49,15 @@
 ]]
 
  -- NEW --
-StoreDamageAccuratly = true -- if set to true, make sure to apply / run patch1.sql
-StoreParkinglotAccuratly = true  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
-SpawnAtLastParkinglot = true -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
+StoreDamageAccuratly = false -- Do not use, if on latest qb-core, if set to true, make sure to apply / run patch1.sql
+StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
+SpawnAtLastParkinglot = false -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
+UseEnc0dedPersistenVehicles = false -- enable if you use this script, not really a requirement for your server and I don't recommend it if you don't know what you're doing as it requires a lot of changes in other places
 -- NEW --
 
 FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
 UseLoafHousing = false
-UseEnc0dedPersistenVehicles = false -- enable if you use this script, not really a requirement for your server and I don't recommend it if you don't know what you're doing as it requires a lot of changes in other places
 AllowSpawningFromAnywhere = true -- if set to true, the car can be spawned from anywhere inside the zone on the closest parking lot, if set to false you will have to walk up to a parking lot 
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)

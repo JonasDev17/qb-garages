@@ -108,8 +108,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
             if result[1] then
                 local vehs = {}
                 for _, vehicle in pairs(result) do
+                    local spot = json.decode(vehicle.parkingspot)
                     if vehicle.parkingspot then
-                        vehicle.parkingspot = json.decode(vehicle.parkingspot)
+                        vehicle.parkingspot = vector3(spot.x, spot.y, spot.z)
                     end
                     if vehicle.damage then
                         vehicle.damage = json.decode(vehicle.damage)
@@ -318,6 +319,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                 else
                     fullname = VehicleData["name"]
                 end
+                local spot = json.decode(v.parkingspot)
                 Vehicles[#Vehicles+1] = {
                     fullname = fullname,
                     brand = VehicleData["brand"],
@@ -328,7 +330,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                     fuel = v.fuel,
                     engine = v.engine,
                     body = v.body,
-                    parkingspot = json.decode(v.parkingspot),
+                    parkingspot = vector3(spot.x, spot.y, spot.z),
                     damage = json.decode(v.damage)
                 }
                 ::continue::

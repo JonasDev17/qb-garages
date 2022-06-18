@@ -49,9 +49,9 @@
 ]]
 
  -- NEW --
-StoreDamageAccuratly = false -- if set to true, make sure to apply / run patch1.sql
-StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
-SpawnAtLastParkinglot = false -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
+StoreDamageAccuratly = true -- if set to true, make sure to apply / run patch1.sql
+StoreParkinglotAccuratly = true  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
+SpawnAtLastParkinglot = true -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
 -- NEW --
 

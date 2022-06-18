@@ -155,7 +155,7 @@ local function ApplyVehicleDamage(currentVehicle, veh)
 	local engine = veh.engine + 0.0
 	local body = veh.body + 0.0
     local damage = veh.damage
-    if damage then
+    if damage and StoreDamageAccuratly then
         if damage.tyres then
             for k, tyre in pairs(damage.tyres) do
                 if tyre.onRim then
@@ -302,7 +302,8 @@ local function ParkVehicle(veh, garageName, vehLocation)
             local canPark, closestLocation = CanParkVehicle(veh, garageName, vehLocation)
             local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
             if not canPark and not garageName.useVehicleSpawner then return end
-            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, plate, garageName, StoreParkinglotAccuratly and closestVec3 or nil, StoreDamageAccuratly and GetCarDamage(veh) or nil)
+            local properties = QBCore.Functions.GetVehicleProperties(veh)
+            TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, StoreParkinglotAccuratly and closestVec3 or nil, StoreDamageAccuratly and GetCarDamage(veh) or nil)
             ExitAndDeleteVehicle(veh)
             if plate then
                 OutsideVehicles[plate] = nil

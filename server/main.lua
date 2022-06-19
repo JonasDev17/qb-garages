@@ -51,7 +51,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                 for _, vehicle in pairs(result) do
                     if vehicle.parkingspot then
                         local spot = json.decode(vehicle.parkingspot)
-                        vehicle.parkingspot = vector3(spot.x, spot.y, spot.z)
+                        if spot and spot.x then
+                            vehicle.parkingspot = vector3(spot.x, spot.y, spot.z)
+                        end
                     end
                     if vehicle.damage then
                         vehicle.damage = json.decode(vehicle.damage)

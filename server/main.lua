@@ -332,7 +332,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                     fuel = v.fuel,
                     engine = v.engine,
                     body = v.body,
-                    parkingspot = vector3(spot.x, spot.y, spot.z),
+                    parkingspot = spot and vector3(spot.x, spot.y, spot.z) or nil,
                     damage = json.decode(v.damage)
                 }
                 ::continue::

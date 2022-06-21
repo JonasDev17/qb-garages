@@ -596,7 +596,7 @@ Garages = {
             ['minZ'] = 29.0,
             ['maxZ'] = 31.10
         },
-        label = 'Leigon Square Parking',
+        label = 'Legion Square Parking',
         showBlip = true,
         blipcoords = vector3(52.41, -874.53, 30.42),
         blipName = 'Public Parking',
@@ -827,7 +827,7 @@ Garages = {
             ['minZ'] = 68.00,  -- min height of the parking zone
             ['maxZ'] = 70.45,  -- max height of the parking zone
         },
-        label = "Caears 24 Parking",
+        label = "Caesar 24h Parking",
         showBlip = true,
         blipcoords = vector3(69.84, 12.6, 68.96),
         blipName = "Public Parking",
@@ -856,7 +856,7 @@ Garages = {
             ['minZ'] = 29.47,  -- min height of the parking zone
             ['maxZ'] = 32.82,  -- max height of the parking zone
         },
-        label = "Caears 24 Parking",
+        label = "Caesar 24h Parking",
         showBlip = true,
         blipcoords = vector3(-475.31, -818.73, 30.46),
         blipName = "Public Parking",
@@ -1095,7 +1095,7 @@ Garages = {
             ['minZ'] = 31.5,  -- min height of the parking zone
             ['maxZ'] = 35.99,  -- max height of the parking zone
         },
-        label = "Liqour Parking",
+        label = "Liquor Parking",
         showBlip = true,
         blipcoords = vector3(934.95, 3606.59, 32.81),
         blipName = "Public Parking",
@@ -1334,7 +1334,7 @@ Garages = {
             ['minZ'] = 86.00,  -- min height of the parking zone
             ['maxZ'] = 98.0,  -- max height of the parking zone
         },
-        label = "Police Vinewood",
+        label = "Vinewood Police Station",
         showBlip = false,
         blipName = "Police",
         blipNumber = 357,

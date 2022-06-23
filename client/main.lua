@@ -70,7 +70,7 @@ function SetAsMissionEntity(vehicle)
     SetVehicleIsWanted(vehicle, false)
     SetVehRadioStation(vehicle, 'OFF')
     local id = NetworkGetNetworkIdFromEntity(vehicle)
-	SetNetworkIdCanMigrate(id, true)
+    SetNetworkIdCanMigrate(id, true)
 end
 
 --Menus
@@ -605,8 +605,11 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
             else
                 _, closestDistance, location = GetClosestLocation(parkingSpots)
                 local plyCoords = GetEntityCoords(PlayerPedId(), 0)
-		local spot = SpawnAtLastParkinglot and (vehicle.parkingspot or location) or location
-               local dist = #(plyCoords - vector3(spot.x, spot.y, spot.z))
+		local spot = vector3(location.x, location.y, location.z)
+                if SpawnAtLastParkinglot and vehicle and vehicle.parkingspot then
+                    spot = vehicle.parkingspot
+                end
+                local dist = #(plyCoords - vector3(spot.x, spot.y, spot.z))
                 if SpawnAtLastParkinglot and dist >= spawnDistance then
                     QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
                     return

@@ -136,10 +136,10 @@ end
 
 
 
-QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, type, garage, gang, hasHouseKey)
+QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang, hasHouseKey)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    if type == "public" then        --Public garages only for player cars
+    if garageType == "public" then        --Public garages only for player cars
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
             if result[1] then
                 cb(true)
@@ -147,7 +147,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
                 cb(false)
             end
         end)
-    elseif type == "house" then     --House garages only for player cars that have keys of the house
+    elseif garageType == "house" then     --House garages only for player cars that have keys of the house
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
                 if not UseLoafHousing then
@@ -162,7 +162,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
                 cb(false)
             end
         end)
-    elseif type == "gang" then        --Gang garages only for gang members cars (for sharing)
+    elseif garageType == "gang" then        --Gang garages only for gang members cars (for sharing)
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
                 --Check if found owner is part of the gang

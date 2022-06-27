@@ -597,7 +597,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                         freeParkingSpots[#freeParkingSpots+1] = parkingSpot
                     end
                 end
-               	_, _, location = GetClosestLocation(freeParkingSpots, SpawnAtLastParkinglot and (vehicle.parkingspot and vector3(vehicle.parkingspot.x, vehicle.parkingspot.y, vehicle.parkingspot.z) or nil) or nil)
+               	_, _, location = GetClosestLocation(freeParkingSpots, SpawnAtLastParkinglot and (vehicle and (vehicle.parkingspot and vector3(vehicle.parkingspot.x, vehicle.parkingspot.y, vehicle.parkingspot.z) or nil) or nil) or nil)
                 if location == nil then
                     QBCore.Functions.Notify(Lang:t("error.all_occupied"), "error", 4500)
                 return end

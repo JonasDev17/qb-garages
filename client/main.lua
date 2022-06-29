@@ -310,7 +310,7 @@ local function ParkVehicle(veh, garageName, vehLocation)
                 TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
             end
             QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "success", 4500)
-        elseif garage.useVehicleSpawner and garage.job == job then
+        elseif garage and garage.useVehicleSpawner and garage.job == job then
             QBCore.Functions.TriggerCallback("qb-garage:server:CheckSpawnedVehicle", function (result)
                 local canPark, _ = CanParkVehicle(veh, garageName, vehLocation)
                 if result and canPark then

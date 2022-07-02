@@ -256,7 +256,7 @@ local function CanParkVehicle(veh, garageName, vehLocation)
         return false
     end
 
-    if CurrentGarage and not TableContains(Garages[CurrentGarage].vehicleCategories, vehCategory) then
+    if garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategory) then
         QBCore.Functions.Notify(Lang:t("error.not_correct_type"), "error", 4500)
         return false
     end

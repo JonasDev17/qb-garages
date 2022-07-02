@@ -518,7 +518,11 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                 local enginePercent = Round(v.engine / 10, 0)
                 local bodyPercent = Round(v.body / 10, 0)
                 local currentFuel = v.fuel
-                local vname = QBCore.Shared.Vehicles[v.vehicle].name
+                local vehData = QBCore.Shared.Vehicles[v.vehicle]
+                local vname = 'Vehicle does not exist'
+                if vehData then
+                    vname = vehData.name
+                end
 
                 if v.state == 0 then
                     v.state = Lang:t("status.out")

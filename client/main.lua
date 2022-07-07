@@ -864,3 +864,12 @@ CreateThread(function()
         end
     end
 end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if MenuItemId ~= nil then
+            exports['qb-radialmenu']:RemoveOption(MenuItemId)
+            MenuItemId = nil
+        end
+    end
+end)

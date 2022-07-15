@@ -151,7 +151,7 @@ local function ApplyVehicleDamage(currentVehicle, veh)
 	local engine = veh.engine + 0.0
 	local body = veh.body + 0.0
     local damage = veh.damage
-    if damage and StoreDamageAccuratly then
+    if damage then
         if damage.tyres then
             for k, tyre in pairs(damage.tyres) do
                 if tyre.onRim then
@@ -619,6 +619,8 @@ local function SpawnPlayerVehicle(vehicle, vehicleModel, location, heading, cb)
                     exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
                 end
 
+                if StoreDamageAccuratly then ApplyVehicleDamage(veh, vehicle) end
+
                 QBCore.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
 
@@ -626,7 +628,6 @@ local function SpawnPlayerVehicle(vehicle, vehicleModel, location, heading, cb)
                     TriggerEvent('persistent-vehicles/register-vehicle', veh)
                 end
                 
-                ApplyVehicleDamage(veh, vehicle)
                 
                 TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)

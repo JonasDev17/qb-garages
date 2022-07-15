@@ -31,7 +31,11 @@
         blipColor = 69, -- optional, defaults to 3 (Blue), numbers can be found here: https://docs.fivem.net/docs/game-references/blips/
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = 'police', -- optional, everyone can use it when not defined
-        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                            <---  NEW
+        -- job = {'police', 'ambulance'), -- optional, multi job support
+        gang = 'vagos', -- optional, same as job but for gangs, do not use both
+        -- gang = {'vagos', 'gsf'}, -- optional, multi gang support
+        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                          <---  NEW
+        jobVehiclesIndex = 'pd1', -- the corresponding index (JobVehicles)
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
         ParkingDistance = 10.0 -- Optional ParkingDistance, to override the global ParkingDistance
@@ -48,13 +52,15 @@
     },
 ]]
 
- -- NEW --
+-- NEW --
+SpawnAtFreeParkingSpot = true
+-- NEW --
+
 StoreDamageAccuratly = false -- Do not use, if on latest qb-core, if set to true, make sure to apply / run patch1.sql
 StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 SpawnAtLastParkinglot = false -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
 UseEnc0dedPersistenVehicles = false -- enable if you use this script, not really a requirement for your server and I don't recommend it if you don't know what you're doing as it requires a lot of changes in other places
--- NEW --
 
 FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
 UseLoafHousing = false
@@ -69,8 +75,9 @@ DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
 -- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
 JobVehicles = {
-	['police'] = { -- job
+	['pd1'] = { -- job
         label = "Police Vehicles",
+        job = 'police',
         -- Grade 0
         vehicles = {
             [0] = {
@@ -136,6 +143,7 @@ JobVehicles = {
 -- NOTE: This may also send helis and boats to said garaga so choose wisely
 RestoreCommandPermissionLevel = 'god' -- sets the permission level for the above mentioned command
 
+-- THESE VEHICLE CATEGORIES ARE NOT RELATED TO THE ONES IN shared/vehicles.lua
 -- Here you can define which category contains which vehicle class. These categories can then be used in the garage config
 -- All vehicle classes can be found here: https://docs.fivem.net/natives/?_0x29439776AAA00A62
 VehicleCategories = {

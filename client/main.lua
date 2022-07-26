@@ -490,6 +490,50 @@ function JobMenuGarage(garageName)
     exports['qb-menu']:openMenu(vehicleMenu)
 end
 
+function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage)
+    if not garage.useVehicleSpawner then
+        QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+            if vehicleInfo.plate then
+                OutsideVehicles[vehicleInfo.plate] = spawnedVehicle
+                TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+            end
+
+            if FuelScript then
+                exports[FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
+            else
+                exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
+            end
+            QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
+            SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
+            SetAsMissionEntity(spawnedVehicle)
+            if UseEnc0dedPersistenVehicles and spawnedVehicle then
+                TriggerEvent('persistent-vehicles/register-vehicle', spawnedVehicle)
+            end
+            ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
+            TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
+            TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
+        end, vehicleInfo.plate)
+    else
+        local plate = QBCore.Functions.GetPlate(spawnedVehicle)
+        if FuelScript then
+            exports[FuelScript]:SetFuel(spawnedVehicle, 100)
+        else
+            exports['LegacyFuel']:SetFuel(spawnedVehicle, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
+        end
+        TriggerEvent("vehiclekeys:client:SetOwner", plate)
+        TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
+    end
+    closeMenuFull()
+    SetEntityHeading(spawnedVehicle, heading)
+
+    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
+        TaskWarpPedIntoVehicle(PlayerPedId(), spawnedVehicle, -1)
+    end
+
+    SetAsMissionEntity(spawnedVehicle)
+    SetVehicleEngineOn(spawnedVehicle, true, true)
+end
+
 -- Events
 
 RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
@@ -646,52 +690,20 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         end
     end
 
-    QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
-        if not garage.useVehicleSpawner then
-            QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-                if vehicle.plate then
-                    OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-                end
-
-                if FuelScript then
-                    exports[FuelScript]:SetFuel(veh, vehicle.fuel)
-                else
-                    exports['LegacyFuel']:SetFuel(veh, vehicle.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
-                end
-                QBCore.Functions.SetVehicleProperties(veh, properties)
-                SetVehicleNumberPlateText(veh, vehicle.plate)
-                SetAsMissionEntity(veh)
-                if UseEnc0dedPersistenVehicles and veh then
-                    TriggerEvent('persistent-vehicles/register-vehicle', veh)
-                end
-                ApplyVehicleDamage(veh, vehicle)
-                TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
-            end, vehicle.plate)
-        else
-            local plate = QBCore.Functions.GetPlate(veh)
-            if FuelScript then
-                exports[FuelScript]:SetFuel(veh, 100)
-            else
-                exports['LegacyFuel']:SetFuel(veh, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
-            end
-            TriggerEvent("vehiclekeys:client:SetOwner", plate)
-            TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
-        end
-        closeMenuFull()
-        SetEntityHeading(veh, heading)
-
-        if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
-            TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        end
-
-        SetAsMissionEntity(veh)
-        SetVehicleEngineOn(veh, true, true)
-
-        if cb then cb(veh) end
-    end, location, true)
+    if SpawnVehicleServerside then
+        QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+            local veh = NetToVeh(netId)
+            UpdateSpawnedVehicle(veh, vehicle, heading, garage)
+        end)
+    else
+        QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
+            UpdateSpawnedVehicle(veh, vehicle, heading, garage)
+            if cb then cb(veh) end
+        end, location, true)
+    end
 end)
+
+
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
     UpdateRadialMenu()

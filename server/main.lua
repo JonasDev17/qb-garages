@@ -25,7 +25,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     local pData = QBCore.Functions.GetPlayer(src)
     if not OutsideVehicles[plate] then cb(nil) return end
      MySQL.query('SELECT * FROM player_vehicles WHERE citizenid = ? and plate = ?', {pData.PlayerData.citizenid, plate}, function(result)
-        if result[1] then
+        if result[1] 
             cb(result[1])
         else
             cb(nil)

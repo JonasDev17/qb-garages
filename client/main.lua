@@ -681,7 +681,6 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
 
     if SpawnVehicleServerside then
         QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
-            print(netId)
             local veh = NetToVeh(netId)
             UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
         end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)

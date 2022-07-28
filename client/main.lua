@@ -490,30 +490,8 @@ function JobMenuGarage(garageName)
     exports['qb-menu']:openMenu(vehicleMenu)
 end
 
-function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage)
-    if not garage.useVehicleSpawner then
-        QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
-            if vehicleInfo.plate then
-                OutsideVehicles[vehicleInfo.plate] = spawnedVehicle
-                TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
-            end
-
-            if FuelScript then
-                exports[FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
-            else
-                exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
-            end
-            QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
-            SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
-            SetAsMissionEntity(spawnedVehicle)
-            if UseEnc0dedPersistenVehicles and spawnedVehicle then
-                TriggerEvent('persistent-vehicles/register-vehicle', spawnedVehicle)
-            end
-            ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
-            TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
-            TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
-        end, vehicleInfo.plate)
-    else
+function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, outsideVehilce, properties)
+    if garage.useVehicleSpawner then
         local plate = QBCore.Functions.GetPlate(spawnedVehicle)
         if FuelScript then
             exports[FuelScript]:SetFuel(spawnedVehicle, 100)
@@ -522,13 +500,24 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage)
         end
         TriggerEvent("vehiclekeys:client:SetOwner", plate)
         TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
+    else
+        if FuelScript then
+            exports[FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
+        else
+            exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
+        end
+        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
+        SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
+        SetAsMissionEntity(spawnedVehicle)
+        if UseEnc0dedPersistenVehicles and spawnedVehicle then
+            TriggerEvent('persistent-vehicles/register-vehicle', spawnedVehicle)
+        end
+        ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
+        TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
+        TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
     end
     closeMenuFull()
     SetEntityHeading(spawnedVehicle, heading)
-
-    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
-        TaskWarpPedIntoVehicle(PlayerPedId(), spawnedVehicle, -1)
-    end
 
     SetAsMissionEntity(spawnedVehicle)
     SetVehicleEngineOn(spawnedVehicle, true, true)
@@ -691,10 +680,11 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     end
 
     if SpawnVehicleServerside then
-        QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+        QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
+            print(netId)
             local veh = NetToVeh(netId)
-            UpdateSpawnedVehicle(veh, vehicle, heading, garage)
-        end)
+            UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
+        end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
             UpdateSpawnedVehicle(veh, vehicle, heading, garage)

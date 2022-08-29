@@ -273,20 +273,16 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
     local cashBalance = Player.PlayerData.money["cash"]
     local bankBalance = Player.PlayerData.money["bank"]
 
+    
     local vehicle = data.vehicle
-
-     MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
-        if result[1] then
-            local depotPrice = result[1].depotprice ~= 0 and result[1].depotprice or DepotPrice
-            if cashBalance >= depotPrice then
-                Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
-            elseif bankBalance >= depotPrice then
-                Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
-            else
-                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
-            end
-        end
-    end)
+    local depotPrice = vehicle.depotprice ~= 0 and vehicle.depotprice or DepotPrice
+    if cashBalance >= depotPrice then
+        Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
+    elseif bankBalance >= depotPrice then
+        Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
+    end
 end)
 
 

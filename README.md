@@ -19,7 +19,6 @@ Drag 'n Drop replace for qb-garages.
 
 - Delete qb-garages.
 - Drag the downloaded qb-garages folder into the [qb] folder.
-- If you want to use the latest features, apply patch1.sql to your DB
 
 ## Features
 

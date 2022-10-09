@@ -41,10 +41,9 @@ RegisterNetEvent("qb-garage:server:UpdateSpawnedVehicle", function(plate, value)
     VehicleSpawnerVehicles[plate] = value
 end)
 
-
 QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, warp)
     local veh = QBCore.Functions.SpawnVehicle(source, vehInfo.vehicle, coords, warp)
-    print(veh)
+
     if not veh or not NetworkGetNetworkIdFromEntity(veh) then
         print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
     end
@@ -152,9 +151,11 @@ end
 
 
 
-QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang, hasHouseKey)
+QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
+    local hasHouseKey = false
+
     if garageType == "public" then        --Public garages only for player cars
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
             if result[1] then
@@ -166,14 +167,8 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif garageType == "house" then     --House garages only for player cars that have keys of the house
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                if not UseLoafHousing then
-                    hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
-                end
-                if hasHouseKey then
-                    cb(true)
-                else
-                    cb(false)
-                end
+                hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
+                cb(hasHouseKey)
             else
                 cb(false)
             end
@@ -181,18 +176,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif garageType == "gang" then        --Gang garages only for gang members cars (for sharing)
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                --Check if found owner is part of the gang
-                local resultplayer = MySQL.single.await('SELECT * FROM players WHERE citizenid = ?', { result[1].citizenid })
-                if resultplayer then
-                    local playergang = json.decode(resultplayer.gang)
-                    if playergang.name == gang then
-                        cb(true)
-                    else
-                        cb(false)
-                    end
-                else
-                    cb(false)
-                end
+                local Player = QBCore.Functions.GetPlayer(source)
+                local playerGang = Player.PlayerData.gang.name
+                cb(playerGang == gang)
             else
                 cb(false)
             end

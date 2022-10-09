@@ -219,11 +219,7 @@ local function ExitAndDeleteVehicle(vehicle)
     end
     SetVehicleDoorsLocked(vehicle)
     Wait(1500)
-    if UseEnc0dedPersistenVehicles then
-        TriggerEvent('persistent-vehicles/delete-vehicle', vehicle)
-    else
-        QBCore.Functions.DeleteVehicle(vehicle)
-    end
+    QBCore.Functions.DeleteVehicle(vehicle)
 end
 
 local function GetVehicleCategoryFromClass(class)
@@ -321,12 +317,7 @@ local function ParkVehicle(veh, garageName, vehLocation)
     local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
     local garage = Garages[garageName]
     local type = garage and garage.type or 'house'
-    local gang = PlayerGang.name;
-    local job = PlayerJob.name;
-    local hasHouseKey = false;
-    if type == 'house' and UseLoafHousing then
-        hasHouseKey = exports['loaf_housing']:HasHouseKey(garageName)
-    end
+    local gang = PlayerGang.name
     QBCore.Functions.TriggerCallback('qb-garage:server:checkOwnership', function(owned)
         if owned then
            ParkOwnedVehicle(veh, garageName, vehLocation, plate)
@@ -335,7 +326,7 @@ local function ParkVehicle(veh, garageName, vehLocation)
         else
             QBCore.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
         end
-    end, plate, type, garageName, gang, hasHouseKey)
+    end, plate, type, garageName, gang)
 end
 
 local function AddRadialParkingOption()
@@ -399,7 +390,6 @@ local function UpdateRadialMenu()
 end
 
 local function CreateGarageZone()
-    print("CreateGarageZone")
     local combo = ComboZone:Create(GarageZones, {name = 'garages', debugPoly=false})
     combo:onPlayerInOut(function(isPointInside, l, zone)
         if isPointInside and IsAuthorizedToAccessGarage(zone.name) then
@@ -466,18 +456,24 @@ end
 function JobMenuGarage(garageName)
     local job = QBCore.Functions.GetPlayerData().job.name
     local garage = Garages[garageName]
+    local jobGarage = JobVehicles[garage.jobGarageIdentifier]
 
-    if not JobVehicles[job] then
+    if not jobGarage then
+        if garage.jobGarageIdentifier then
+            TriggerEvent('QBCore:Notify', string.format('Job garage with id %s not configured.', garage.jobGarageIdentifier), 'error', 5000)
+        else
+            TriggerEvent('QBCore:Notify', string.format("'jobGarageIdentifier' not defined on job garage %s ", garageName), 'error', 5000)
+        end
         return
     end
     local vehicleMenu = {
         {
-            header = JobVehicles[job].label,
+            header = jobGarage.label,
             isMenuHeader = true
         }
     }
 
-    local vehicles = JobVehicles[job].vehicles[QBCore.Functions.GetPlayerData().job.grade.level]
+    local vehicles = jobGarage.vehicles[QBCore.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(vehicles) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
@@ -582,32 +578,45 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
     return location, heading
 end
 
+local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+    local plate = QBCore.Functions.GetPlate(veh)
+    if FuelScript then
+        exports[FuelScript]:SetFuel(veh, 100)
+    else
+        exports['LegacyFuel']:SetFuel(veh, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
+    end
+    TriggerEvent("vehiclekeys:client:SetOwner", plate)
+    TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
+
+    ClearMenu()
+    SetEntityHeading(veh, heading)
+    
+    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
+        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+    end
+    
+    SetAsMissionEntity(veh)
+    SetVehicleEngineOn(veh, true, true)
+
+    if cb then cb(veh) end
+end
+
 local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
-    QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
-            local plate = QBCore.Functions.GetPlate(veh)
-            if FuelScript then
-                exports[FuelScript]:SetFuel(veh, 100)
-            else
-                exports['LegacyFuel']:SetFuel(veh, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
-            end
-            TriggerEvent("vehiclekeys:client:SetOwner", plate)
-            TriggerServerEvent("qb-garage:server:UpdateSpawnedVehicle", plate, true)
-
-            ClearMenu()
-            SetEntityHeading(veh, heading)
-            
-            if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
-                TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-            end
-            
-            SetAsMissionEntity(veh)
-            SetVehicleEngineOn(veh, true, true)
-
-            if cb then cb(veh) end
-    end, location, true)
+    local garage = Garages[CurrentGarage]
+    if SpawnVehicleServerside then
+        QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+            local veh = NetToVeh(netId)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+        end,vehicleModel, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+    else
+        QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+        end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+    end
 end
 
 function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, properties)
+    QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
     local plate = QBCore.Functions.GetPlate(spawnedVehicle)
     if garage.useVehicleSpawner then
         if plate then
@@ -631,12 +640,8 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
-        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
         SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
         SetAsMissionEntity(spawnedVehicle)
-        if UseEnc0dedPersistenVehicles and spawnedVehicle then
-            TriggerEvent('persistent-vehicles/register-vehicle', spawnedVehicle)
-        end
         ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
         TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
         TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
@@ -743,25 +748,26 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local location, heading = GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, spawnDistance)
     if garage.useVehicleSpawner then
         SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
-    end
-    if SpawnVehicleServerside then
-        QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
-            local veh = NetToVeh(netId)
-            if not veh or not netId then
-                print("ISSUE HERE: ", netId)
-                print(veh)
-                QBCore.Debug(properties)
-            end
-            UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
-            if cb then cb(veh) end
-	end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
     else
-        QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
-            QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+        if SpawnVehicleServerside then
+            QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
+                local veh = NetToVeh(netId)
+                if not veh or not netId then
+                    print("ISSUE HERE: ", netId)
+                    print(veh)
+                    QBCore.Debug(properties)
+                end
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then cb(veh) end
-            end, vehicle.plate)
-        end, location, true)
+            end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+        else
+            QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
+                QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
+                    UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
+                    if cb then cb(veh) end
+                end, vehicle.plate)
+            end, location, true)
+        end
     end
 end)
 
@@ -804,16 +810,9 @@ end)
 
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
+    QBCore.Debug(OutsideVehicles)
     local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
     if not vehExists then
-        if UseEnc0dedPersistenVehicles then
-            QBCore.Functions.TriggerCallback('qb-garage:server:checkIsSpawned', function(spawned)
-                if spawned then
-                    QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
-                    return
-                end
-            end, vehicle.plate)
-        end
         local PlayerData = QBCore.Functions.GetPlayerData()
         if PlayerData.money['cash'] >= vehicle.depotprice or PlayerData.money['bank'] >= vehicle.depotprice then
             TriggerEvent("qb-garages:client:TakeOutGarage", data, function (veh)
@@ -821,6 +820,8 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
                     TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
                 end
             end)
+        else
+            QBCore.Functions.Notify(Lang:t('error.not_enough'), "error", 5000)
         end
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
@@ -874,6 +875,18 @@ AddEventHandler('onResourceStart', function(resourceName)
         if not PlayerData then return end
         PlayerGang = PlayerData.gang
         PlayerJob = PlayerData.job
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if MenuItemId ~= nil then
+            exports['qb-radialmenu']:RemoveOption(MenuItemId)
+            MenuItemId = nil
+        end
+        for _,v in pairs(GarageZones) do
+            exports['qb-target']:RemoveZone(v.name)
+        end
     end
 end)
 

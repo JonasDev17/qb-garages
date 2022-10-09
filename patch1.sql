@@ -1,6 +1,8 @@
--- RUN ONLY WHEN USING StoreParkinglotAccuratly
-ALTER TABLE `player_vehicles`
-ADD COLUMN `parkingspot` VARCHAR(200) NULL DEFAULT NULL AFTER `garage`;
+--- INSTRUCTIONS ON THE README ARE OUTDATED, ONLY FOR DEVS WHO KNOW WHAT THEY ARE DOING
+
+--RUN ONLY WHEN USING StoreParkinglotAccuratly 
+-- ALTER TABLE `player_vehicles`
+-- ADD COLUMN `parkingspot` VARCHAR(200) NULL DEFAULT NULL AFTER `garage`;
 
 -- RUN ONLY WHEN USING StoreDamageAccuratly
 -- ALTER TABLE `player_vehicles`

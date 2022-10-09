@@ -1,8 +1,13 @@
 --[[
+
     Author: JDev17#8160
+
     TRANSLATION:
         To create a new translation file, copy an existing one and rename it to e.g. es (spanish), then translate it and change the imported file in the fxmanifest under shared_scripts.
+
+    
     GARAGE CONFIGURATION EXAMPLE:
+
     ['somegarage'] = {
         ['Zone'] = {
             ['Shape'] = { -- Create a polyzone by using '/pzcreate poly', '/pzadd' and '/pzfinish' or '/pzcancel' to cancel it. the newly created polyzone will be in txData/QBCoreFramework_******.base/polyzone_created_zones.txt
@@ -32,9 +37,10 @@
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = 'police', -- optional, everyone can use it when not defined
         -- job = {'police', 'ambulance'), -- optional, multi job support
+        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                                                           <---    NEW
+        jobGarageIdentifier = 'pd1', required when using vehicle spawner, references the JobVehicles down below, make sure this matches what you used in the JobVehicles table          <---    NEW
         gang = 'vagos', -- optional, same as job but for gangs, do not use both
         -- gang = {'vagos', 'gsf'}, -- optional, multi gang support
-        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                          <---  NEW
         jobVehiclesIndex = 'pd1', -- the corresponding index (JobVehicles)
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
@@ -64,7 +70,6 @@ StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if se
 SpawnAtLastParkinglot = false -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
 FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
-UseLoafHousing = false
 AllowSpawningFromAnywhere = true -- if set to true, the car can be spawned from anywhere inside the zone on the closest parking lot, if set to false you will have to walk up to a parking lot 
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)
@@ -76,7 +81,7 @@ DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
 -- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
 JobVehicles = {
-	['pd1'] = { -- job
+	['pd1'] = { -- jobGarageIdentifier
         label = "Police Vehicles",
         job = 'police',
         -- Grade 0

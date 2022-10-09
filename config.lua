@@ -153,14 +153,16 @@ RestoreCommandPermissionLevel = 'god' -- sets the permission level for the above
 -- Here you can define which category contains which vehicle class. These categories can then be used in the garage config
 -- All vehicle classes can be found here: https://docs.fivem.net/natives/?_0x29439776AAA00A62
 VehicleCategories = {
-    ['car'] = {0,1,2,3,4,5,6,7,9,10,11,12},
-    ['motorcycle'] = {8},
-    ['boat'] = {14},
-    ['helicopter'] = {15},
-    ['plane'] = {16},
-    ['service'] = {17},
-    ['emergency'] = {18},
-    ['other'] = {13} -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in this category
+    ['car'] = { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12 },
+    ['motorcycle'] = { 8 },
+    ['other'] = { 13 }, -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in this category
+    ['boat'] = { 14 },
+    ['helicopter'] = { 15 },
+    ['plane'] = { 16 },
+    ['service'] = { 17 },
+    ['emergency'] = { 18 },
+    ['military'] = { 19 },
+    ['commercial'] = { 20 },
     -- you can also create new / delete or update categories, and use them below in the config.
 }
 
@@ -807,7 +809,7 @@ Garages = {
             vector4(-275.18, -768.22, 33.54, 71.26)
         }
     },
-    ['spanishave'] = {
+    ['northrockford'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
                 vector2(-1135.1311035156, -778.41644287109),
@@ -818,7 +820,7 @@ Garages = {
             ['minZ'] = 17.69,  -- min height of the parking zone
             ['maxZ'] = 20.61,  -- max height of the parking zone
         },
-        label = "Spanish Ave Parking",
+        label = "North Rockford Parking",
         showBlip = true,
         blipcoords = vector3(-1160.86, -741.41, 19.63),
         blipName = "Public Parking",
@@ -826,9 +828,25 @@ Garages = {
         type = 'public',                --public, job, gang, depot
         vehicleCategories = {'car', 'motorcycle', 'other'},
         drawText = 'Parking',                 --car, air, sea
-        debug = false
+        debug = false,
+        ['ParkingSpots'] = {
+            vector4(-1144.92, -745.32, 19.69, 105.6),
+            vector4(-1143.46, -748.47, 19.51, 111.41),
+            vector4(-1140.84, -751.4, 19.37, 112.09),
+            vector4(-1138.4, -754.54, 19.21, 112.51),
+            vector4(-1135.45, -757.27, 19.08, 109.69),
+            vector4(-1133.38, -760.28, 18.91, 112.11),
+            vector4(-1130.78, -763.25, 18.76, 111.18),
+            vector4(-1128.38, -758.73, 19.13, 286.83),
+            vector4(-1130.16, -755.67, 19.29, 291.44),
+            vector4(-1132.5, -752.58, 19.45, 289.94),
+            vector4(-1135.36, -749.6, 19.59, 287.4),
+            vector4(-1137.97, -746.77, 19.71, 287.88),
+            vector4(-1140.21, -743.83, 19.85, 289.91),
+            vector4(-1142.87, -740.91, 20.01, 289.42),
+        }
     },
-    ['caears24'] = {
+    ['spanishave'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
                 vector2(76.188446044922, 7.9120540618896),
@@ -841,7 +859,7 @@ Garages = {
             ['minZ'] = 68.00,  -- min height of the parking zone
             ['maxZ'] = 70.45,  -- max height of the parking zone
         },
-        label = "Caesar 24h Parking",
+        label = "Spanish Ave Parking",
         showBlip = true,
         blipcoords = vector3(69.84, 12.6, 68.96),
         blipName = "Public Parking",

@@ -176,18 +176,6 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif garageType == "gang" then        --Gang garages only for gang members cars (for sharing)
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                --Check if found owner is part of the gang
-                -- local resultplayer = MySQL.single.await('SELECT * FROM players WHERE citizenid = ?', { result[1].citizenid })
-                -- if resultplayer then
-                --     local playergang = json.decode(resultplayer.gang)
-                --     if playergang.name == gang then
-                --         cb(true)
-                --     else
-                --         cb(false)
-                --     end
-                -- else
-                --     cb(false)
-                -- end
                 local Player = QBCore.Functions.GetPlayer(source)
                 local playerGang = Player.PlayerData.gang.name
                 cb(playerGang == gang)

@@ -367,7 +367,7 @@ local function UpdateRadialMenu()
     local garage = Garages[CurrentGarage]
     if CurrentGarage ~= nil and garage ~= nil then
         if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
-            if PlayerJob.name == garage.job then
+            if IsAuthorizedToAccessGarage(CurrentGarage) then
                 AddRadialParkingOption()
             end
         elseif garage.type == 'gang' and not IsStringNilOrEmpty(garage.gang) then

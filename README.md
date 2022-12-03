@@ -19,6 +19,7 @@ Drag 'n Drop replace for qb-garages.
 
 - Delete qb-garages.
 - Drag the downloaded qb-garages folder into the [qb] folder.
+- If you want to use the latest features, apply patch1.sql to your DB
 
 ## Features
 
@@ -47,7 +48,7 @@ Drag 'n Drop replace for qb-garages.
 ```
 Everything that says optional can be omitted.
  -- GARAGE CONFIGURATION EXAMPLE :
-     ['somegarage'] = {
+    ['somegarage'] = {
         ['Zone'] = {
             ['Shape'] = { -- Create a polyzone by using '/pzcreate poly', '/pzadd' and '/pzfinish' or '/pzcancel' to cancel it. the newly created polyzone will be in txData/QBCoreFramework_******.base/polyzone_created_zones.txt
             vector2(-1030.4713134766, -3016.3388671875),
@@ -65,7 +66,7 @@ Everything that says optional can be omitted.
             },
             ['minZ'] = 12.5,  -- min height of the parking zone, cannot be the same as maxZ, and must be smaller than maxZ
             ['maxZ'] = 20.0,  -- max height of the parking zone
-            -- Important: Make sure the parking zone is high enough - higher than the tallest vehicle and touches the ground (turn on debug to see)
+            -- VERY IMPORTANT: Make sure the parking zone is high enough - higher than the tallest vehicle and LOW ENOUGH / touches the ground (turn on debug to see)
         },
         label = 'Hangar', -- label displayed on phone
         type = 'public', -- 'public', 'job', 'depot' or 'gang'
@@ -75,25 +76,19 @@ Everything that says optional can be omitted.
         blipColor = 69, -- optional, defaults to 3 (Blue), numbers can be found here: https://docs.fivem.net/docs/game-references/blips/
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = 'police', -- optional, everyone can use it when not defined
-        -- job = {'police', 'ambulance'), -- optional, multi job support
-        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                                                           <---    NEW
-        jobGarageIdentifier = 'pd1', required when using vehicle spawner, references the JobVehicles down below, make sure this matches what you used in the JobVehicles table          <---    NEW
-        gang = 'vagos', -- optional, same as job but for gangs, do not use both
-        -- gang = {'vagos', 'gsf'}, -- optional, multi gang support
-        jobVehiclesIndex = 'pd1', -- the corresponding index (JobVehicles)
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
         ParkingDistance = 10.0 -- Optional ParkingDistance, to override the global ParkingDistance
         SpawnDistance = 5.0 -- Optional SpawnDistance, to override the global SpawnDistance
-        debug = false -- will show the polyzone and the parking spots, helpful when creating new garages. If too many garages are set to debug, it will not show all parking lots
-        ExitWarpLocations: { -- Optional, Used for e.g. Boat parking, to teleport the player out of the boat to the closest location defined in the list.
+        debug = false -- Optional, will show the polyzone and the parking spots, helpful when creating new garages. If too many garages are set to debug, it will not show all parking lots
+        ExitWarpLocations: { -- Optional, Used for e.g. Boat parking, to teleport the player out of the boat to the closest location defined in the list. 
             vector3(-807.15, -1496.86, 1.6),
             vector3(-800.17, -1494.87, 1.6),
             vector3(-792.92, -1492.18, 1.6),
             vector3(-787.58, -1508.59, 1.6),
             vector3(-794.89, -1511.16, 1.6),
             vector3(-800.21, -1513.05, 1.6),
-        }
+        } 
     },
 ```
 
@@ -119,8 +114,7 @@ local garageName = 'pdgarage'
         distance = 3
     })
 ```
-### !!! OUTDATED !!! improved phone tracking (requires SQL patch to be applied, NOT RECOMMENDED UNLESS YOU KNOW WHAT YOU ARE DOING)
-
+### improved phone tracking
 Replace:
 
 ```
@@ -151,6 +145,17 @@ RegisterNUICallback('track-vehicle', function(data, cb)
         QBCore.Functions.Notify("This vehicle cannot be located", "error")
     end
     cb("ok")
+end)
+```
+
+## loaf_housing
+
+Add this to your loaf_housing/client/functions.lua all the way at the bottom:
+```
+exports('HasHouseKey', function(propertyId)
+    local stringId = tostring(propertyId)
+    local data = cache.ownedHouses[stringId] or cache.houses[stringId]
+    return exports['loaf_keysystem']:HasKey(GetKeyName(propertyId, data.id))
 end)
 ```
 

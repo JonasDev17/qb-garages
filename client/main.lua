@@ -232,7 +232,7 @@ local function IsAuthorizedToAccessGarage(garageName)
     if garage.type == 'job' then
         if type(garage.job) == "string" and not IsStringNilOrEmpty(garage.job) then
             return PlayerJob.name == garage.job 
-        elseif type(garage.job) =="table" then
+        elseif type(garage.job) == "table" then
             return TableContains(garage.job, PlayerJob.name)
         else
             QBCore.Functions.Notify('job not defined on garage', 'error', 7500)
@@ -382,7 +382,7 @@ local function UpdateRadialMenu()
             end
         elseif garage.type == 'depot' then
             AddRadialImpoundOption()
-        else
+        elseif IsAuthorizedToAccessGarage(CurrentGarage) then
            AddRadialParkingOption()
         end
     elseif CurrentHouseGarage ~= nil then
@@ -457,6 +457,12 @@ local function RegisterHousePoly(house)
             CurrentHouseGarage = nil
         end
     end)
+end
+
+local function RemoveHousePoly(house)
+    if not GaragePoly[house] then return end
+    GaragePoly[house].Polyzone:destroy()
+    GaragePoly[house] = nil
 end
 
 function JobMenuGarage(garageName)
@@ -620,15 +626,21 @@ local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
         end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
     end
 end
-
+		
 function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, properties)
     QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
     local plate = QBCore.Functions.GetPlate(spawnedVehicle)
     if garage.useVehicleSpawner then
-        if plate then
+	ClearMenu()
+	if plate then
             OutsideVehicles[plate] = spawnedVehicle
             TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
         end
+        SetEntityHeading(veh, heading)
+	SetAsMissionEntity(veh)
+       	if SpawnWithEngineRunning then
+        	SetVehicleEngineOn(veh, true, true)
+	end
         if FuelScript then
             exports[FuelScript]:SetFuel(spawnedVehicle, 100)
         else
@@ -654,7 +666,9 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
     end
     SetEntityHeading(spawnedVehicle, heading)
     SetAsMissionEntity(spawnedVehicle)
-    SetVehicleEngineOn(spawnedVehicle, true, true)
+    if SpawnWithEngineRunning then
+	SetVehicleEngineOn(veh, true, true)
+    end
 end
 
 -- Events
@@ -841,26 +855,25 @@ RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()
             QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
         end
     else
-        QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(hasKey)
-            if hasKey then
-                MenuHouseGarage()
-            else
-                QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
-            end
-        end, CurrentHouseGarage)
+        MenuHouseGarage()
     end
 end)
 
 RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
     HouseGarages = garageConfig
-    for house, _ in pairs(HouseGarages) do
-        RegisterHousePoly(house)
-    end
 end)
 
 RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
     HouseGarages[house] = garageInfo
-    RegisterHousePoly(house)
+end)
+
+RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
+    print("setHouseGarage", house, hasKey)
+    if hasKey then
+        RegisterHousePoly(house)
+    else
+        RemoveHousePoly(house)
+    end
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()

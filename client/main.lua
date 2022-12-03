@@ -837,13 +837,7 @@ RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()
             QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
         end
     else
-        QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(hasKey)
-            if hasKey then
-                MenuHouseGarage()
-            else
-                QBCore.Functions.Notify(Lang:t("error.no_house_keys"))
-            end
-        end, CurrentHouseGarage)
+        MenuHouseGarage()
     end
 end)
 
@@ -854,9 +848,14 @@ RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
     end
 end)
 
+RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
+    if hasKey then
+        RegisterHousePoly(house)
+    end
+end)
+
 RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
     HouseGarages[house] = garageInfo
-    RegisterHousePoly(house)
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()

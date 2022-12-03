@@ -154,7 +154,6 @@ end
 QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    local hasHouseKey = false
 
     if garageType == "public" then        --Public garages only for player cars
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
@@ -167,8 +166,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     elseif garageType == "house" then     --House garages only for player cars that have keys of the house
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
-                hasHouseKey = exports['qb-houses']:hasKey(result[1].license, result[1].citizenid, garage)
-                cb(hasHouseKey)
+                cb(true)
             else
                 cb(false)
             end

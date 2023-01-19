@@ -868,7 +868,6 @@ RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
 end)
 
 RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
-    print("setHouseGarage", house, hasKey)
     if hasKey then
         RegisterHousePoly(house)
     else

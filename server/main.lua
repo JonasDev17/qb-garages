@@ -94,21 +94,23 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                 end
                 for _, vehicle in pairs(result) do
-                    if vehicle.depotprice == 0 then
-                        vehicle.depotprice = DepotPrice
-                    end
+                    if not OutsideVehicles[vehicle.plate] or not DoesEntityExist(OutsideVehicles[vehicle.plate].entity) then        
+                        if vehicle.depotprice == 0 then
+                            vehicle.depotprice = DepotPrice
+                        end
 
-                    vehicle.parkingspot = nil
-                    if vehicle.damage then
-                        vehicle.damage = json.decode(vehicle.damage)
-                    end
+                        vehicle.parkingspot = nil
+                        if vehicle.damage then
+                            vehicle.damage = json.decode(vehicle.damage)
+                        end
 
-                    if category == "air" and ( QBCore.Shared.Vehicles[vehicle.vehicle].category == "helicopters" or QBCore.Shared.Vehicles[vehicle.vehicle].category == "planes" ) then
-                        tosend[#tosend + 1] = vehicle
-                    elseif category == "sea" and QBCore.Shared.Vehicles[vehicle.vehicle].category == "boats" then
-                        tosend[#tosend + 1] = vehicle
-                    elseif category == "car" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "helicopters" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "planes" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "boats" then
-                        tosend[#tosend + 1] = vehicle
+                        if category == "air" and ( QBCore.Shared.Vehicles[vehicle.vehicle].category == "helicopters" or QBCore.Shared.Vehicles[vehicle.vehicle].category == "planes" ) then
+                            tosend[#tosend + 1] = vehicle
+                        elseif category == "sea" and QBCore.Shared.Vehicles[vehicle.vehicle].category == "boats" then
+                            tosend[#tosend + 1] = vehicle
+                        elseif category == "car" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "helicopters" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "planes" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "boats" then
+                            tosend[#tosend + 1] = vehicle
+                        end
                     end
                 end
                 cb(tosend)

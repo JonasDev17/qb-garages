@@ -440,8 +440,14 @@ local function RegisterHousePoly(house)
     }
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
-            CurrentHouseGarage = house
-            exports['qb-core']:DrawText(HouseParkingDrawText, DrawTextPosition)
+            QBCore.Functions.TriggerCallback('qb-houses:server:hasKey', function(haskey)
+                hasAccess = haskey
+                
+                if hasAccess then
+                    CurrentHouseGarage = house
+                    exports['qb-core']:DrawText(HouseParkingDrawText, DrawTextPosition)
+                end
+            end, house)
         else
             exports['qb-core']:HideText()
             if MenuItemId ~= nil then

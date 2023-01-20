@@ -234,6 +234,7 @@ end)
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicles", function(source, cb)
     local ply = QBCore.Functions.GetPlayer(source)
+    if not ply then return end
     local citizenId = ply.PlayerData.citizenid
     if OutsideVehicles[citizenId] and next(OutsideVehicles[citizenId]) then
         cb(OutsideVehicles[citizenId])

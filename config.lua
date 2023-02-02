@@ -32,9 +32,10 @@
         blipcoords = vector3(-972.66, -3005.4, 13.32), -- blip coordinates
         job = 'police', -- optional, everyone can use it when not defined
         -- job = {'police', 'ambulance'), -- optional, multi job support
+        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                                                           <---    NEW
+        jobGarageIdentifier = 'pd1', required when using vehicle spawner, references the JobVehicles down below, make sure this matches what you used in the JobVehicles table          <---    NEW
         gang = 'vagos', -- optional, same as job but for gangs, do not use both
         -- gang = {'vagos', 'gsf'}, -- optional, multi gang support
-        useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                          <---  NEW
         jobVehiclesIndex = 'pd1', -- the corresponding index (JobVehicles)
         vehicleCategories = {'helicopter', 'plane'}, -- categories defined in VehicleCategories
         drawText = 'Hangar', -- the drawtext text, shown when entering the polyzone of that garage
@@ -51,6 +52,11 @@
         }
     },
 ]]
+
+-- NEW
+GlobalParking = true -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
+-- NEW
+
 -- NEW
 SpawnVehicleServerside = false -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
 -- NEW 
@@ -64,7 +70,6 @@ StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if se
 SpawnAtLastParkinglot = false -- spawn the vehicle at hte last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
 FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
-UseLoafHousing = false
 AllowSpawningFromAnywhere = true -- if set to true, the car can be spawned from anywhere inside the zone on the closest parking lot, if set to false you will have to walk up to a parking lot 
 AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
 WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)
@@ -76,7 +81,7 @@ DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
 -- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
 JobVehicles = {
-	['pd1'] = { -- job
+	['pd1'] = { -- jobGarageIdentifier
         label = "Police Vehicles",
         job = 'police',
         -- Grade 0
@@ -148,14 +153,16 @@ RestoreCommandPermissionLevel = 'god' -- sets the permission level for the above
 -- Here you can define which category contains which vehicle class. These categories can then be used in the garage config
 -- All vehicle classes can be found here: https://docs.fivem.net/natives/?_0x29439776AAA00A62
 VehicleCategories = {
-    ['car'] = {0,1,2,3,4,5,6,7,9,10,11,12},
-    ['motorcycle'] = {8},
-    ['boat'] = {14},
-    ['helicopter'] = {15},
-    ['plane'] = {16},
-    ['service'] = {17},
-    ['emergency'] = {18},
-    ['other'] = {13} -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in this category
+    ['car'] = { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12 },
+    ['motorcycle'] = { 8 },
+    ['other'] = { 13 }, -- cycles: 13 - you can move cycles to cars if you want and have anything else like military vehicles in this category
+    ['boat'] = { 14 },
+    ['helicopter'] = { 15 },
+    ['plane'] = { 16 },
+    ['service'] = { 17 },
+    ['emergency'] = { 18 },
+    ['military'] = { 19 },
+    ['commercial'] = { 20 },
     -- you can also create new / delete or update categories, and use them below in the config.
 }
 
@@ -1593,7 +1600,8 @@ Garages = {
         label = 'MRPD Garage',
         type = 'job',
         job = "police",
-        --useVehicleSpawner = true,
+        --useVehicleSpawner = false,
+        --jobGarageIdentifier = 'pd1',
         vehicleCategories = {'emergency'},
         drawText = 'Parking',
         ["ParkingSpots"] = {

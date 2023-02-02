@@ -75,7 +75,7 @@ end
 
 --Menus
 local function PublicGarage(garageName, type)
-    local garage = Garages[garageName]
+    local garage = Config.Garages[garageName]
     local categories = garage.vehicleCategories
     local superCategory = GetSuperCategoryFromCategories(categories)
 
@@ -110,7 +110,7 @@ local function PublicGarage(garageName, type)
 end
 
 local function MenuHouseGarage()
-    local superCategory = GetSuperCategoryFromCategories(HouseGarageCategories)
+    local superCategory = GetSuperCategoryFromCategories(Config.HouseGarageCategories)
     exports['qb-menu']:openMenu({
         {
             header = Lang:t("menu.header.house_garage"),
@@ -123,9 +123,9 @@ local function MenuHouseGarage()
                 event = "qb-garages:client:GarageMenu",
                 args = {
                     garageId = CurrentHouseGarage,
-                    categories = HouseGarageCategories,
-                    header =  HouseGarages[CurrentHouseGarage].label,
-                    garage = HouseGarages[CurrentHouseGarage],
+                    categories = Config.HouseGarageCategories,
+                    header =  Config.HouseGarages[CurrentHouseGarage].label,
+                    garage = Config.HouseGarages[CurrentHouseGarage],
                     superCategory = superCategory,
                     type = 'house'
                 }
@@ -203,7 +203,7 @@ local function Round(num, numDecimalPlaces)
 end
 
 local function ExitAndDeleteVehicle(vehicle)
-    local garage = Garages[CurrentGarage]
+    local garage = Config.Garages[CurrentGarage]
     local exitLocation = nil
     if garage and garage.ExitWarpLocations and next(garage.ExitWarpLocations) then
         _, _, exitLocation = GetClosestLocation(garage.ExitWarpLocations)
@@ -227,7 +227,7 @@ local function GetVehicleCategoriesFromClass(class)
 end
 
 local function IsAuthorizedToAccessGarage(garageName)
-    local garage = Garages[garageName]
+    local garage = Config.Garages[garageName]
     if not garage then return false end
     if garage.type == 'job' then
         if type(garage.job) == "string" and not IsStringNilOrEmpty(garage.job) then
@@ -252,9 +252,9 @@ local function IsAuthorizedToAccessGarage(garageName)
 end
 
 local function CanParkVehicle(veh, garageName, vehLocation)
-    local garage = garageName and Garages[garageName] or (CurrentGarage and Garages[CurrentGarage]  or HouseGarages[CurrentHouseGarage])
+    local garage = garageName and Config.Garages[garageName] or (CurrentGarage and Config.Garages[CurrentGarage]  or Config.HouseGarages[CurrentHouseGarage])
     if not garage then return false end
-    local parkingDistance =  garage.ParkingDistance and  garage.ParkingDistance or ParkingDistance
+    local parkingDistance =  garage.ParkingDistance and  garage.ParkingDistance or Config.ParkingDistance
     local vehClass = GetVehicleClass(veh)
     local vehCategories = GetVehicleCategoriesFromClass(vehClass)
 
@@ -287,8 +287,8 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
 
     local totalFuel = 0
 
-    if FuelScript then
-        totalFuel = exports[FuelScript]:GetFuel(veh)
+    if Config.FuelScript then
+        totalFuel = exports[Config.FuelScript]:GetFuel(veh)
     else
         totalFuel = exports['LegacyFuel']:GetFuel(veh) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
     end
@@ -297,7 +297,7 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
     local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
     if not canPark and not garageName.useVehicleSpawner then return end
     local properties = QBCore.Functions.GetVehicleProperties(veh)
-    TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, StoreParkinglotAccuratly and closestVec3 or nil, StoreDamageAccuratly and GetCarDamage(veh) or nil)
+    TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, Config.StoreParkinglotAccuratly and closestVec3 or nil, Config.StoreDamageAccuratly and GetCarDamage(veh) or nil)
     ExitAndDeleteVehicle(veh)
     if plate then
         OutsideVehicles[plate] = nil
@@ -321,7 +321,7 @@ end
 local function ParkVehicle(veh, garageName, vehLocation)
     local plate = QBCore.Functions.GetPlate(veh)
     local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
-    local garage = Garages[garageName]
+    local garage = Config.Garages[garageName]
     local type = garage and garage.type or 'house'
     local gang = PlayerGang.name;
     local job = PlayerJob.name;
@@ -371,7 +371,7 @@ local function AddRadialImpoundOption()
 end
 
 local function UpdateRadialMenu()
-    local garage = Garages[CurrentGarage]
+    local garage = Config.Garages[CurrentGarage]
     if CurrentGarage ~= nil and garage ~= nil then
         if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
             if IsAuthorizedToAccessGarage(CurrentGarage) then
@@ -401,7 +401,7 @@ local function CreateGarageZone()
     combo:onPlayerInOut(function(isPointInside, l, zone)
         if isPointInside and IsAuthorizedToAccessGarage(zone.name) then
             CurrentGarage = zone.name
-            exports['qb-core']:DrawText(Garages[CurrentGarage]['drawText'], DrawTextPosition)
+            exports['qb-core']:DrawText(Config.Garages[CurrentGarage]['drawText'], Config.DrawTextPosition)
         else
             CurrentGarage = nil
             if MenuItemId ~= nil then
@@ -414,11 +414,11 @@ local function CreateGarageZone()
 end
 
 local function CreateGaragePolyZone(garage)
-    local zone = PolyZone:Create(Garages[garage].Zone.Shape, {
+    local zone = PolyZone:Create(Config.Garages[garage].Zone.Shape, {
         name = garage,
-        minZ = Garages[garage].Zone.minZ,
-        maxZ = Garages[garage].Zone.maxZ,
-        debugPoly = Garages[garage].debug
+        minZ = Config.Garages[garage].Zone.minZ,
+        maxZ = Config.Garages[garage].Zone.maxZ,
+        debugPoly = Config.Garages[garage].debug
     })
     GarageZones[#GarageZones+1] = zone
     --CreateGarageZone(zone, garage)
@@ -438,7 +438,7 @@ end
 
 local function RegisterHousePoly(house)
     if GaragePoly[house] then return end
-    local coords = HouseGarages[house].takeVehicle
+    local coords = Config.HouseGarages[house].takeVehicle
     if not coords or not coords.x then return end
     local zone = CreateGarageBoxZone(house, coords, false)
     GaragePoly[house] = {
@@ -448,7 +448,7 @@ local function RegisterHousePoly(house)
     zone:onPlayerInOut(function(isPointInside)
         if isPointInside then
             CurrentHouseGarage = house
-            exports['qb-core']:DrawText(HouseParkingDrawText, DrawTextPosition)
+            exports['qb-core']:DrawText(Config.HouseParkingDrawText, Config.DrawTextPosition)
         else
             exports['qb-core']:HideText()
             if MenuItemId ~= nil then
@@ -468,8 +468,8 @@ end
 
 function JobMenuGarage(garageName)
     local job = QBCore.Functions.GetPlayerData().job.name
-    local garage = Garages[garageName]
-    local jobGarage = JobVehicles[garage.jobGarageIdentifier]
+    local garage = Config.Garages[garageName]
+    local jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
 
     if not jobGarage then
         if garage.jobGarageIdentifier then
@@ -525,7 +525,7 @@ end
 
 function GetFreeSingleParkingSpot(freeParkingSpots, vehicle)
     local checkAt = nil
-    if StoreParkinglotAccuratly and SpawnAtLastParkinglot and vehicle and vehicle.parkingspot then
+    if Config.StoreParkinglotAccuratly and Config.SpawnAtLastParkinglot and vehicle and vehicle.parkingspot then
         checkAt = vector3(vehicle.parkingspot.x, vehicle.parkingspot.y, vehicle.parkingspot.z) or nil
     end
     local _, _, location = GetClosestLocation(freeParkingSpots, checkAt)
@@ -543,21 +543,21 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
     else
         if next(parkingSpots) ~= nil then
             local freeParkingSpots = GetFreeParkingSpots(parkingSpots)
-            if AllowSpawningFromAnywhere then
+            if Config.AllowSpawningFromAnywhere then
                 location = GetFreeSingleParkingSpot(freeParkingSpots, vehicle)
                 if location == nil then
                     QBCore.Functions.Notify(Lang:t("error.all_occupied"), "error", 4500)
                 return end
                 heading = location.w
             else
-                _, closestDistance, location = GetClosestLocation(SpawnAtFreeParkingSpot and freeParkingSpots or parkingSpots)
+                _, closestDistance, location = GetClosestLocation(Config.SpawnAtFreeParkingSpot and freeParkingSpots or parkingSpots)
                 local plyCoords = GetEntityCoords(PlayerPedId(), 0)
                 local spot = vector3(location.x, location.y, location.z)
-                if SpawnAtLastParkinglot and vehicle and vehicle.parkingspot then
+                if Config.SpawnAtLastParkinglot and vehicle and vehicle.parkingspot then
                     spot = vehicle.parkingspot
                 end
                 local dist = #(plyCoords - vector3(spot.x, spot.y, spot.z))
-                if SpawnAtLastParkinglot and dist >= spawnDistance then
+                if Config.SpawnAtLastParkinglot and dist >= spawnDistance then
                     QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
                     return
                 elseif closestDistance >= spawnDistance then
@@ -577,13 +577,13 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
             local forward = GetEntityForwardVector(PlayerPedId())
             local x, y, z = table.unpack(ped + forward * 3)
             location = vector3(x, y, z)
-            if VehicleHeading == 'forward' then
+            if Config.VehicleHeading == 'forward' then
                 heading = pedheadin
-            elseif VehicleHeading == 'driverside' then
+            elseif Config.VehicleHeading == 'driverside' then
                 heading = pedheadin + 90
-            elseif VehicleHeading == 'hood' then
+            elseif Config.VehicleHeading == 'hood' then
                 heading = pedheadin + 180
-            elseif VehicleHeading == 'passengerside' then
+            elseif Config.VehicleHeading == 'passengerside' then
                 heading = pedheadin + 270
             end
         end
@@ -593,8 +593,8 @@ end
 
 local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
     local plate = QBCore.Functions.GetPlate(veh)
-    if FuelScript then
-        exports[FuelScript]:SetFuel(veh, 100)
+    if Config.FuelScript then
+        exports[Config.FuelScript]:SetFuel(veh, 100)
     else
         exports['LegacyFuel']:SetFuel(veh, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
     end
@@ -604,7 +604,7 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
     ClearMenu()
     SetEntityHeading(veh, heading)
     
-    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle then
+    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle then
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
     end
     
@@ -615,16 +615,16 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
 end
 
 local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
-    local garage = Garages[CurrentGarage]
-    if SpawnVehicleServerside then
+    local garage = Config.Garages[CurrentGarage]
+    if Config.SpawnVehicleServerside then
         QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
             local veh = NetToVeh(netId)
             UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
-        end,vehicleModel, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+        end,vehicleModel, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
             UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
-        end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+        end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
     end
 end
 
@@ -636,8 +636,8 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
             OutsideVehicles[plate] = spawnedVehicle
             TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
         end
-        if FuelScript then
-            exports[FuelScript]:SetFuel(spawnedVehicle, 100)
+        if Config.FuelScript then
+            exports[Config.FuelScript]:SetFuel(spawnedVehicle, 100)
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, 100) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
@@ -648,8 +648,8 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
             OutsideVehicles[plate] = spawnedVehicle
             TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
         end
-        if FuelScript then
-            exports[FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
+        if Config.FuelScript then
+            exports[Config.FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
@@ -763,14 +763,14 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local vehicleModel = data.vehicleModel
     local vehicle = data.vehicle
     local garage = data.garage
-    local spawnDistance = garage.SpawnDistance and garage.SpawnDistance or SpawnDistance
+    local spawnDistance = garage.SpawnDistance and garage.SpawnDistance or Config.SpawnDistance
     local parkingSpots = garage.ParkingSpots or {}
 
     local location, heading = GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, spawnDistance)
     if garage.useVehicleSpawner then
         SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
     else
-        if SpawnVehicleServerside then
+        if Config.SpawnVehicleServerside then
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
                 local veh = NetToVeh(netId)
                 if not veh or not netId then
@@ -778,7 +778,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 end
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then cb(veh) end
-            end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or WarpPlayerIntoVehicle)
+            end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
         else
             QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
@@ -798,7 +798,7 @@ end)
 
 RegisterNetEvent('qb-garages:client:OpenMenu', function()
     if CurrentGarage then
-        local garage = Garages[CurrentGarage]
+        local garage = Config.Garages[CurrentGarage]
         local type = garage.type
         if type == 'job' and garage.useVehicleSpawner then
             JobMenuGarage(CurrentGarage)
@@ -852,7 +852,7 @@ end)
 
 RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
     if hasKey then
-        if HouseGarages[house] and HouseGarages[house].takeVehicle.x then
+        if Config.HouseGarages[house] and Config.HouseGarages[house].takeVehicle.x then
             RegisterHousePoly(house)
         end
     else
@@ -861,11 +861,11 @@ RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
 end)
 
 RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
-    HouseGarages = garageConfig
+    Config.HouseGarages = garageConfig
 end)
 
 RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
-    HouseGarages[house] = garageInfo
+    Config.HouseGarages[house] = garageInfo
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
@@ -910,7 +910,7 @@ end)
 -- Threads
 
 CreateThread(function()
-    for _, garage in pairs(Garages) do
+    for _, garage in pairs(Config.Garages) do
         if garage.showBlip then
             local Garage = AddBlipForCoord(garage.blipcoords.x, garage.blipcoords.y, garage.blipcoords.z)
             local blipColor = garage.blipColor ~= nil and garage.blipColor or 3
@@ -920,14 +920,14 @@ CreateThread(function()
             SetBlipAsShortRange(Garage, true)
             SetBlipColour(Garage, blipColor)
             BeginTextCommandSetBlipName("STRING")
-            AddTextComponentSubstringPlayerName(GarageNameAsBlipName and garage.label or garage.blipName)
+            AddTextComponentSubstringPlayerName(Config.GarageNameAsBlipName and garage.label or garage.blipName)
             EndTextCommandSetBlipName(Garage)
         end
     end
 end)
 
 CreateThread(function()
-    for garageName, garage in pairs(Garages) do
+    for garageName, garage in pairs(Config.Garages) do
         if(garage.type == 'public' or garage.type == 'depot' or garage.type == 'job' or garage.type == 'gang') then
             CreateGaragePolyZone(garageName)
         end
@@ -937,14 +937,14 @@ end)
 
 CreateThread(function()
     local debug = false
-    for _, garage in pairs(Garages) do
+    for _, garage in pairs(Config.Garages) do
         if garage.debug then
             debug = true
             break
         end
     end
     while debug do
-        for _, garage in pairs(Garages) do
+        for _, garage in pairs(Config.Garages) do
             local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
             if next(parkingSpots) ~= nil and garage.debug then
                 for _, location in pairs(parkingSpots) do
@@ -957,7 +957,7 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-    for category, classes  in pairs(VehicleCategories) do
+    for category, classes  in pairs(Config.VehicleCategories) do
         for _, class  in pairs(classes) do
             VehicleClassMap[class] = VehicleClassMap[class] or {}
             VehicleClassMap[class][#VehicleClassMap[class]+1] = category

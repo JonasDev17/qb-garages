@@ -54,7 +54,7 @@
 ]]
 
 -- NEW
-GlobalParking = true -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
+GlobalParking = false -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
 -- NEW
 
 -- NEW

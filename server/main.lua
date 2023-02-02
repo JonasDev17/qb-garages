@@ -43,7 +43,7 @@ end)
 
 QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, warp)
     local veh = QBCore.Functions.SpawnVehicle(source, vehInfo.vehicle, coords, warp)
-
+    
     if not veh or not NetworkGetNetworkIdFromEntity(veh) then
         print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
     end
@@ -86,7 +86,6 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if garageType == "public" then        --Public garages give player cars in the garage only
-        print(garage)
         GetVehicles(pData.PlayerData.citizenid, garage, 1, function(result)
             local vehs = {}
             if result[1] then
@@ -108,7 +107,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
             end
         end)
     elseif garageType == "depot" then    --Depot give player cars that are not in garage only
-         GetDepotVehicles(pData.PlayerData.citizenid, 0, garage, function(result)
+        GetDepotVehicles(pData.PlayerData.citizenid, 0, garage, function(result)
             local tosend = {}
             if result[1] then
                 if type(category) == 'table' then
@@ -169,20 +168,11 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
     end
 end)
 
-if UseEnc0dedPersistenVehicles then
-    QBCore.Functions.CreateCallback("qb-garage:server:checkIsSpawned", function (plate)
-        local data = exports['persistent-vehicles']:GetVehicleData(plate, {'pos'})
-        return data == false and data or true
-    end)
-end
-
 
 
 QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
-    local hasHouseKey = false
-
     if garageType == "public" then        --Public garages only for player cars
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
             if result[1] then
@@ -203,17 +193,6 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
          MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
             if result[1] then
                 --Check if found owner is part of the gang
-                -- local resultplayer = MySQL.single.await('SELECT * FROM players WHERE citizenid = ?', { result[1].citizenid })
-                -- if resultplayer then
-                --     local playergang = json.decode(resultplayer.gang)
-                --     if playergang.name == gang then
-                --         cb(true)
-                --     else
-                --         cb(false)
-                --     end
-                -- else
-                --     cb(false)
-                -- end
                 local Player = QBCore.Functions.GetPlayer(source)
                 local playerGang = Player.PlayerData.gang.name
                 cb(playerGang == gang)
@@ -274,7 +253,6 @@ end)
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicles", function(source, cb)
     local ply = QBCore.Functions.GetPlayer(source)
-    if not ply then return end
     local citizenId = ply.PlayerData.citizenid
     if OutsideVehicles[citizenId] and next(OutsideVehicles[citizenId]) then
         cb(OutsideVehicles[citizenId])
@@ -300,14 +278,20 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
 
     
     local vehicle = data.vehicle
-    local depotPrice = vehicle.depotprice ~= 0 and vehicle.depotprice or DepotPrice
-    if cashBalance >= depotPrice then
-        Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
-    elseif bankBalance >= depotPrice then
-        Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
-    else
-        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
-    end
+
+     MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
+        if result[1] then
+            local vehicle = result[1]
+            local depotPrice = vehicle.depotprice ~= 0 and vehicle.depotprice or DepotPrice
+            if cashBalance >= depotPrice then
+                Player.Functions.RemoveMoney("cash", depotPrice, "paid-depot")
+            elseif bankBalance >= depotPrice then
+                Player.Functions.RemoveMoney("bank", depotPrice, "paid-depot")
+            else
+                TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_enough"), 'error')
+            end
+        end
+    end)
 end)
 
 

@@ -114,7 +114,7 @@ local garageName = 'pdgarage'
         distance = 3
     })
 ```
-### improved phone tracking
+### improved phone tracking (DEPRECATED)
 Replace:
 
 ```
@@ -145,17 +145,6 @@ RegisterNUICallback('track-vehicle', function(data, cb)
         QBCore.Functions.Notify("This vehicle cannot be located", "error")
     end
     cb("ok")
-end)
-```
-
-## loaf_housing
-
-Add this to your loaf_housing/client/functions.lua all the way at the bottom:
-```
-exports('HasHouseKey', function(propertyId)
-    local stringId = tostring(propertyId)
-    local data = cache.ownedHouses[stringId] or cache.houses[stringId]
-    return exports['loaf_keysystem']:HasKey(GetKeyName(propertyId, data.id))
 end)
 ```
 

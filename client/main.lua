@@ -222,7 +222,7 @@ local function ExitAndDeleteVehicle(vehicle)
     QBCore.Functions.DeleteVehicle(vehicle)
 end
 
-local function GetVehicleCategoryFromClass(class)
+local function GetVehicleCategoriesFromClass(class)
     return VehicleClassMap[class]
 end
 
@@ -256,13 +256,13 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     if not garage then return false end
     local parkingDistance =  garage.ParkingDistance and  garage.ParkingDistance or ParkingDistance
     local vehClass = GetVehicleClass(veh)
-    local vehCategory = GetVehicleCategoryFromClass(vehClass)
+    local vehCategories = GetVehicleCategoriesFromClass(vehClass)
 
     if GetPedInVehicleSeat(veh, -1) ~= PlayerPedId() then
         return false
     end
 
-    if garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategory) then
+    if garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategories) then
         QBCore.Functions.Notify(Lang:t("error.not_correct_type"), "error", 4500)
         return false
     end
@@ -698,6 +698,10 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                 local vehData = QBCore.Shared.Vehicles[v.vehicle]
                 local vname = 'Vehicle does not exist'
                 if vehData then
+                    local vehCategories = GetVehicleCategoriesFromClass(GetVehicleClassFromName(v.vehicle))
+                    if not TableContains(garage.vehicleCategories, vehCategories) then
+                        goto continue
+                    end
                     vname = vehData.name
                 end
 
@@ -739,6 +743,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                         }
                     }
                 end
+                ::continue::
             end
 
             MenuGarageOptions[#MenuGarageOptions+1] = {
@@ -954,7 +959,8 @@ end)
 CreateThread(function()
     for category, classes  in pairs(VehicleCategories) do
         for _, class  in pairs(classes) do
-            VehicleClassMap[class] = category
+            VehicleClassMap[class] = VehicleClassMap[class] or {}
+            VehicleClassMap[class][#VehicleClassMap[class]+1] = category
         end
     end
 end)

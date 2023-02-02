@@ -56,12 +56,12 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
     cb(netId, vehProps)
 end)
 
-local function GetVehicles(citizenid, garage, state, cb)
+local function GetVehicles(citizenid, garageName, state, cb)
     local result = nil
     if not GlobalParking then
         result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = @citizenid AND garage = @garage AND state = @state', {
             ['@citizenid'] = citizenid,
-            ['@garage'] = garage,
+            ['@garage'] = garageName,
             ['@state'] = state
         })
     else

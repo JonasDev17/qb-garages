@@ -82,6 +82,16 @@ local function GetDepotVehicles(citizenid, state, garage, cb)
     cb(result)
 end
 
+local function GetVehicleByPlate(plate)
+    local vehicles = GetAllVehicles() -- Get all vehicles known to the server
+    for _, vehicle in pairs(vehicles) do
+        local pl = GetVehicleNumberPlateText(vehicle)
+        if pl == plate then
+            return vehicle
+        end
+    end
+end
+
 QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, garageType, category)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
@@ -120,6 +130,9 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                 end
                 for _, vehicle in pairs(result) do
+                    if GetVehicleByPlate(vehicle.plate) then
+                        goto skip
+                    end
                     if vehicle.depotprice == 0 then
                         vehicle.depotprice = Config.DepotPrice
                     end
@@ -136,6 +149,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     elseif category == "car" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "helicopters" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "planes" and QBCore.Shared.Vehicles[vehicle.vehicle].category ~= "boats" then
                         tosend[#tosend + 1] = vehicle
                     end
+                    ::skip::
                 end
                 cb(tosend)
             else

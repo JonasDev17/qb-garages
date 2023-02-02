@@ -73,6 +73,16 @@ function SetAsMissionEntity(vehicle)
     SetNetworkIdCanMigrate(id, true)
 end
 
+function GetVehicleByPlate(plate)
+    local vehicles = QBCore.Functions.GetVehicles()
+    for _, v in pairs(vehicles) do
+        if QBCore.Functions.GetPlate(v) == plate then
+            return v
+        end
+    end
+    return nil
+end
+
 --Menus
 local function PublicGarage(garageName, type)
     local garage = Config.Garages[garageName]
@@ -829,7 +839,8 @@ end)
 
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
-    local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
+    -- check whether the vehicle is already spawned
+    local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate]) or GetVehicleByPlate(vehicle.plate) ~= nil
     if not vehExists then
         local PlayerData = QBCore.Functions.GetPlayerData()
         if PlayerData.money['cash'] >= vehicle.depotprice or PlayerData.money['bank'] >= vehicle.depotprice then

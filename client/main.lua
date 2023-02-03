@@ -367,14 +367,14 @@ local function AddRadialParkingOption()
 end
 
 local function AddRadialImpoundOption()
-    MenuItemId = exports['qb-radialmenu']:AddOption({
+    MenuItemId1 = exports['qb-radialmenu']:AddOption({
         id = 'open_garage_menu',
         title = 'Open Impound Lot',
         icon = 'warehouse',
         type = 'client',
         event = 'qb-garages:client:OpenMenu',
         shouldClose = true
-    }, MenuItemId)
+    }, MenuItemId1)
 end
 
 local function UpdateRadialMenu()

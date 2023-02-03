@@ -1810,6 +1810,7 @@ Config.Garages = {
     },
 }
 
-
-
 Config.HouseGarages = {} -- DO NOT TOUCH!
+
+Garages = Config.Garages
+HouseGarages = Config.HouseGarages

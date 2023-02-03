@@ -158,7 +158,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         end)
     else                            --House give all cars in the garage, Job and Gang depend of config
         local shared = ''
-        if not TableContains(Config.SharedJobGarages, garage) and garageType ~= "house" then
+        if not TableContains(Config.SharedJobGarages, garage) or (not Config.SharedHouseGarage and garageType == "house") then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
          MySQL.query('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)

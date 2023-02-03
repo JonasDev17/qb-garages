@@ -53,6 +53,11 @@ Config = Config or {}
         }
     },
 ]]
+
+-- NEW ---
+Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
+-- NEW ---
+
 -- NEW ---
 Config.AllowParkingAnyonesVehicle = false -- Allow anyones vehicle to be stored in the garage, if false, only vehicles you own can be stored in the garage (supports only public garages)
 Config.AllowParkingFromOutsideVehicle = true -- Allow parking from outside the vehicle, if false, you have to be inside the vehicle to park it

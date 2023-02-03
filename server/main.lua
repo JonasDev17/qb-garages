@@ -188,7 +188,11 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(sour
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if garageType == "public" then        --Public garages only for player cars
-         MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
+        local addSQLForAllowParkingAnyonesVehicle = ""
+        if not Config.AllowParkingAnyonesVehicle then
+            addSQLForAllowParkingAnyonesVehicle = " AND citizenid = '"..pData.PlayerData.citizenid.."' "
+        end
+         MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? ' .. addSQLForAllowParkingAnyonesVehicle,{plate}, function(result)
             if result[1] then
                 cb(true)
             else

@@ -53,6 +53,11 @@ Config = Config or {}
         }
     },
 ]]
+-- NEW ---
+Config.AllowParkingAnyonesVehicle = false -- Allow anyones vehicle to be stored in the garage, if false, only vehicles you own can be stored in the garage (supports only public garages)
+Config.AllowParkingFromOutsideVehicle = true -- Allow parking from outside the vehicle, if false, you have to be inside the vehicle to park it
+Config.VehicleParkDistance = 5.0 -- Distance from the player to the vehicle to park it
+-- NEW --
 
 -- NEW
 Config.GlobalParking = false -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in

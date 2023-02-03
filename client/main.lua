@@ -881,11 +881,13 @@ RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
         v.vehicleCategories = Config.HouseGarageCategories
     end
     Config.HouseGarages = garageConfig
+    HouseGarages = garageConfig
 end)
 
 RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
     garageInfo.vehicleCategories = Config.HouseGarageCategories
     Config.HouseGarages[house] = garageInfo
+    HouseGarages[house] = garageInfo
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()

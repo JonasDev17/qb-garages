@@ -269,7 +269,7 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     local vehClass = GetVehicleClass(veh)
     local vehCategories = GetVehicleCategoriesFromClass(vehClass)
 
-    if garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategories) then
+    if garage and garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategories) then
         QBCore.Functions.Notify(Lang:t("error.not_correct_type"), "error", 4500)
         return false
     end
@@ -419,9 +419,9 @@ local function CreateGarageZone()
                 exports['qb-radialmenu']:RemoveOption(MenuItemId1)
                 MenuItemId1 = nil
             end
-            if MenuItemId1 ~= nil then
-                exports['qb-radialmenu']:RemoveOption(MenuItemId)
-                MenuItemId1 = nil
+            if MenuItemId2 ~= nil then
+                exports['qb-radialmenu']:RemoveOption(MenuItemId2)
+                MenuItemId2 = nil
             end
             exports['qb-core']:HideText()
         end
@@ -718,7 +718,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                 local vname = 'Vehicle does not exist'
                 if vehData then
                     local vehCategories = GetVehicleCategoriesFromClass(GetVehicleClassFromName(v.vehicle))
-                    if not TableContains(garage.vehicleCategories, vehCategories) then
+                    if garage and garage.vehicleCategories and not TableContains(garage.vehicleCategories, vehCategories) then
                         goto continue
                     end
                     vname = vehData.name
@@ -887,10 +887,14 @@ RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
 end)
 
 RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
+    for _,v in pairs(garageConfig) do
+        v.vehicleCategories = Config.HouseGarageCategories
+    end
     Config.HouseGarages = garageConfig
 end)
 
 RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
+    garageInfo.vehicleCategories = Config.HouseGarageCategories
     Config.HouseGarages[house] = garageInfo
 end)
 

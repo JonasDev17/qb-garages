@@ -84,6 +84,16 @@ function GetVehicleByPlate(plate)
     return nil
 end
 
+function RemoveRadialOptions()
+    if MenuItemId1 ~= nil then
+        exports['qb-radialmenu']:RemoveOption(MenuItemId1)
+        MenuItemId1 = nil
+    end
+    if MenuItemId2 ~= nil then
+        exports['qb-radialmenu']:RemoveOption(MenuItemId2)
+        MenuItemId2 = nil
+    end
+end
 --Menus
 local function PublicGarage(garageName, type)
     local garage = Config.Garages[garageName]
@@ -231,6 +241,7 @@ local function ExitAndDeleteVehicle(vehicle)
     SetVehicleDoorsLocked(vehicle)
     Wait(1500)
     QBCore.Functions.DeleteVehicle(vehicle)
+    RemoveRadialOptions()
 end
 
 local function GetVehicleCategoriesFromClass(class)
@@ -396,14 +407,7 @@ local function UpdateRadialMenu()
     elseif CurrentHouseGarage ~= nil then
        AddRadialParkingOption()
     else
-        if MenuItemId1 ~= nil then
-            exports['qb-radialmenu']:RemoveOption(MenuItemId1)
-            MenuItemId1 = nil
-        end
-        if MenuItemId2 ~= nil then
-            exports['qb-radialmenu']:RemoveOption(MenuItemId2)
-            MenuItemId2 = nil
-        end
+        RemoveRadialOptions()
     end
 end
 
@@ -415,14 +419,7 @@ local function CreateGarageZone()
             exports['qb-core']:DrawText(Config.Garages[CurrentGarage]['drawText'], Config.DrawTextPosition)
         else
             CurrentGarage = nil
-            if MenuItemId1 ~= nil then
-                exports['qb-radialmenu']:RemoveOption(MenuItemId1)
-                MenuItemId1 = nil
-            end
-            if MenuItemId2 ~= nil then
-                exports['qb-radialmenu']:RemoveOption(MenuItemId2)
-                MenuItemId2 = nil
-            end
+            RemoveRadialOptions()
             exports['qb-core']:HideText()
         end
     end)
@@ -466,14 +463,7 @@ local function RegisterHousePoly(house)
             exports['qb-core']:DrawText(Config.HouseParkingDrawText, Config.DrawTextPosition)
         else
             exports['qb-core']:HideText()
-            if MenuItemId1 ~= nil then
-                exports['qb-radialmenu']:RemoveOption(MenuItemId1)
-                MenuItemId1 = nil
-            end
-            if MenuItemId2 ~= nil then
-                exports['qb-radialmenu']:RemoveOption(MenuItemId2)
-                MenuItemId2 = nil
-            end
+            RemoveRadialOptions()
             CurrentHouseGarage = nil
         end
     end)
@@ -919,14 +909,7 @@ end)
 
 AddEventHandler('onResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
-        if MenuItemId1 ~= nil then
-            exports['qb-radialmenu']:RemoveOption(MenuItemId1)
-            MenuItemId1 = nil
-        end
-        if MenuItemId2 ~= nil then
-            exports['qb-radialmenu']:RemoveOption(MenuItemId2)
-            MenuItemId2 = nil
-        end
+        RemoveRadialOptions()
         for _,v in pairs(GarageZones) do
             exports['qb-target']:RemoveZone(v.name)
         end

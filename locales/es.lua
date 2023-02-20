@@ -1,64 +1,60 @@
 local Translations = {
     error = {
-        no_vehicles = "No tienes ningún vehículo en este garaje!",
-        not_impound = "Tu Vehiculo no está en el depósito",
-        not_owned = "No eres dueño del vehiculo",
-        not_correct_type = "No puede almacenar este tipo de vehículo aquí.",
-        not_enough = "Dinero insuficiente",
+        no_vehicles = "¡No hay vehículos en esta ubicación!",
+        not_impound = "Tu vehículo no está en embargo",
+        not_owned = "Este vehículo no puede ser estacionado",
+        not_correct_type = "No puedes guardar este tipo de vehículo aquí",
+        not_enough = "No tienes suficiente dinero",
         no_garage = "Ninguno",
-        vehicle_occupied = "No puedes almacenar este vehículo ya que no está vacío.",
+        too_far_away = "Muy lejos de zona de estacionamiento",
+        occupied = "Espacio de estacionamiento ya está ocupado",
+        all_occupied = "Todos los espacios de estacionamiento están ocupados",
+        no_vehicle = "No hay vehículo para estacionar",
+        no_house_keys = "No tienes las llaves para este garaje de casa",
     },
     success = {
-        vehicle_parked = "vehículo estacionado",
+        vehicle_parked = "Vehículo estacionado",
     },
     menu = {
         header = {
-            house_car = "Garage de casa %{value}",
-            public_car = "Garage Público  %{value}",
-            public_sea = "Boathouse Público  %{value}",
-            public_air = "Hangar Público  %{value}",
-            job_car = "Job Garage %{value}",
-            job_sea = "Job Boathouse %{value}",
-            job_air = "Job Hangar %{value}",
-            gang_car = "Gang Garage %{value}",
-            gang_sea = "Gang Boathouse %{value}",
-            gang_air = "Gang Hangar %{value}",
+            house_garage = "Garaje de casa",
+            house_car = "Garaje de casa %{value}",
+            public_car = "Garaje público %{value}",
+            public_sea = "Marina pública %{value}",
+            public_air = "Hangar público %{value}",
+            job_car = "Garaje de trabajo %{value}",
+            job_sea = "Marina de trabajo %{value}",
+            job_air = "Hangar de trabajo %{value}",
+            gang_car = "Garaje de pandilla %{value}",
+            gang_sea = "Marina de pandilla %{value}",
+            gang_air = "Hangar de pandilla %{value}",
             depot_car = "Deposito %{value}",
             depot_sea = "Deposito %{value}",
             depot_air = "Deposito %{value}",
-            vehicles = "Vehiculos Disponible ",
+            vehicles = "Vehículos disponibles",
             depot = "%{value} [ $%{value2} ]",
             garage = "%{value} [ %{value2} ]",
         },
         leave = {
-            car = "⬅ Abandonar Garage",
-            sea = "⬅ Abandonar Boathouse",
-            air = "⬅ Abandonar Hangar",
+            car = "⬅ Salir garaje",
+            sea = "⬅ Salir marina",
+            air = "⬅ Salir hangar",
+            job = "⬅ Salir garaje"
         },
         text = {
-            vehicles = "Ver vehículos almacenados!",
-            depot = "Placa: %{value}<br>Gasolina: %{value2} | Motor: %{value3} | Carroceria: %{value4}",
-            garage = "Estado: %{value}<br>Gasolina: %{value2} | Motor: %{value3} | Carroceria: %{value4}",
+            vehicles = "¡Ver vehículos estacionados!",
+            depot = "Placa: %{value}<br>Gasolina: %{value2} | Motor: %{value3} | Cuerpo: %{value4}",
+            garage = "Estado: %{value}<br>Gasolina: %{value2} | Motor: %{value3} | Cuerpo: %{value4}",
         }
     },
     status = {
         out = "Afuera",
-        garaged = "en garaje",
-        impound = "incautado por la policía",
+        garaged = "En garaje",
+        impound = "Embargado",
     },
-    info = {
-        car_e = "[E] Garage",
-        sea_e = "[E] Boathouse",
-        air_e = "[E] Hangar",
-        park_e = "[E] Almacenar vehículo",
-        house_garage = "garaje de la casa",
-    }
 }
 
-if GetConvar('qb_locale', 'en') == 'es' then
-    Lang = Locale:new({
-        phrases = Translations,
-        warnOnMissing = true,
-        fallbackLang = Lang,
-    })
-end
+Lang = Lang or Locale:new({
+    phrases = Translations,
+    warnOnMissing = true
+})

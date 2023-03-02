@@ -69,22 +69,22 @@ Config.GlobalParking = false -- if true, you can access your cars from any garag
 -- NEW
 
 -- NEW
-Config.SpawnVehiclesServerside = false -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
+Config.SpawnVehiclesServerside = true -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
 -- NEW 
 
 -- NEW -- Only relevant if AllowSpawningFromAnywhere = false
 Config.SpawnAtFreeParkingSpot = false -- Will spawn at the closest free parking spot if you walk up to a occupied parking spot (basically you have to walk up close to a parking lot but it does not matter if there is a vehicle blocking the spawn as it will spawn at the closest free parking spot)
 -- NEW --
 
-Config.StoreDamageAccuratly = false -- Do not use, if on latest qb-core, if set to true, make sure to apply / run patch1.sql
+Config.StoreDamageAccuratly = true -- Do not use, if on latest qb-core, if set to true, make sure to apply / run patch1.sql
 Config.StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 Config.SpawnAtLastParkinglot = false -- spawn the vehicle at the last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
 Config.GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
-Config.FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
+Config.FuelScript = 'ps-fuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
 Config.AllowSpawningFromAnywhere = true -- if set to true, the car can be spawned from anywhere inside the zone on the closest parking lot, if set to false you will have to walk up to a parking lot 
 Config.AutoRespawn = true --True == auto respawn cars that are outside into your garage on script restart, false == does not put them into your garage and players have to go to the impound
-Config.WarpPlayerIntoVehicle = false -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)
-Config.HouseParkingDrawText = 'Parking' -- text when driving on to the HOUSE parking lot
+Config.WarpPlayerIntoVehicle = true -- True == Will Warp Player Into their vehicle after pulling it out of garage. False It will spawn on the parking lot / in front of them  (Global, can be overriden by each garage)
+Config.HouseParkingDrawText = 'Estacionar' -- text when driving on to the HOUSE parking lot
 Config.ParkingDistance = 2.0 -- Distance to the parking lot when trying to park the vehicle  (Global, can be overriden by each garage)
 Config.SpawnDistance = 4.5 -- The maximum distance you can be from a parking spot, to spawn a car (Global, can be overriden by each garage)
 Config.DepotPrice = 60.0 -- The price to take out a despawned vehicle from impound.
@@ -1319,34 +1319,55 @@ Config.Garages = {
     ['police'] = {
         ['Zone'] = {
             ['Shape'] = { --polygon that surrounds the parking area
-                vector2(427.85052490234, -1017.9293212891),
-                vector2(428.14498901367, -1030.7161865234),
-                vector2(459.05325317383, -1026.896484375),
-                vector2(459.12948608398, -1012.3634033203),
-                vector2(449.7737121582, -1012.4426879883),
-                vector2(449.38006591797, -1011.4791870117),
-                vector2(434.09115600586, -1011.4317016602),
-                vector2(434.05737304688, -1013.9020996094),
-                vector2(427.95745849609, -1013.9678344727)
+                vector2(425.47, -1030.8),
+                vector2(424.97, -1024.81),
+                vector2(446.38, -1021.13),
+                vector2(448.41, -1027.88),
             },
-            ['minZ'] = 28.10,  -- min height of the parking zone
-            ['maxZ'] = 30.97,  -- max height of the parking zone
+            ['minZ'] = 27,  -- min height of the parking zone
+            ['maxZ'] = 30.5,  -- max height of the parking zone
         },
         label = "Police",
         showBlip = false,
         blipName = "Police",
         blipNumber = 357,
         type = 'job',                --public, job, gang, depot
-        vehicleCategories = {'emergency'},
+        vehicleCategories = {'car', 'motorcycle', 'other'},
         drawText = 'Parking',              --car, air, sea
         job = "police",
-        debug = false,
+        debug = true,
         ['ParkingSpots'] = {
-            vector4(449.57, -1024.85, 28.06, 5.95),
-            vector4(446.04, -1025.62, 28.14, 5.18),
-            vector4(442.53, -1025.66, 28.2, 6.39),
-            vector4(438.8, -1025.99, 28.27, 7.28),
-            vector4(435.41, -1026.74, 28.35, 3.84),
+            vector4(427.09, -1026.96, 28.59, 6.26),
+            vector4(430.98, -1026.3, 28.5, 8.3),
+            vector4(434.65, -1025.9, 28.44, 7.04),
+            vector4(438.42, -1025.1, 28.36, 5.88),
+            vector4(442.27, -1024.8, 28.28, 6.03),
+            vector4(445.84, -1024.79, 28.23, 10.71),
+        }
+    },
+    ['policegarage1'] = {
+        ['Zone'] = {
+            ['Shape'] = { --polygon that surrounds the parking area
+                vector2(460.15, -1021.34),
+                vector2(460.07, -1012.97),
+                vector2(466.13, -1012.97),
+                vector2(466.13, -1021.34)
+            },
+            ['minZ'] = 27,  -- min height of the parking zone
+            ['maxZ'] = 30.5,  -- max height of the parking zone
+        },
+        label = "Police Garage 1",
+        showBlip = false,
+        blipName = "Police",
+        blipNumber = 357,
+        type = 'job',                --public, job, gang, depot
+        vehicleCategories = {'car', 'motorcycle', 'other'},
+        drawText = 'Parking',              --car, air, sea
+        job = "police",
+        debug = true,
+        ['ParkingSpots'] = {
+            vector4(463.42, -1019.7, 27.7, 89.29),
+            vector4(463.45, -1014.89, 27.68, 88.83)
         }
     },
     ['policevinewood'] = {

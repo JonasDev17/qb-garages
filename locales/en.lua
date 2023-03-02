@@ -1,6 +1,6 @@
 local Translations = {
     error = {
-        no_vehicles = "There is no vehicles in this location!",
+        no_vehicles = "There are no vehicles in this location!",
         not_impound = "Your vehicle is not in impound",
         not_owned = "This vehicle can't be stored",
         not_correct_type = "You can't store this type of vehicle here",
@@ -11,9 +11,18 @@ local Translations = {
         all_occupied = "All parking spots are occupied",
         no_vehicle = "There is no vehicle to park",
         no_house_keys = "You don't have the keys for this house garage",
+        job_not_defined = 'Job not defined on garage',
+        gang_not_defined = 'Gang not defined on garage',
+        job_garage_not_configured = 'Job garage with id $%{value} not configured',
+        jobgarageidentifier_not_configured = "'jobGarageIdentifier' not defined on job garage $%{value}",
     },
     success = {
         vehicle_parked = "Vehicle Stored",
+    },
+    info = {
+        park_vehicle = "Park Vehicle",
+        open_garage = "Open Garage",
+        open_impound_lot = "Open Impound Lot",
     },
     menu = {
         header = {

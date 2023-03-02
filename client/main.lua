@@ -257,7 +257,7 @@ local function IsAuthorizedToAccessGarage(garageName)
         elseif type(garage.job) == "table" then
             return TableContains(garage.job, PlayerJob.name)
         else
-            QBCore.Functions.Notify('job not defined on garage', 'error', 7500)
+            QBCore.Functions.Notify(Lang:t('error.job_not_defined'), 'error', 7500)
             return false
         end
     elseif garage.type == 'gang' then 
@@ -266,7 +266,7 @@ local function IsAuthorizedToAccessGarage(garageName)
         elseif type(garage.gang) =="table" then
             return TableContains(garage.gang, PlayerGang.name)
         else
-            QBCore.Functions.Notify('gang not defined on garage', 'error', 7500)
+            QBCore.Functions.Notify(Lang:t('error.gang_not_defined'), 'error', 7500)
             return false
         end
     end
@@ -360,7 +360,7 @@ local function AddRadialParkingOption()
     if (veh and dist <= Config.VehicleParkDistance and Config.AllowParkingFromOutsideVehicle) or IsPedInAnyVehicle(ped) then
         MenuItemId1 = exports['qb-radialmenu']:AddOption({
             id = 'put_up_vehicle',
-            title = 'Park Vehicle',
+            title = Lang:t('info.park_vehicle'),
             icon = 'square-parking',
             type = 'client',
             event = 'qb-garages:client:ParkVehicle',
@@ -369,7 +369,7 @@ local function AddRadialParkingOption()
     end
     MenuItemId2 = exports['qb-radialmenu']:AddOption({
         id = 'open_garage_menu',
-        title = 'Open Garage',
+        title = Lang:t('info.open_garage'),
         icon = 'warehouse',
         type = 'client',
         event = 'qb-garages:client:OpenMenu',
@@ -380,7 +380,7 @@ end
 local function AddRadialImpoundOption()
     MenuItemId1 = exports['qb-radialmenu']:AddOption({
         id = 'open_garage_menu',
-        title = 'Open Impound Lot',
+        title = Lang:t('info.open_impound_lot'),
         icon = 'warehouse',
         type = 'client',
         event = 'qb-garages:client:OpenMenu',
@@ -482,9 +482,9 @@ function JobMenuGarage(garageName)
 
     if not jobGarage then
         if garage.jobGarageIdentifier then
-            TriggerEvent('QBCore:Notify', string.format('Job garage with id %s not configured.', garage.jobGarageIdentifier), 'error', 5000)
+            TriggerEvent('QBCore:Notify', Lang:t('error.job_garage_not_configured', {value = garage.jobGarageIdentifier}), 'error', 5000)
         else
-            TriggerEvent('QBCore:Notify', string.format("'jobGarageIdentifier' not defined on job garage %s ", garageName), 'error', 5000)
+            TriggerEvent('QBCore:Notify', Lang:t('error.jobgarageidentifier_not_configured', {value = garageName}), 'error', 5000)
         end
         return
     end

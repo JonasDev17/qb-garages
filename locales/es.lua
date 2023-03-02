@@ -11,9 +11,18 @@ local Translations = {
         all_occupied = "Todos los espacios de estacionamiento están ocupados",
         no_vehicle = "No hay vehículo para estacionar",
         no_house_keys = "No tienes las llaves para este garaje de casa",
+        job_not_defined = 'Trabajo no definido en garaje',
+        gang_not_defined = 'Pandilla no definida en garaje',
+        job_garage_not_configured = 'Garaje de trabajo con id $%{value} no está configurado',
+        jobgarageidentifier_not_configured = "'jobGarageIdentifier' no está definido en garaje de trabajo $%{value}",
     },
     success = {
         vehicle_parked = "Vehículo estacionado",
+    },
+    info = {
+        park_vehicle = "Estacionar vehículo",
+        open_garage = "Abrir garaje",
+        open_impound_lot = "Abrir depósito de vehículos",
     },
     menu = {
         header = {
@@ -54,7 +63,10 @@ local Translations = {
     },
 }
 
-Lang = Lang or Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'es' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end

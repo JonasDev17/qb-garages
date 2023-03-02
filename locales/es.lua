@@ -13,8 +13,8 @@ local Translations = {
         no_house_keys = "No tienes las llaves para este garaje de casa",
         job_not_defined = 'Trabajo no definido en garaje',
         gang_not_defined = 'Pandilla no definida en garaje',
-        job_garage_not_configured = 'Garaje de trabajo con id $%{value} no está configurado',
-        jobgarageidentifier_not_configured = "'jobGarageIdentifier' no está definido en garaje de trabajo $%{value}",
+        job_garage_not_configured = 'Garaje de trabajo con id %{value} no está configurado',
+        jobgarageidentifier_not_configured = "'jobGarageIdentifier' no está definido en garaje de trabajo %{value}",
     },
     success = {
         vehicle_parked = "Vehículo estacionado",

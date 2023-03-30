@@ -480,6 +480,11 @@ function JobMenuGarage(garageName)
     local garage = Config.Garages[garageName]
     local jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
 
+    if job ~= garage.job then
+        TriggerEvent('QBCore:Notify', 'You are not authorized to access this garage.', 'error', 5000)
+        return
+    end
+
     if not jobGarage then
         if garage.jobGarageIdentifier then
             TriggerEvent('QBCore:Notify', string.format('Job garage with id %s not configured.', garage.jobGarageIdentifier), 'error', 5000)
@@ -488,14 +493,15 @@ function JobMenuGarage(garageName)
         end
         return
     end
+
     local vehicleMenu = {
         {
             header = jobGarage.label,
             isMenuHeader = true
         }
     }
-
-    local vehicles = jobGarage.vehicles[QBCore.Functions.GetPlayerData().job.grade.level]
+    local jobGrade = QBCore.Functions.GetPlayerData().job.grade.level
+    local vehicles = jobGarage.vehicles[jobGrade]
     for veh, label in pairs(vehicles) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
@@ -504,7 +510,7 @@ function JobMenuGarage(garageName)
                 event = "qb-garages:client:TakeOutGarage",
                 args = {
                     vehicleModel = veh,
-                    garage = garage
+                    garage = garage              
                 }
             }
         }
@@ -600,7 +606,7 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
     return location, heading
 end
 
-local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConf, cb)
     local plate = QBCore.Functions.GetPlate(veh)
     if Config.FuelScript then
         exports[Config.FuelScript]:SetFuel(veh, 100)
@@ -612,6 +618,15 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
 
     ClearMenu()
     SetEntityHeading(veh, heading)
+
+    if vehicleConf then
+        if vehicleConf.extras then
+			QBCore.Shared.SetDefaultVehicleExtras(veh, vehicleConf.extras)
+		end
+		if vehicleConf.livery then
+			SetVehicleLivery(veh, vehicleConf.livery)
+		end
+    end
     
     if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle then
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
@@ -623,16 +638,42 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
     if cb then cb(veh) end
 end
 
+local function GetVehicleConfFromModel(vehicleModel, grade)
+    local vehicleConf = nil
+    
+    for _, v in pairs(Config.VehicleSettings) do
+        if v.model == vehicleModel then
+            if v.jobGrades and not TableContains(v.jobGrades, grade) then
+                return nil
+            end
+            return v
+        end
+    end
+
+    return vehicleConf
+end
+
 local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
     local garage = Config.Garages[CurrentGarage]
+    local jobGarageConfig = Config.JobVehicles[garage.jobGarageIdentifier]
+    local jobGrade = QBCore.Functions.GetPlayerData().job.grade.level
+    local jobConf = jobGarageConfig.vehicles[jobGrade][vehicleModel]
+    local vehicleConf = nil
+    
+    if type(jobConf) == "table" then
+        vehicleConf = Config.VehicleSettings[jobConf.configName]
+    else
+        vehicleConf = GetVehicleConfFromModel(vehicleModel, jobGrade)
+    end
+
     if Config.SpawnVehiclesServerside then
         QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
             local veh = NetToVeh(netId)
-            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConf, cb)
         end,vehicleModel, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
-            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConf, cb)
         end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
     end
 end

@@ -464,8 +464,8 @@ function(source, args)
     end
 end, Config.RestoreCommandPermissionLevel)
 
-if Config.TrackVehicleByPlateCommand then
-    QBCore.Commands.Add('trackvehicle', 'Track vehicle', {{name='plate', help='Plate'}}, true, function(source, args)
+if Config.EnableTrackVehicleByPlateCommand then
+    QBCore.Commands.Add(Config.TrackVehicleByPlateCommand, 'Track vehicle', {{name='plate', help='Plate'}}, true, function(source, args)
     TriggerClientEvent('qb-garages:client:TrackVehicleByPlate', source, args[1])
     end, Config.TrackVehicleByPlateCommandPermissionLevel)
 end

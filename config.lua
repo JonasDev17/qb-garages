@@ -55,7 +55,7 @@ Config = Config or {}
 ]]
 
 -- NEW ---
-Config.SharedGangGarages = true -- Allow shared gang garages, if false, the player can only access their own vehicles
+Config.SharedGangGarages = false -- Allow shared gang garages, if false, the player can only access their own vehicles
 -- for specific gangs, use this:
 -- Config.SharedGangGarages = {
 --     ['vagos'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
@@ -65,37 +65,27 @@ Config.SharedGangGarages = true -- Allow shared gang garages, if false, the play
 
 
 
-
+-- NEW ---
 Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
-Config.SharedGangGarages = true -- Allow shared gang garages, if false, the player can only access their own vehicles
--- for specific gangs, use this:
--- Config.SharedGangGarages = {
---     ['vagos'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
---     ['gsf'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
--- }
 -- NEW ---
 
 -- NEW ---
 Config.AllowParkingAnyonesVehicle = false -- Allow anyones vehicle to be stored in the garage, if false, only vehicles you own can be stored in the garage (supports only public garages)
 Config.AllowParkingFromOutsideVehicle = true -- Allow parking from outside the vehicle, if false, you have to be inside the vehicle to park it
 Config.VehicleParkDistance = 2.0 -- Distance from the player to the vehicle to park it, radial option will dissapear beyond this distance
--- NEW --
+-- NEW -
 
--- NEW
 Config.GlobalParking = false -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
--- NEW
-
--- NEW
 Config.SpawnVehiclesServerside = false -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
--- NEW 
-
--- NEW -- Only relevant if AllowSpawningFromAnywhere = false
+-- Only relevant if AllowSpawningFromAnywhere = false,
 Config.SpawnAtFreeParkingSpot = false -- Will spawn at the closest free parking spot if you walk up to a occupied parking spot (basically you have to walk up close to a parking lot but it does not matter if there is a vehicle blocking the spawn as it will spawn at the closest free parking spot)
--- NEW --
 
+-- DEPRECATED - will be removed in the future
 Config.StoreDamageAccuratly = false -- Do not use, if on latest qb-core, if set to true, make sure to apply / run patch1.sql
+-- DEPRECATED - will be removed in the future
+
 Config.StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
-Config.SpawnAtLastParkinglot = false -- spawn the vehicle at the last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet from the ReadMe to the phone so you can track the vehicle to the exact parking lot
+Config.SpawnAtLastParkinglot = false -- spawn the vehicle at the last parked location if StoreParkinglotAccuratly = true, if set to true, make sure to apply / run patch1.sql
 Config.GarageNameAsBlipName = true -- if set to true, the blips name will match the garage name
 Config.FuelScript = 'LegacyFuel' -- change to lj-fuel / ps-fuel if you use lj-fuel / ps-fuel or something else if you use any other LegcyFuel compatible script
 Config.AllowSpawningFromAnywhere = true -- if set to true, the car can be spawned from anywhere inside the zone on the closest parking lot, if set to false you will have to walk up to a parking lot 
@@ -1439,7 +1429,8 @@ Config.Garages = {
 
         },
         label = 'Alta Apartments',
-        type = 'public',
+        type = 'gang',
+        gang = 'vagos',
         vehicleCategories = {'car', 'motorcycle', 'other'},
         drawText = 'Parking',
         ["ParkingSpots"] = {

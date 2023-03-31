@@ -95,6 +95,8 @@ end
 QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, garageType, category)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
+    local playerGang = pData.PlayerData.gang.name;
+
     if garageType == "public" then        --Public garages give player cars in the garage only
         GetVehicles(pData.PlayerData.citizenid, garage, 1, function(result)
             local vehs = {}
@@ -158,7 +160,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         end)
     else                            --House give all cars in the garage, Job and Gang depend of config
         local shared = ''
-        if not TableContains(Config.SharedJobGarages, garage) or (not Config.SharedHouseGarage and garageType == "house") then
+        if not TableContains(Config.SharedJobGarages, garage) and not (Config.SharedHouseGarage and garageType == "house") and not ((Config.SharedGangGarages == true or (type(Config.SharedGangGarages) == "table" and Config.SharedGangGarages[playerGang])) and garageType == "gang") then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
          MySQL.query('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)

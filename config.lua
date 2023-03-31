@@ -55,7 +55,24 @@ Config = Config or {}
 ]]
 
 -- NEW ---
+Config.SharedGangGarages = true -- Allow shared gang garages, if false, the player can only access their own vehicles
+-- for specific gangs, use this:
+-- Config.SharedGangGarages = {
+--     ['vagos'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
+--     ['gsf'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
+-- }
+-- NEW ---
+
+
+
+
 Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
+Config.SharedGangGarages = true -- Allow shared gang garages, if false, the player can only access their own vehicles
+-- for specific gangs, use this:
+-- Config.SharedGangGarages = {
+--     ['vagos'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
+--     ['gsf'] = true, -- Allow shared gang garages, if false, the player can only access their own vehicles
+-- }
 -- NEW ---
 
 -- NEW ---

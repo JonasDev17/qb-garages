@@ -33,6 +33,16 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     end)
 end)
 
+QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleLocation", function(source, cb, plate)
+    local src = source
+    for _, vehicle in pairs(vehicles) do
+        local pl = GetVehicleNumberPlateText(vehicle)
+        if pl == plate then
+            cb(GetEntityCoords(vehicle))
+        end
+    end
+end)
+
 QBCore.Functions.CreateCallback("qb-garage:server:CheckSpawnedVehicle", function(source, cb, plate)
     cb(VehicleSpawnerVehicles[plate] ~= nil and VehicleSpawnerVehicles[plate])
 end)

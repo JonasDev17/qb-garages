@@ -31,6 +31,13 @@ local function TableContains (tab, val)
     return false
 end
 
+function TrackVehicleByPlate(plate)
+    QBCore.Functions.TriggerCallback('qb-garages:server:GetVehicleLocation', function(coords)
+        SetNewWaypoint(coords.x, coords.y)
+    end, plate)
+end
+exports("TrackVehicleByPlate", TrackVehicleByPlate)
+
 local function IsStringNilOrEmpty(s)
     return s == nil or s == ''
 end

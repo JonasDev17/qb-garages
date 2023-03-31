@@ -55,6 +55,17 @@ Config = Config or {}
 ]]
 
 -- NEW ---
+-- There is a new clientside export called 'TrackVehicleByPlate' that can be used to track vehicles by plate, this is useful for other scripts that want to track vehicles by plate (e.g. exports['qb-garages']:TrackVehicleByPlate(plate))
+-- And the clientside event 'qb-garages:client:TrackVehicleByPlate'(e.g. TriggerEvent('qb-garages:client:TrackVehicleByPlate', plate))
+
+Config.TrackVehicleByPlateCommand = true -- Allow players to track their vehicles by plate using /trackvehicle <plate>
+Config.TrackVehicleByPlateCommandPermissionLevel = 'god' -- Permission level required to use /trackvehicle <plate>, false for anyone / everyone
+
+-- NEW --
+
+
+
+-- NEW --
 Config.SharedGangGarages = false -- Allow shared gang garages, if false, the player can only access their own vehicles
 -- for specific gangs, use this:
 -- Config.SharedGangGarages = {
@@ -63,11 +74,7 @@ Config.SharedGangGarages = false -- Allow shared gang garages, if false, the pla
 -- }
 -- NEW ---
 
-
-
--- NEW ---
 Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
--- NEW ---
 
 -- NEW ---
 Config.AllowParkingAnyonesVehicle = false -- Allow anyones vehicle to be stored in the garage, if false, only vehicles you own can be stored in the garage (supports only public garages)

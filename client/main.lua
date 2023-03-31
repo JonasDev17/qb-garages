@@ -835,7 +835,10 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
             curVeh = closestVeh
         end
     end
-    ParkVehicle(curVeh)
+    if curVeh ~= 0 and GetPedInVehicleSeat(curVeh, -1) == ped then
+        local coords = GetEntityCoords(curVeh)
+        ParkVehicle(curVeh)
+    end
 end)
 
 RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
@@ -867,6 +870,10 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
     end
+end)
+
+RegisterNetEvent('qb-garages:client:TrackVehicleByPlate', function(plate)
+    TrackVehicleByPlate(plate)
 end)
 
 RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()

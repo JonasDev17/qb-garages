@@ -33,12 +33,42 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     end)
 end)
 
-QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleLocation", function(source, cb, plate)
+QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function(source, cb, plate)
     local src = source
+    local vehicles = GetAllVehicles()
     for _, vehicle in pairs(vehicles) do
         local pl = GetVehicleNumberPlateText(vehicle)
         if pl == plate then
             cb(GetEntityCoords(vehicle))
+            return
+        end
+    end
+    local result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate})
+    local veh = result[1]
+    if veh then
+        if Config.StoreParkinglotAccuratly and veh.parkingspot then
+            local location = json.decode(veh.parkingspot)
+            cb(vector3(location.x, location.y, location.z))
+        else
+            local garageName = veh and veh.garage
+            local garage = Config.Garages[garageName]
+            if garage and garage.blipcoords then
+                cb(garage.blipcoords)
+            elseif garage and garage.Zone and garage.Zone.Shape and garage.Zone.Shape[1] then
+                cb(vector3(garage.Zone.Shape[1].x, garage.Zone.Shape[1].y, garage.Zone.minZ))
+            else
+                local result = MySQL.query.await('SELECT * FROM houselocations WHERE name = ?', {garageName})
+                if result and result[1] then
+                    local coords = json.decode(result[1].garage)
+                    if coords then
+                        cb(vector3(coords.x, coords.y, coords.z))
+                    else
+                        cb(nil)
+                    end
+                else
+                    cb(nil)
+                end
+            end
         end
     end
 end)
@@ -433,3 +463,9 @@ function(source, args)
         end)
     end
 end, Config.RestoreCommandPermissionLevel)
+
+if Config.TrackVehicleByPlateCommand then
+    QBCore.Commands.Add('trackvehicle', 'Track vehicle', {{name='plate', help='Plate'}}, true, function(source, args)
+    TriggerClientEvent('qb-garages:client:TrackVehicleByPlate', source, args[1])
+    end, Config.TrackVehicleByPlateCommandPermissionLevel)
+end

@@ -633,7 +633,7 @@ local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
             UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
-        end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
+        end, location, true, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
     end
 end
 
@@ -794,7 +794,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                     UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                     if cb then cb(veh) end
                 end, vehicle.plate)
-            end, location, true)
+            end, location, true, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
         end
     end
 end)

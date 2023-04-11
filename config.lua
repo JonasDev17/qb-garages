@@ -55,6 +55,10 @@ Config = Config or {}
 ]]
 
 -- NEW ---
+Config.qbx = false -- Fix to make the latest version of qbx-radialmenu work
+-- NEW ---
+
+-- NEW ---
 Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
 -- NEW ---
 

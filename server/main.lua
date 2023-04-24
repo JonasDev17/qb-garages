@@ -33,6 +33,46 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     end)
 end)
 
+QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function(source, cb, plate)
+    local src = source
+    local vehicles = GetAllVehicles()
+    for _, vehicle in pairs(vehicles) do
+        local pl = GetVehicleNumberPlateText(vehicle)
+        if pl == plate then
+            cb(GetEntityCoords(vehicle))
+            return
+        end
+    end
+    local result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate})
+    local veh = result[1]
+    if veh then
+        if Config.StoreParkinglotAccuratly and veh.parkingspot then
+            local location = json.decode(veh.parkingspot)
+            cb(vector3(location.x, location.y, location.z))
+        else
+            local garageName = veh and veh.garage
+            local garage = Config.Garages[garageName]
+            if garage and garage.blipcoords then
+                cb(garage.blipcoords)
+            elseif garage and garage.Zone and garage.Zone.Shape and garage.Zone.Shape[1] then
+                cb(vector3(garage.Zone.Shape[1].x, garage.Zone.Shape[1].y, garage.Zone.minZ))
+            else
+                local result = MySQL.query.await('SELECT * FROM houselocations WHERE name = ?', {garageName})
+                if result and result[1] then
+                    local coords = json.decode(result[1].garage)
+                    if coords then
+                        cb(vector3(coords.x, coords.y, coords.z))
+                    else
+                        cb(nil)
+                    end
+                else
+                    cb(nil)
+                end
+            end
+        end
+    end
+end)
+
 QBCore.Functions.CreateCallback("qb-garage:server:CheckSpawnedVehicle", function(source, cb, plate)
     cb(VehicleSpawnerVehicles[plate] ~= nil and VehicleSpawnerVehicles[plate])
 end)
@@ -90,11 +130,14 @@ local function GetVehicleByPlate(plate)
             return vehicle
         end
     end
+    return nil
 end
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, garageType, category)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
+    local playerGang = pData.PlayerData.gang.name;
+
     if garageType == "public" then        --Public garages give player cars in the garage only
         GetVehicles(pData.PlayerData.citizenid, garage, 1, function(result)
             local vehs = {}
@@ -158,7 +201,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
         end)
     else                            --House give all cars in the garage, Job and Gang depend of config
         local shared = ''
-        if not TableContains(Config.SharedJobGarages, garage) or (not Config.SharedHouseGarage and garageType == "house") then
+        if not TableContains(Config.SharedJobGarages, garage) and not (Config.SharedHouseGarage and garageType == "house") and not ((Config.SharedGangGarages == true or (type(Config.SharedGangGarages) == "table" and Config.SharedGangGarages[playerGang])) and garageType == "gang") then
             shared = " AND citizenid = '"..pData.PlayerData.citizenid.."'"
         end
          MySQL.query('SELECT * FROM player_vehicles WHERE garage = ? AND state = ?'..shared, {garage, 1}, function(result)
@@ -312,6 +355,12 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
     end)
 end)
 
+RegisterNetEvent('qb-garages:server:parkVehicle', function(plate)
+    local vehicle = GetVehicleByPlate(plate)
+    if vehicle then
+        DeleteEntity(vehicle)
+    end
+end)
 
 --External Calls
 --Call from qb-vehiclesales
@@ -421,3 +470,9 @@ function(source, args)
         end)
     end
 end, Config.RestoreCommandPermissionLevel)
+
+if Config.EnableTrackVehicleByPlateCommand then
+    QBCore.Commands.Add(Config.TrackVehicleByPlateCommand, 'Track vehicle', {{name='plate', help='Plate'}}, true, function(source, args)
+    TriggerClientEvent('qb-garages:client:TrackVehicleByPlate', source, args[1])
+    end, Config.TrackVehicleByPlateCommandPermissionLevel)
+end

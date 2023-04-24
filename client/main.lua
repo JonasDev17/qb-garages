@@ -31,6 +31,13 @@ local function TableContains (tab, val)
     return false
 end
 
+function TrackVehicleByPlate(plate)
+    QBCore.Functions.TriggerCallback('qb-garages:server:GetVehicleLocation', function(coords)
+        SetNewWaypoint(coords.x, coords.y)
+    end, plate)
+end
+exports("TrackVehicleByPlate", TrackVehicleByPlate)
+
 local function IsStringNilOrEmpty(s)
     return s == nil or s == ''
 end
@@ -239,9 +246,14 @@ local function ExitAndDeleteVehicle(vehicle)
         end
     end
     SetVehicleDoorsLocked(vehicle)
+    local plate = GetVehicleNumberPlateText(vehicle)
     Wait(1500)
     QBCore.Functions.DeleteVehicle(vehicle)
     RemoveRadialOptions()
+    if Config.SpawnVehiclesServerside then
+        Wait(1000)
+        TriggerServerEvent('qb-garages:server:parkVehicle', plate)
+    end
 end
 
 local function GetVehicleCategoriesFromClass(class)
@@ -828,7 +840,10 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
             curVeh = closestVeh
         end
     end
-    ParkVehicle(curVeh)
+    if curVeh ~= 0 and GetPedInVehicleSeat(curVeh, -1) == ped then
+        local coords = GetEntityCoords(curVeh)
+        ParkVehicle(curVeh)
+    end
 end)
 
 RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
@@ -860,6 +875,10 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
     end
+end)
+
+RegisterNetEvent('qb-garages:client:TrackVehicleByPlate', function(plate)
+    TrackVehicleByPlate(plate)
 end)
 
 RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()

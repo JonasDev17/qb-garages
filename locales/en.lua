@@ -1,6 +1,6 @@
 local Translations = {
     error = {
-        no_vehicles = "There is no vehicles in this location!",
+        no_vehicles = "There are no vehicles in this location!",
         not_impound = "Your vehicle is not in impound",
         not_owned = "This vehicle can't be stored",
         not_correct_type = "You can't store this type of vehicle here",

@@ -130,6 +130,7 @@ local function GetVehicleByPlate(plate)
             return vehicle
         end
     end
+    return nil
 end
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(source, cb, garage, garageType, category)
@@ -354,6 +355,12 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
     end)
 end)
 
+RegisterNetEvent('qb-garages:server:parkVehicle', function(plate)
+    local vehicle = GetVehicleByPlate(plate)
+    if vehicle then
+        DeleteEntity(vehicle)
+    end
+end)
 
 --External Calls
 --Call from qb-vehiclesales

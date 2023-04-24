@@ -246,9 +246,14 @@ local function ExitAndDeleteVehicle(vehicle)
         end
     end
     SetVehicleDoorsLocked(vehicle)
+    local plate = GetVehicleNumberPlateText(vehicle)
     Wait(1500)
     QBCore.Functions.DeleteVehicle(vehicle)
     RemoveRadialOptions()
+    if Config.SpawnVehiclesServerside then
+        Wait(1000)
+        TriggerServerEvent('qb-garages:server:parkVehicle', plate)
+    end
 end
 
 local function GetVehicleCategoriesFromClass(class)

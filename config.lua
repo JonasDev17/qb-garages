@@ -83,8 +83,13 @@ Config.VehicleParkDistance = 2.0 -- Distance from the player to the vehicle to p
 -- NEW -
 
 Config.GlobalParking = false -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
-Config.SpawnVehiclesServerside = false -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
--- Only relevant if AllowSpawningFromAnywhere = false,
+-- NEW
+
+-- NEW
+Config.SpawnVehiclesServerside = true -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
+-- NEW 
+
+-- NEW -- Only relevant if AllowSpawningFromAnywhere = false
 Config.SpawnAtFreeParkingSpot = false -- Will spawn at the closest free parking spot if you walk up to a occupied parking spot (basically you have to walk up close to a parking lot but it does not matter if there is a vehicle blocking the spawn as it will spawn at the closest free parking spot)
 
 -- DEPRECATED - will be removed in the future

@@ -114,7 +114,7 @@ local function GetVehicles(citizenid, garageName, state, cb)
 end
 
 local function GetDepotVehicles(citizenid, state, garage, cb)
-    local result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = @citizenid AND (state = @state OR garage = @garage OR garage IS NULL)', {
+    local result = MySQL.Sync.fetchAll("SELECT * FROM player_vehicles WHERE citizenid = @citizenid AND (state = @state OR garage = @garage OR garage IS NULL or garage = '')", {
         ['@citizenid'] = citizenid,
         ['@state'] = state,
         ['@garage'] = garage

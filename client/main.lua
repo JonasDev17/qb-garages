@@ -844,8 +844,7 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
 	canPark = GetPedInVehicleSeat(curVeh, -1) == ped
     end
     if curVeh ~= 0 and canPark then
-        local coords = GetEntityCoords(curVeh)
-        ParkVehicle(curVeh)
+	ParkVehicle(curVeh)
     end
 end)
 

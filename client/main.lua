@@ -625,7 +625,7 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
     ClearMenu()
     SetEntityHeading(veh, heading)
     
-    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle then
+	if garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil then
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
     end
     

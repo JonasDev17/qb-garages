@@ -325,7 +325,8 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
 
     local canPark, closestLocation = CanParkVehicle(veh, garageName, vehLocation)
     local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
-    if not canPark and not garageName.useVehicleSpawner then return end
+    local garage = Config.Garages[garageName]
+    if not canPark and not garage.useVehicleSpawner then return end
     local properties = QBCore.Functions.GetVehicleProperties(veh)
     TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, Config.StoreParkinglotAccuratly and closestVec3 or nil, Config.StoreDamageAccuratly and GetCarDamage(veh) or nil)
     ExitAndDeleteVehicle(veh)

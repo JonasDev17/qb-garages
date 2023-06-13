@@ -650,7 +650,11 @@ local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
     end
 end
 
-function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, properties)
+function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, properties, vehNetId)
+    Wait(100)
+    if not DoesEntityExist(spawnedVehicle) and vehNetId then
+	spawnedVehicle = NetToVeh(vehNetId)
+    end
     local plate = QBCore.Functions.GetPlate(spawnedVehicle)
     if garage.useVehicleSpawner then
         ClearMenu()
@@ -670,11 +674,17 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
             OutsideVehicles[plate] = spawnedVehicle
             TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
         end
+	if not DoesEntityExist(spawnedVehicle) and vehNetId then
+	    spawnedVehicle = NetToVeh(vehNetId)
+    	end
         if Config.FuelScript then
             exports[Config.FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
+	if not DoesEntityExist(spawnedVehicle) then
+		spawnedVehicle = NetToVeh(vehNetId)
+    	end
         QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
         SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
         SetAsMissionEntity(spawnedVehicle)

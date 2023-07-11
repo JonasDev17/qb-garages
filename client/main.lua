@@ -815,30 +815,30 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     end
 end)
 
--- function GetVehicleTypeFromModelOrHash(model)
---     model = type(model) == 'string' and joaat(model) or model
+function GetVehicleTypeFromModelOrHash(model)
+    model = type(model) == 'string' and joaat(model) or model
 
---     if model == `submersible` or model == `submersible2` then
---         return 'submarine'
---     end
+    if model == `submersible` or model == `submersible2` then
+        return 'submarine'
+    end
 
---     local vehicleType = GetVehicleClassFromName(model)
---     local types = {
---         [8] = "bike",
---         [11] = "trailer",
---         [13] = "bike",
---         [14] = "boat",
---         [15] = "heli",
---         [16] = "plane",
---         [21] = "train",
---     }
+    local vehicleType = GetVehicleClassFromName(model)
+    local types = {
+        [8] = "bike",
+        [11] = "trailer",
+        [13] = "bike",
+        [14] = "boat",
+        [15] = "heli",
+        [16] = "plane",
+        [21] = "train",
+    }
 
---     return types[vehicleType] or "automobile"
--- end
+    return types[vehicleType] or "automobile"
+end
 
--- QBCore.Functions.CreateClientCallback('qb-garages:client:GetVehicleType', function(cb, model)
---     cb(GetVehicleTypeFromModelOrHash(model));
--- end)
+QBCore.Functions.CreateClientCallback('qb-garages:client:GetVehicleType', function(cb, model)
+    cb(GetVehicleTypeFromModelOrHash(model));
+end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
     UpdateRadialMenu()

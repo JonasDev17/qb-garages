@@ -83,11 +83,9 @@ end)
 
 QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, heading, warp)
     local hash = type(vehInfo.vehicle) == 'string' and joaat(vehInfo.vehicle) or vehInfo.vehicle;
-    -- print(hash)
-    -- QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
-    --     local veh = CreateVehicleServerSetter(hash, vehicleType, coords.x, coords.y, coords.z, heading)
-        local veh = CreateVehicle(hash, coords.x, coords.y, coords.z, heading, true, true)
-        Wait(100)
+    QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
+        local veh = CreateVehicleServerSetter and CreateVehicleServerSetter(hash, vehicleType, coords.x, coords.y, coords.z, heading) or CreateVehicle(hash, coords.x, coords.y, coords.z, heading, true, true)
+        Wait(500)
         if not veh or not NetworkGetNetworkIdFromEntity(veh) then
             print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
         end
@@ -107,7 +105,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
         local netId = NetworkGetNetworkIdFromEntity(veh)
         OutsideVehicles[plate] = {netID = netId, entity = veh}
         cb(netId, vehProps or {})
-    -- end, hash)
+    end, hash)
 end)
 
 local function GetVehicles(citizenid, garageName, state, cb)

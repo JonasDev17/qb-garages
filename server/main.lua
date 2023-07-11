@@ -41,19 +41,33 @@ RegisterNetEvent("qb-garage:server:UpdateSpawnedVehicle", function(plate, value)
     VehicleSpawnerVehicles[plate] = value
 end)
 
-QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, warp)
-    local veh = QBCore.Functions.SpawnVehicle(source, vehInfo.vehicle, coords, warp)
-    
-    if not veh or not NetworkGetNetworkIdFromEntity(veh) then
-        print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
-    end
-    local vehProps = {}
-    local plate = vehInfo.plate
-    local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
-    if result[1] then vehProps = json.decode(result[1].mods) end
-    local netId = NetworkGetNetworkIdFromEntity(veh)
-    OutsideVehicles[plate] = {netID = netId, entity = veh}
-    cb(netId, vehProps)
+QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, heading, warp)
+    local hash = type(vehInfo.vehicle) == 'string' and joaat(vehInfo.vehicle) or vehInfo.vehicle;
+    -- print(hash)
+    -- QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
+    --     local veh = CreateVehicleServerSetter(hash, vehicleType, coords.x, coords.y, coords.z, heading)
+        local veh = CreateVehicle(hash, coords.x, coords.y, coords.z, heading, true, true)
+        Wait(100)
+        if not veh or not NetworkGetNetworkIdFromEntity(veh) then
+            print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
+        end
+        
+        local vehProps = {}
+        local plate = vehInfo.plate
+        if plate then
+            SetVehicleNumberPlateText(veh, plate)
+        end
+
+        if warp then
+            TaskWarpPedIntoVehicle(source, veh, -1)
+        end
+
+        local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+        if result[1] then vehProps = json.decode(result[1].mods) end
+        local netId = NetworkGetNetworkIdFromEntity(veh)
+        OutsideVehicles[plate] = {netID = netId, entity = veh}
+        cb(netId, vehProps)
+    -- end, hash)
 end)
 
 local function GetVehicles(citizenid, garageName, state, cb)

@@ -662,10 +662,13 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
+
+        NetworkRequestControlOfEntity(spawnedVehicle)
+        NetworkRequestControlOfEntity(spawnedVehicle)
+        
         QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
-        SetVehicleNumberPlateText(spawnedVehicle, vehicleInfo.plate)
-        SetAsMissionEntity(spawnedVehicle)
         ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
+        SetAsMissionEntity(spawnedVehicle)
         TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
         TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
     end
@@ -787,7 +790,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 end
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then cb(veh) end
-            end, vehicle, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
+            end, vehicle, location, heading, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
         else
             QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
@@ -799,7 +802,30 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     end
 end)
 
+-- function GetVehicleTypeFromModelOrHash(model)
+--     model = type(model) == 'string' and joaat(model) or model
 
+--     if model == `submersible` or model == `submersible2` then
+--         return 'submarine'
+--     end
+
+--     local vehicleType = GetVehicleClassFromName(model)
+--     local types = {
+--         [8] = "bike",
+--         [11] = "trailer",
+--         [13] = "bike",
+--         [14] = "boat",
+--         [15] = "heli",
+--         [16] = "plane",
+--         [21] = "train",
+--     }
+
+--     return types[vehicleType] or "automobile"
+-- end
+
+-- QBCore.Functions.CreateClientCallback('qb-garages:client:GetVehicleType', function(cb, model)
+--     cb(GetVehicleTypeFromModelOrHash(model));
+-- end)
 
 RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
     UpdateRadialMenu()

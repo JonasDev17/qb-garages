@@ -1441,8 +1441,7 @@ Config.Garages = {
 
         },
         label = 'Alta Apartments',
-        type = 'gang',
-        gang = 'vagos',
+        type = 'public',
         vehicleCategories = {'car', 'motorcycle', 'other'},
         drawText = 'Parking',
         ["ParkingSpots"] = {

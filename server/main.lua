@@ -21,6 +21,7 @@ local function TableContains (tab, val)
 end
 
 QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(source, cb, plate)
+    plate = string.upper(plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if not OutsideVehicles[plate] then cb(nil) return end
@@ -34,6 +35,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
 end)
 
 QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function(source, cb, plate)
+    plate = string.upper(plate)
     local src = source
     local vehicles = GetAllVehicles()
     for _, vehicle in pairs(vehicles) do
@@ -74,10 +76,12 @@ QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function
 end)
 
 QBCore.Functions.CreateCallback("qb-garage:server:CheckSpawnedVehicle", function(source, cb, plate)
+    plate = string.upper(plate)
     cb(VehicleSpawnerVehicles[plate] ~= nil and VehicleSpawnerVehicles[plate])
 end)
 
 RegisterNetEvent("qb-garage:server:UpdateSpawnedVehicle", function(plate, value)
+    plate = string.upper(plate)
     VehicleSpawnerVehicles[plate] = value
 end)
 
@@ -91,7 +95,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
         end
         
         local vehProps = {}
-        local plate = vehInfo.plate
+        local plate = string.upper(vehInfo.plate)
         if plate then
             SetVehicleNumberPlateText(veh, plate)
         end
@@ -135,6 +139,7 @@ local function GetDepotVehicles(citizenid, state, garage, cb)
 end
 
 local function GetVehicleByPlate(plate)
+    plate = string.upper(plate)
     local vehicles = GetAllVehicles() -- Get all vehicles known to the server
     for _, vehicle in pairs(vehicles) do
         local pl = GetVehicleNumberPlateText(vehicle)
@@ -185,7 +190,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                 end
                 for _, vehicle in pairs(result) do
-                    if GetVehicleByPlate(vehicle.plate) or not QBCore.Shared.Vehicles[vehicle.vehicle] then
+                    if GetVehicleByPlate(string.upper(vehicle.plate)) or not QBCore.Shared.Vehicles[vehicle.vehicle] then
                         goto skip
                     end
                     if vehicle.depotprice == 0 then
@@ -240,6 +245,7 @@ end)
 
 
 QBCore.Functions.CreateCallback("qb-garage:server:checkOwnership", function(source, cb, plate, garageType, garage, gang)
+    plate = string.upper(plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
     if garageType == "public" then        --Public garages only for player cars
@@ -298,6 +304,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleProperties", functio
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicle', function(state, fuel, engine, body, properties, plate, garage, location, damage)
+    plate = string.upper(plate)
     if location and type(location) == 'vector3' then
         if Config.StoreDamageAccuratly then
             MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ?, parkingspot = ?, damage = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(properties), json.encode(location), json.encode(damage), plate})
@@ -314,6 +321,7 @@ RegisterNetEvent('qb-garage:server:updateVehicle', function(state, fuel, engine,
 end)
 
 RegisterNetEvent('qb-garage:server:updateVehicleState', function(state, plate, garage)
+    plate = string.upper(plate)
     MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
 end)
 
@@ -352,7 +360,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
     
     local vehicle = data.vehicle
 
-     MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
+     MySQL.query('SELECT * FROM player_vehicles WHERE plate = ?', {string.upper(vehicle.plate)}, function(result)
         if result[1] then
             local vehicle = result[1]
             local depotPrice = vehicle.depotprice ~= 0 and vehicle.depotprice or Config.DepotPrice
@@ -368,6 +376,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
 end)
 
 RegisterNetEvent('qb-garages:server:parkVehicle', function(plate)
+    plate = string.upper(plate)
     local vehicle = GetVehicleByPlate(plate)
     if vehicle then
         DeleteEntity(vehicle)
@@ -377,6 +386,7 @@ end)
 --External Calls
 --Call from qb-vehiclesales
 QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(source, cb, plate)
+    plate = string.upper(plate)
     local src = source
     local pData = QBCore.Functions.GetPlayer(src)
      MySQL.query('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
@@ -426,7 +436,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                     fullname = fullname,
                     brand = VehicleData["brand"],
                     model = VehicleData["name"],
-                    plate = v.plate,
+                    plate = string.upper(v.plate),
                     garage = VehicleGarage,
                     state = v.state,
                     fuel = v.fuel,

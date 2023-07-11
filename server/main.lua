@@ -106,7 +106,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
         if result[1] then vehProps = json.decode(result[1].mods) end
         local netId = NetworkGetNetworkIdFromEntity(veh)
         OutsideVehicles[plate] = {netID = netId, entity = veh}
-        cb(netId, vehProps)
+        cb(netId, vehProps or {})
     -- end, hash)
 end)
 

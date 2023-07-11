@@ -19,7 +19,6 @@ client_scripts {
     '@PolyZone/CircleZone.lua',
     '@PolyZone/ComboZone.lua',
     'client/main.lua',
-    'client/police.lua'
 }
 
 server_scripts {

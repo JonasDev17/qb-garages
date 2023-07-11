@@ -31,6 +31,13 @@ local function TableContains (tab, val)
     return false
 end
 
+function TrackVehicleByPlate(plate)
+    QBCore.Functions.TriggerCallback('qb-garages:server:GetVehicleLocation', function(coords)
+        SetNewWaypoint(coords.x, coords.y)
+    end, plate)
+end
+exports("TrackVehicleByPlate", TrackVehicleByPlate)
+
 local function IsStringNilOrEmpty(s)
     return s == nil or s == ''
 end
@@ -239,9 +246,14 @@ local function ExitAndDeleteVehicle(vehicle)
         end
     end
     SetVehicleDoorsLocked(vehicle)
+    local plate = GetVehicleNumberPlateText(vehicle)
     Wait(1500)
     QBCore.Functions.DeleteVehicle(vehicle)
     RemoveRadialOptions()
+    if Config.SpawnVehiclesServerside then
+        Wait(1000)
+        TriggerServerEvent('qb-garages:server:parkVehicle', plate)
+    end
 end
 
 local function GetVehicleCategoriesFromClass(class)
@@ -286,7 +298,7 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     end
 
     local parkingSpots = garage.ParkingSpots and garage.ParkingSpots or {}
-    if next(parkingSpots) ~= nil then
+    if next(parkingSpots) then
         local _, closestDistance, closestLocation = GetClosestLocation(parkingSpots, vehLocation)
         if closestDistance >= parkingDistance then
             QBCore.Functions.Notify(Lang:t("error.too_far_away"), "error", 4500)
@@ -313,7 +325,8 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
 
     local canPark, closestLocation = CanParkVehicle(veh, garageName, vehLocation)
     local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
-    if not canPark and not garageName.useVehicleSpawner then return end
+    local garage = Config.Garages[garageName]
+    if not canPark and not garage.useVehicleSpawner then return end
     local properties = QBCore.Functions.GetVehicleProperties(veh)
     TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, Config.StoreParkinglotAccuratly and closestVec3 or nil, Config.StoreDamageAccuratly and GetCarDamage(veh) or nil)
     ExitAndDeleteVehicle(veh)
@@ -390,7 +403,7 @@ end
 
 local function UpdateRadialMenu()
     local garage = Config.Garages[CurrentGarage]
-    if CurrentGarage ~= nil and garage ~= nil then
+    if CurrentGarage and garage then
         if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
             if IsAuthorizedToAccessGarage(CurrentGarage) then
                 AddRadialParkingOption()
@@ -404,7 +417,7 @@ local function UpdateRadialMenu()
         elseif IsAuthorizedToAccessGarage(CurrentGarage) then
            AddRadialParkingOption()
         end
-    elseif CurrentHouseGarage ~= nil then
+    elseif CurrentHouseGarage then
        AddRadialParkingOption()
     else
         RemoveRadialOptions()
@@ -550,7 +563,7 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
         location = garage.takeVehicle
         heading = garage.takeVehicle.h -- yes its 'h' not 'w'...
     else
-        if next(parkingSpots) ~= nil then
+        if next(parkingSpots) then
             local freeParkingSpots = GetFreeParkingSpots(parkingSpots)
             if Config.AllowSpawningFromAnywhere then
                 location = GetFreeSingleParkingSpot(freeParkingSpots, vehicle)
@@ -613,7 +626,7 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
     ClearMenu()
     SetEntityHeading(veh, heading)
     
-    if garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle then
+	if garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil then
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
     end
     
@@ -629,11 +642,11 @@ local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
         QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
             local veh = NetToVeh(netId)
             UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
-        end,vehicleModel, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
+        end,vehicleModel, location, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
             UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, cb)
-        end, location, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
+        end, location, true, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil)
     end
 end
 
@@ -790,14 +803,14 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 end
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then cb(veh) end
-            end, vehicle, location, heading, garage.WarpPlayerIntoVehicle ~= nil and garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle)
+            end, vehicle, location,heading, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil)
         else
             QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
                     UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                     if cb then cb(veh) end
                 end, vehicle.plate)
-            end, location, true)
+            end, location, true, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil)
         end
     end
 end)
@@ -847,14 +860,19 @@ end)
 
 RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     local ped = PlayerPedId()
+    local canPark = true
     local curVeh = GetVehiclePedIsIn(ped)
     if Config.AllowParkingFromOutsideVehicle and curVeh == 0 then
         local closestVeh, dist = QBCore.Functions.GetClosestVehicle()
         if dist <= Config.VehicleParkDistance then
             curVeh = closestVeh
         end
+    else
+	canPark = GetPedInVehicleSeat(curVeh, -1) == ped
     end
-    ParkVehicle(curVeh)
+    if curVeh ~= 0 and canPark then
+	ParkVehicle(curVeh)
+    end
 end)
 
 RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
@@ -871,7 +889,7 @@ end)
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     -- check whether the vehicle is already spawned
-    local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate]) or (not Config.SpawnVehiclesServerside and GetVehicleByPlate(vehicle.plate) ~= nil)
+    local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate]) or (not Config.SpawnVehiclesServerside and GetVehicleByPlate(vehicle.plate))
     if not vehExists then
         local PlayerData = QBCore.Functions.GetPlayerData()
         if PlayerData.money['cash'] >= vehicle.depotprice or PlayerData.money['bank'] >= vehicle.depotprice then
@@ -886,6 +904,10 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     else
         QBCore.Functions.Notify(Lang:t('error.not_impound'), "error", 5000)
     end
+end)
+
+RegisterNetEvent('qb-garages:client:TrackVehicleByPlate', function(plate)
+    TrackVehicleByPlate(plate)
 end)
 
 RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()

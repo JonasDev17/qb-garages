@@ -561,7 +561,7 @@ function GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, s
 
     if garageType == "house" then
         location = garage.takeVehicle
-        heading = garage.takeVehicle.h -- yes its 'h' not 'w'...
+        heading = garage.takeVehicle.w -- yes its 'h' not 'w'...
     else
         if next(parkingSpots) then
             local freeParkingSpots = GetFreeParkingSpots(parkingSpots)
@@ -652,6 +652,7 @@ end
 
 function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, properties)
     local plate = QBCore.Functions.GetPlate(spawnedVehicle)
+    
     if garage.useVehicleSpawner then
         ClearMenu()
         if plate then
@@ -675,15 +676,20 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
-
         NetworkRequestControlOfEntity(spawnedVehicle)
         NetworkRequestControlOfEntity(spawnedVehicle)
-        
-        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
         ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
         SetAsMissionEntity(spawnedVehicle)
+
+        while (NetworkGetEntityOwner(spawnedVehicle) ~= NetworkPlayerIdToInt()) do
+            Wait(0)
+        end
+
         TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
         TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
+        
+        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
+
     end
     SetEntityHeading(spawnedVehicle, heading)
     SetAsMissionEntity(spawnedVehicle)
@@ -936,6 +942,10 @@ RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
     garageInfo.vehicleCategories = Config.HouseGarageCategories
     Config.HouseGarages[house] = garageInfo
     HouseGarages[house] = garageInfo
+end)
+
+RegisterNetEvent('qb-garages:client:removeHouseGarage', function(house)
+    Config.HouseGarages[house] = nil
 end)
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()

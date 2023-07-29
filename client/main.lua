@@ -676,7 +676,7 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         else
             exports['LegacyFuel']:SetFuel(spawnedVehicle, vehicleInfo.fuel) -- Don't change this. Change it in the  Defaults to legacy fuel if not set in the config
         end
-        NetworkRequestControlOfEntity(spawnedVehicle)
+        
         NetworkRequestControlOfEntity(spawnedVehicle)
         ApplyVehicleDamage(spawnedVehicle, vehicleInfo)
         SetAsMissionEntity(spawnedVehicle)

@@ -87,11 +87,32 @@ end)
 
 QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, heading, warp)
     local hash = type(vehInfo.vehicle) == 'string' and joaat(vehInfo.vehicle) or vehInfo.vehicle;
+
+    local ped
+    if not coords then
+        ped = GetPlayerPed(source)
+        coords = GetCoordsFromEntity(ped)
+    end
+
     QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
+
+        if not CreateVehicleServerSetter then
+            error('^1CreateVehicleServerSetter is not available on your artifact, please use artifact 5904 or above to be able to use this^0')
+            return
+        end
+
         local veh = CreateVehicleServerSetter and CreateVehicleServerSetter(hash, vehicleType, coords.x, coords.y, coords.z, heading) or CreateVehicle(hash, coords.x, coords.y, coords.z, heading, true, true)
         Wait(500)
         if not veh or not NetworkGetNetworkIdFromEntity(veh) then
             print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
+        end
+
+        while not DoesEntityExist(veh) do
+            Wait(0)
+        end
+    
+        while GetVehicleNumberPlateText(veh) == "" do
+            Wait(0)
         end
         
         local vehProps = {}
@@ -101,7 +122,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
         end
 
         if warp then
-            TaskWarpPedIntoVehicle(source, veh, -1)
+            SetPedIntoVehicle(source, veh, -1)
         end
 
         local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})

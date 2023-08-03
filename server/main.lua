@@ -211,7 +211,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                 end
                 for _, vehicle in pairs(result) do
-                    if GetVehicleByPlate(string.upper(vehicle.plate)) or not QBCore.Shared.Vehicles[vehicle.vehicle] then
+                    if Config.SpawnVehiclesServerside and GetVehicleByPlate(string.upper(vehicle.plate)) or not QBCore.Shared.Vehicles[vehicle.vehicle] then
                         goto skip
                     end
                     if vehicle.depotprice == 0 then

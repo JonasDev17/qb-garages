@@ -688,7 +688,7 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         TriggerServerEvent('qb-garage:server:updateVehicleState', 0, vehicleInfo.plate, vehicleInfo.garage)
         TriggerEvent("vehiclekeys:client:SetOwner", vehicleInfo.plate)
         
-        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties)
+        QBCore.Functions.SetVehicleProperties(spawnedVehicle, properties or {})
 
     end
     SetEntityHeading(spawnedVehicle, heading)

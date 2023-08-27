@@ -91,7 +91,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
     local ped
     if not coords then
         ped = GetPlayerPed(source)
-        coords = GetCoordsFromEntity(ped)
+        coords = GetEntityCoords(ped)
     end
 
     QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)

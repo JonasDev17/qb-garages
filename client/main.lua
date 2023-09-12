@@ -986,22 +986,78 @@ end)
 
 -- Threads
 
-CreateThread(function()
-    for _, garage in pairs(Config.Garages) do
-        if garage.showBlip then
-            local Garage = AddBlipForCoord(garage.blipcoords.x, garage.blipcoords.y, garage.blipcoords.z)
-            local blipColor = garage.blipColor ~= nil and garage.blipColor or 3
-            SetBlipSprite(Garage, garage.blipNumber)
-            SetBlipDisplay(Garage, 4)
-            SetBlipScale(Garage, 0.60)
-            SetBlipAsShortRange(Garage, true)
-            SetBlipColour(Garage, blipColor)
-            BeginTextCommandSetBlipName("STRING")
-            AddTextComponentSubstringPlayerName(Config.GarageNameAsBlipName and garage.label or garage.blipName)
-            EndTextCommandSetBlipName(Garage)
+if Config.ShowNearestParkingOnly then
+    CreateThread(function()
+        local currentGarageBlip = 0
+        while true do
+            local coords = GetEntityCoords(PlayerPedId())
+            local closest = 100000
+            local closestCoords
+            
+            for _, garage in pairs(Config.Garages) do
+                local dstcheck = #(coords - garage.blipcoords)
+                if dstcheck < closest and garage.showBlip == true then
+                    closest = dstcheck
+                    closestCoords = garage.blipcoords
+                    closestName = garage.label
+                end
+            end
+
+            if DoesBlipExist(currentGarageBlip) then
+                RemoveBlip(currentGarageBlip)
+            end
+            
+            currentGarageBlip = CreateBlipForClosestGarage(closestCoords)
+            Wait(5000)
         end
-    end
-end)
+    end)
+
+    CreateThread(function()
+        for _, garage in pairs(Config.Garages) do
+            for _, category in ipairs(garage.vehicleCategories) do
+                if category == 'plane' or category == 'boat' or category == 'helicopter' then
+                    CreateBlipForGarage(garage)
+                    break
+                end
+            end
+        end
+    end)
+else
+    CreateThread(function()
+        for _, garage in pairs(Config.Garages) do
+            if garage.showBlip then
+                CreateBlipForGarage(garage)
+            end
+        end
+    end)
+end
+
+function CreateBlipForClosestGarage(closestCoords)
+    local blip = AddBlipForCoord(closestCoords)
+    SetBlipSprite(blip, 357)
+    SetBlipScale(blip, 0.6)
+    SetBlipColour(blip, 3)
+    SetBlipDisplay(blip, 4)
+    SetBlipAsShortRange(blip, true)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString(closestName)
+    EndTextCommandSetBlipName(blip)
+    return blip
+end
+
+function CreateBlipForGarage(garage)
+	local blip = AddBlipForCoord(garage.blipcoords.x, garage.blipcoords.y, garage.blipcoords.z)
+    local blipColor = garage.blipColor ~= nil and garage.blipColor or 3
+    SetBlipSprite(blip, garage.blipNumber)
+    SetBlipDisplay(blip, 4)
+    SetBlipScale(blip, 0.60)
+    SetBlipAsShortRange(blip, true)
+    SetBlipColour(blip, blipColor)
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentSubstringPlayerName(Config.GarageNameAsBlipName and garage.label or garage.blipName)
+    EndTextCommandSetBlipName(blip)
+	return blip
+end
 
 CreateThread(function()
     for garageName, garage in pairs(Config.Garages) do

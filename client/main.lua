@@ -311,7 +311,7 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     end
 end
 
-local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
+local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)	
     local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
     local engineDamage = math.ceil(GetVehicleEngineHealth(veh))
 
@@ -352,7 +352,7 @@ function ParkVehicleSpawnerVehicle(veh, garageName, vehLocation, plate)
     end, plate)
 end
 
-local function ParkVehicle(veh, garageName, vehLocation)
+local function ParkVehicle(veh, garageName, vehLocation)	
     local plate = QBCore.Functions.GetPlate(veh)
     local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
     local garage = Config.Garages[garageName]
@@ -869,16 +869,21 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     local ped = PlayerPedId()
     local canPark = true
     local curVeh = GetVehiclePedIsIn(ped)
-    if Config.AllowParkingFromOutsideVehicle and curVeh == 0 then
+    
+	if Config.AllowParkingFromOutsideVehicle and curVeh == 0 then
         local closestVeh, dist = QBCore.Functions.GetClosestVehicle()
         if dist <= Config.VehicleParkDistance then
             curVeh = closestVeh
         end
-    else
+	end
+
+	Wait(200)
+	
+	if not curVeh or not DoesEntityExist(curVeh) then return end
+	
 	canPark = GetPedInVehicleSeat(curVeh, -1) == ped
-    end
     if curVeh ~= 0 and canPark then
-	ParkVehicle(curVeh)
+		ParkVehicle(curVeh)
     end
 end)
 

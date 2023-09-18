@@ -311,7 +311,7 @@ local function CanParkVehicle(veh, garageName, vehLocation)
     end
 end
 
-local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
+local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)	
     local bodyDamage = math.ceil(GetVehicleBodyHealth(veh))
     local engineDamage = math.ceil(GetVehicleEngineHealth(veh))
 
@@ -327,8 +327,11 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
     local closestVec3 = closestLocation and vector3(closestLocation.x,closestLocation.y, closestLocation.z) or nil
     local garage = Config.Garages[garageName]
     if not canPark and not garage.useVehicleSpawner then return end
+    
     local properties = QBCore.Functions.GetVehicleProperties(veh)
-    TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, Config.StoreParkinglotAccuratly and closestVec3 or nil, Config.StoreDamageAccuratly and GetCarDamage(veh) or nil)
+    if not properties then return end
+	
+    TriggerServerEvent('qb-garage:server:updateVehicle', 1, totalFuel, engineDamage, bodyDamage, properties, plate, garageName, Config.StoreParkinglotAccuratly and closestVec3 or nil)
     ExitAndDeleteVehicle(veh)
     if plate then
         OutsideVehicles[plate] = nil
@@ -349,7 +352,7 @@ function ParkVehicleSpawnerVehicle(veh, garageName, vehLocation, plate)
     end, plate)
 end
 
-local function ParkVehicle(veh, garageName, vehLocation)
+local function ParkVehicle(veh, garageName, vehLocation)	
     local plate = QBCore.Functions.GetPlate(veh)
     local garageName = garageName or (CurrentGarage or CurrentHouseGarage)
     local garage = Config.Garages[garageName]
@@ -803,10 +806,8 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     else
         if Config.SpawnVehiclesServerside then
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
+				Wait(100)	
                 local veh = NetToVeh(netId)
-                if not veh or not netId then
-                    print("ISSUE HERE: ", netId)
-                end
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then cb(veh) end
             end, vehicle, location,heading, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and garage.WarpPlayerIntoVehicle == nil)
@@ -868,16 +869,22 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     local ped = PlayerPedId()
     local canPark = true
     local curVeh = GetVehiclePedIsIn(ped)
-    if Config.AllowParkingFromOutsideVehicle and curVeh == 0 then
-        local closestVeh, dist = QBCore.Functions.GetClosestVehicle()
-        if dist <= Config.VehicleParkDistance then
-            curVeh = closestVeh
-        end
-    else
-	canPark = GetPedInVehicleSeat(curVeh, -1) == ped
-    end
+    
+	if Config.AllowParkingFromOutsideVehicle and curVeh == 0 then
+		local closestVeh, dist = QBCore.Functions.GetClosestVehicle()
+		if dist <= Config.VehicleParkDistance then
+		    curVeh = closestVeh
+		end
+	else
+		canPark = GetPedInVehicleSeat(curVeh, -1) == ped
+	end
+
+	Wait(200)
+	
+	if not curVeh or not DoesEntityExist(curVeh) then return end
+	
     if curVeh ~= 0 and canPark then
-	ParkVehicle(curVeh)
+		ParkVehicle(curVeh)
     end
 end)
 

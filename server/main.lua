@@ -140,8 +140,8 @@ local function GetMods(plate)
 
     local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
     if not result or not result[1] then
-        print("ERROR: No mods found!")
-         result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+        print("ERROR: No mods found for plate: " + plate)
+        result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
     end
 
     vehProps = json.decode(result[1].mods)

@@ -115,8 +115,8 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
             Wait(0)
         end
         
-        local vehProps = {}
         local plate = string.upper(vehInfo.plate)
+        local vehProps = GetMods(plate)
         if plate then
             SetVehicleNumberPlateText(veh, plate)
         end
@@ -125,13 +125,35 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
             SetPedIntoVehicle(source, veh, -1)
         end
 
-        local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
-        if result[1] then vehProps = json.decode(result[1].mods) end
         local netId = NetworkGetNetworkIdFromEntity(veh)
         OutsideVehicles[plate] = {netID = netId, entity = veh}
-        cb(netId, vehProps or {})
+        cb(netId, vehProps)
     end, hash)
 end)
+
+local function GetMods(plate)
+    local result = nil
+    if not plate then 
+        print("ERROR: Vehicle plate is nil!")
+        return
+    end
+
+    local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+    if not result or not result[1] then
+        print("ERROR: No mods found!")
+         result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
+    end
+
+    vehProps = json.decode(result[1].mods)
+
+    if not vehProps then
+        print("ERROR: vehicle has no props!")
+    end
+
+    return {}
+end
+
+    
 
 local function GetVehicles(citizenid, garageName, state, cb)
     local result = nil

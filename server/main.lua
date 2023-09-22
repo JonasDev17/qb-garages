@@ -150,7 +150,7 @@ local function GetMods(plate)
         print("ERROR: vehicle has no props!")
     end
 
-    return {}
+    return vehProps
 end
 
     

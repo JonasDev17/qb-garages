@@ -109,7 +109,9 @@ Config.DrawTextPosition = 'left' -- location of drawtext: left, top, right
     - `model` is the internal name of the vehicle.
     - `label` is the display name for the vehicle.
     - `configName` (optional) is a unique configuration identifier.
-    - `job` (optional) restricts the vehicle to a specific job. If omitted, it's available for all jobs.
+    - `job` (optional) restricts the vehicle to a specific job if multiple have access to this garage. If omitted, it's available for all jobs that have access to this sepecific garage.
+    - with multi job restriction:  {"police", "swat"} --> If, for instance, 'ambulance' had access to this garage too, they wouldn't see this vehicle, only police and swat (in this example). 
+    ---- NOTE: If you want the same vehicle with different liveries, create two entries with distinct configurations. 
 
     -- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
 ]]
@@ -124,8 +126,8 @@ Config.JobVehicles = {
                 -- you can either define the configName, model and label like this and use the vehicle settings below to define extras and liveries for your vehicles
                 -- this way you can define a single config and can reuse it for any vehicle you want or you can just use the old way without configuring extras and liveries
                 [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration", job = "police" }, -- job is optional, leave it away if this garage will only be accessed by the same job 
-                -- [2] = { label = "Some Vehicle", model = "yourmodel", job = {"police", "ambulance"} }, -- example
-                -- [3] = { label = "Another Vehicle", model = "anothermodel", configName = "myUniqueNameForThisCarConfiguration3", job = {"police", "swat"} },
+                -- [2] = { label = "My Police / Swat Helicopter", model = "myhelomodel",  configName = "myUniqueNameForThisHeloConfiguration3", job = {"police", "swat"} }, -- example
+                -- [3] = { label = "My Ambulance Helicopter", model = "myhelomodel", configName = "myUniqueNameForThisHeloConfiguration4", job = "ambulance" or { "ambulance" } },  -- example              
                 ["police2"] = "Police Car 2",
                 ["police3"] = "Police Car 3",
                 ["police4"] = "Police Car 4",

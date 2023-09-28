@@ -124,6 +124,8 @@ Config.JobVehicles = {
                 -- you can either define the configName, model and label like this and use the vehicle settings below to define extras and liveries for your vehicles
                 -- this way you can define a single config and can reuse it for any vehicle you want or you can just use the old way without configuring extras and liveries
                 [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration", job = "police" }, -- job is optional, leave it away if this garage will only be accessed by the same job 
+                -- [2] = { label = "Some Vehicle", model = "yourmodel", job = {"police", "ambulance"} }, -- example
+                -- [3] = { label = "Another Vehicle", model = "anothermodel", configName = "myUniqueNameForThisCarConfiguration3", job = {"police", "swat"} },
                 ["police2"] = "Police Car 2",
                 ["police3"] = "Police Car 3",
                 ["police4"] = "Police Car 4",

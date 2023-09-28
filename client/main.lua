@@ -167,8 +167,6 @@ local function ClearMenu()
     TriggerEvent("qb-menu:closeMenu")
 end
 
--- Functions
-
 local function ApplyVehicleDamage(currentVehicle, veh)
     local engine = veh.engine + 0.0
     local body = veh.body + 0.0
@@ -423,7 +421,7 @@ end
 local function UpdateRadialMenu()
     local garage = Config.Garages[CurrentGarage]
     if CurrentGarage and garage then
-        if garage.type == 'job' and not IsStringNilOrEmpty(garage.job) then
+        if garage.type == 'job' and (type(garage) == "table" or not IsStringNilOrEmpty(garage.job)) then
             if IsAuthorizedToAccessGarage(CurrentGarage) then
                 AddRadialParkingOption()
             end
@@ -517,18 +515,13 @@ local function RemoveHousePoly(house)
 end
 
 function JobMenuGarage(garageName)
-    local job = QBCore.Functions.GetPlayerData().job.name
+    local playerJob = PlayerJob.name
     local garage = Config.Garages[garageName]
     local jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
 
-    if job ~= garage.job then
-        TriggerEvent('QBCore:Notify', 'You are not authorized to access this garage.', 'error', 5000)
-        return
-    end
-
     if not jobGarage then
         if garage.jobGarageIdentifier then
-            TriggerEvent('QBCore:Notify',
+            TriggerEvent('QBCore:Notify', 
                 string.format('Job garage with id %s not configured.', garage.jobGarageIdentifier), 'error', 5000)
         else
             TriggerEvent('QBCore:Notify',
@@ -549,24 +542,39 @@ function JobMenuGarage(garageName)
         local model = index
         local label = data
         local vehicleConfig = nil
+        local addVehicle = true
+
         if type(data) == "table" then
-            label = data.label
-            model = data.model
-            vehicleConfig = Config.VehicleSettings[data.configName]
+            local vehicleJob = data.job
+            if vehicleJob then
+                if type(vehicleJob) == "table" and not TableContains(vehicleJob, playerJob) then
+                    addVehicle = false
+                elseif playerJob ~= vehicleJob then
+                    addVehicle = false
+                end
+            end
+            
+            if addVehicle then
+                label = data.label
+                model = data.model
+                vehicleConfig = Config.VehicleSettings[data.configName]
+            end
         end
 
-        vehicleMenu[#vehicleMenu + 1] = {
-            header = label,
-            txt = "",
-            params = {
-                event = "qb-garages:client:TakeOutGarage",
-                args = {
-                    vehicleModel = model,
-                    garage = garage,
-                    vehicleConfig = vehicleConfig
+        if addVehicle then
+            vehicleMenu[#vehicleMenu + 1] = {
+                header = label,
+                txt = "",
+                params = {
+                    event = "qb-garages:client:TakeOutGarage",
+                    args = {
+                        vehicleModel = model,
+                        garage = garage,
+                        vehicleConfig = vehicleConfig
+                    }
                 }
             }
-        }
+        end
     end
 
     vehicleMenu[#vehicleMenu + 1] = {
@@ -575,8 +583,8 @@ function JobMenuGarage(garageName)
         params = {
             event = "qb-menu:client:closeMenu"
         }
-
     }
+
     exports['qb-menu']:openMenu(vehicleMenu)
 end
 
@@ -795,7 +803,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                     local vehCategories = GetVehicleCategoriesFromClass(GetVehicleClassFromName(v.vehicle))
                     if garage and garage.vehicleCategories and
                         not TableContains(garage.vehicleCategories, vehCategories) then
-                        goto continue
+                        goto skipVehicle
                     end
                     vname = vehData.name
                 end
@@ -855,7 +863,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                         }
                     }
                 end
-                ::continue::
+                ::skipVehicle::
             end
 
             MenuGarageOptions[#MenuGarageOptions + 1] = {
@@ -939,11 +947,11 @@ end)
 RegisterNetEvent('qb-garages:client:OpenMenu', function()
     if CurrentGarage then
         local garage = Config.Garages[CurrentGarage]
-        local type = garage.type
-        if type == 'job' and garage.useVehicleSpawner then
+        local garageType = garage.type
+        if garageType == 'job' and garage.useVehicleSpawner then
             JobMenuGarage(CurrentGarage)
         else
-            PublicGarage(CurrentGarage, type)
+            PublicGarage(CurrentGarage, garageType)
         end
     elseif CurrentHouseGarage then
         TriggerEvent('qb-garages:client:OpenHouseGarage')

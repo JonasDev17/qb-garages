@@ -66,7 +66,7 @@ Config.TrackVehicleByPlateCommandPermissionLevel = 'god' -- Permission level req
 
 
 
--- NEW --
+Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
 Config.SharedGangGarages = false -- Allow shared gang garages, if false, the player can only access their own vehicles
 -- for specific gangs, use this:
 -- Config.SharedGangGarages = {
@@ -75,22 +75,12 @@ Config.SharedGangGarages = false -- Allow shared gang garages, if false, the pla
 -- }
 -- NEW ---
 
-Config.SharedHouseGarage = true -- Allow shared house garages, if false, the player can only access their own vehicles
-
--- NEW ---
 Config.AllowParkingAnyonesVehicle = false -- Allow anyones vehicle to be stored in the garage, if false, only vehicles you own can be stored in the garage (supports only public garages)
 Config.AllowParkingFromOutsideVehicle = true -- Allow parking from outside the vehicle, if false, you have to be inside the vehicle to park it
 Config.VehicleParkDistance = 2.0 -- Distance from the player to the vehicle to park it, radial option will dissapear beyond this distance
--- NEW -
-
 Config.GlobalParking = false -- if true, you can access your cars from any garage, if false, you can only access your cars from the garage you stored them in
--- NEW
-
--- NEW
 Config.SpawnVehiclesServerside = true -- REQUIRES THE ABSOLUTE LATEST VERSION OF QBCORE, OR MAKE SURE YOU HAVE THESE: https://github.com/qbcore-framework/qb-core/blob/81ffd872319d2eb8e496c3b3faaf37e791912c84/server/events.lua#L252
--- NEW 
-
--- NEW -- Only relevant if AllowSpawningFromAnywhere = false
+-- Only relevant if AllowSpawningFromAnywhere = false
 Config.SpawnAtFreeParkingSpot = false -- Will spawn at the closest free parking spot if you walk up to a occupied parking spot (basically you have to walk up close to a parking lot but it does not matter if there is a vehicle blocking the spawn as it will spawn at the closest free parking spot)
 
 Config.StoreParkinglotAccuratly = false  -- store the last parking lot in the DB, if set to true, make sure to apply / run patch1.sql, I recommend applying the tracking snippet for qb-phone from the ReadMe to the phone so you can track the vehicle to the exact parking lot
@@ -106,18 +96,34 @@ Config.SpawnDistance = 4.5 -- The maximum distance you can be from a parking spo
 Config.DepotPrice = 60.0 -- The price to take out a despawned vehicle from impound.
 Config.DrawTextPosition = 'left' -- location of drawtext: left, top, right
 
--- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
+--[[ 
+    Job Vehicles Configuration
+
+    Every job-specific garage is identified by a unique jobGarageIdentifier.
+    
+    For each garage:
+    - `label` provides a descriptive name for the garage.
+    - `vehicles` is a grade-based list of vehicles available for that grade.
+
+    For each vehicle:
+    - `model` is the internal name of the vehicle.
+    - `label` is the display name for the vehicle.
+    - `configName` (optional) is a unique configuration identifier.
+    - `job` (optional) restricts the vehicle to a specific job. If omitted, it's available for all jobs.
+
+    -- set useVehicleSpawner = true for each garage that has type job and should use the vehicle spawner instead of personal vehicles
+]]
+
 Config.JobVehicles = {
-	['pd1'] = { -- jobGarageIdentifier
+	['someRandomIdentifier'] = { -- <-- jobGarageIdentifier
         label = "Police Vehicles",
-        job = 'police',
-        -- Grade 0
         vehicles = {
+            -- Grade 0
             [0] = {
                 -- !! IMPORTANT !! - READ THIS
-                -- you can either define the configName, model and label like this and or use the vehicle settings below to define extras and liveries for your vehicles
-                -- this way you can define a single config and can reuse it for any vehicle you want
-                [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration"}, 
+                -- you can either define the configName, model and label like this and use the vehicle settings below to define extras and liveries for your vehicles
+                -- this way you can define a single config and can reuse it for any vehicle you want or you can just use the old way without configuring extras and liveries
+                [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration", job = "police" }, -- job is optional, leave it away if this garage will only be accessed by the same job 
                 ["police2"] = "Police Car 2",
                 ["police3"] = "Police Car 3",
                 ["police4"] = "Police Car 4",
@@ -1652,7 +1658,7 @@ Config.Garages = {
         type = 'job',
         job = "police",
         --useVehicleSpawner = false,
-        --jobGarageIdentifier = 'pd1',
+        --jobGarageIdentifier = 'someRandomIdentifier',
         vehicleCategories = {'emergency'},
         drawText = 'Parking',
         ["ParkingSpots"] = {

@@ -114,7 +114,10 @@ Config.JobVehicles = {
         -- Grade 0
         vehicles = {
             [0] = {
-                ["police"] = "Police Car 1",
+                -- !! IMPORTANT !! - READ THIS
+                -- you can either define the configName, model and label like this and or use the vehicle settings below to define extras and liveries for your vehicles
+                -- this way you can define a single config and can reuse it for any vehicle you want
+                [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration"}, 
                 ["police2"] = "Police Car 2",
                 ["police3"] = "Police Car 3",
                 ["police4"] = "Police Car 4",
@@ -169,6 +172,27 @@ Config.JobVehicles = {
                 ["sheriff2"] = "Sheriff Car 2",
             }
         }
+    }
+}
+
+Config.VehicleSettings = {
+    ['myUniqueNameForThisCarConfiguration'] = { -- configName
+        ["livery"] = 1,
+        ["extras"] = {
+            ["1"] = true, -- on/off
+            ["2"] = true,
+            ["3"] = true,
+            ["4"] = true,
+            ["5"] = true,
+            ["6"] = true,
+            ["7"] = true,
+            ["8"] = true,
+            ["9"] = true,
+            ["10"] = true,
+            ["11"] = true,
+            ["12"] = true,
+            ["13"] = true,
+        },
     }
 }
 

@@ -518,7 +518,12 @@ function JobMenuGarage(garageName)
     }
     local jobGrade = QBCore.Functions.GetPlayerData().job.grade.level
     local vehicles = jobGarage.vehicles[jobGrade]
-    for veh, label in pairs(vehicles) do
+    for veh, data in pairs(vehicles) do
+		local label = data
+		if type(data) == "table" then
+			label = data.label
+		end
+		
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
             txt = "",

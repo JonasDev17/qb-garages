@@ -546,11 +546,13 @@ function JobMenuGarage(garageName)
     local vehicles = jobGarage.vehicles[jobGrade]
     
     for index, data in pairs(vehicles) do
-        local label = data
         local model = index
+        local label = data
+        local vehicleConfig = nil
         if type(data) == "table" then
             label = data.label
             model = data.model
+            vehicleConfig = Config.VehicleSettings[data.configName]
         end
 
         vehicleMenu[#vehicleMenu + 1] = {
@@ -560,7 +562,8 @@ function JobMenuGarage(garageName)
                 event = "qb-garages:client:TakeOutGarage",
                 args = {
                     vehicleModel = model,
-                    garage = garage
+                    garage = garage,
+                    vehicleConfig = vehicleConfig
                 }
             }
         }
@@ -694,26 +697,19 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleC
     end
 end
 
-local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
+local function SpawnVehicleSpawnerVehicle(vehicleModel, vehicleConfig, location, heading, cb)
     local garage = Config.Garages[CurrentGarage]
-    local jobGarageConfig = Config.JobVehicles[garage.jobGarageIdentifier]
     local jobGrade = QBCore.Functions.GetPlayerData().job.grade.level
-    local jobConf = jobGarageConfig.vehicles[jobGrade][vehicleModel]
-    local vehicleConf = nil
-
-    if type(jobConf) == "table" then
-        vehicleConf = Config.VehicleSettings[jobConf.configName]
-    end
 
     if Config.SpawnVehiclesServerside then
         QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
             local veh = NetToVeh(netId)
-            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConf, cb)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConfig, cb)
         end, vehicleModel, location, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and
             garage.WarpPlayerIntoVehicle == nil)
     else
         QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
-            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConf, cb)
+            UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleConfig, cb)
         end, location, true, garage.WarpPlayerIntoVehicle or Config.WarpPlayerIntoVehicle and
             garage.WarpPlayerIntoVehicle == nil)
     end
@@ -877,6 +873,7 @@ end)
 RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     local garageType = data.type
     local vehicleModel = data.vehicleModel
+    local vehicleConfig = data.vehicleConfig
     local vehicle = data.vehicle
     local garage = data.garage
     local spawnDistance = garage.SpawnDistance and garage.SpawnDistance or Config.SpawnDistance
@@ -884,7 +881,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
 
     local location, heading = GetSpawnLocationAndHeading(garage, garageType, parkingSpots, vehicle, spawnDistance)
     if garage.useVehicleSpawner then
-        SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
+        SpawnVehicleSpawnerVehicle(vehicleModel, vehicleConfig, location, heading, cb)
     else
         if Config.SpawnVehiclesServerside then
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)

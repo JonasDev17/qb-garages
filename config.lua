@@ -115,9 +115,9 @@ Config.JobVehicles = {
         vehicles = {
             [0] = {
                 -- !! IMPORTANT !! - READ THIS
-                -- you can either define the configName and label like this and or use the vehicle settings below to define extras and liveries for your vehicles
-                -- this way you can define a single config and can reuse it for any vehicle you want, otherwise you can define the model and jobGrades below in the VehicleSettings without having to change your config here. Both can also be used together
-                ["police"] = { label = "Police Car 1", configName = "myUniqueNameForThisCarConfiguration"}, 
+                -- you can either define the configName, model and label like this and or use the vehicle settings below to define extras and liveries for your vehicles
+                -- this way you can define a single config and can reuse it for any vehicle you want
+                [1] = { label = "Police Car 1", model = "police", configName = "myUniqueNameForThisCarConfiguration"}, 
                 ["police2"] = "Police Car 2",
                 ["police3"] = "Police Car 3",
                 ["police4"] = "Police Car 4",
@@ -177,8 +177,6 @@ Config.JobVehicles = {
 
 Config.VehicleSettings = {
     ['myUniqueNameForThisCarConfiguration'] = { -- configName
-        -- ['model'] = 'police2', -- You can either define the model and grades here, or use the configName in the jobVehicles config
-        -- ['jobGrades'] = {0},
         ["livery"] = 1,
         ["extras"] = {
             ["1"] = true, -- on/off
@@ -195,26 +193,6 @@ Config.VehicleSettings = {
             ["12"] = true,
             ["13"] = true,
         },
-    },
-    ['lspdNorm'] = {
-        ['model'] = 'police2',
-        ['jobGrades'] = {1,2,3,4},
-        ["livery"] = 1,
-        ["extras"] = {
-            ["1"] = true,
-            ["2"] = true,
-            ["3"] = true,
-            ["4"] = true,
-            ["5"] = true,
-            ["6"] = true,
-            ["7"] = true,
-            ["8"] = true,
-            ["9"] = true,
-            ["10"] = true,
-            ["11"] = true,
-            ["12"] = true,
-            ["13"] = true,
-        }
     }
 }
 

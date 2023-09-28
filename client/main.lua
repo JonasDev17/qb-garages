@@ -541,12 +541,16 @@ function JobMenuGarage(garageName)
         header = jobGarage.label,
         isMenuHeader = true
     }}
+    
     local jobGrade = QBCore.Functions.GetPlayerData().job.grade.level
     local vehicles = jobGarage.vehicles[jobGrade]
-    for veh, data in pairs(vehicles) do
+    
+    for index, data in pairs(vehicles) do
         local label = data
+        local model = index
         if type(data) == "table" then
             label = data.label
+            model = data.model
         end
 
         vehicleMenu[#vehicleMenu + 1] = {
@@ -555,7 +559,7 @@ function JobMenuGarage(garageName)
             params = {
                 event = "qb-garages:client:TakeOutGarage",
                 args = {
-                    vehicleModel = veh,
+                    vehicleModel = model,
                     garage = garage
                 }
             }
@@ -690,21 +694,6 @@ local function UpdateVehicleSpawnerSpawnedVehicle(veh, garage, heading, vehicleC
     end
 end
 
-local function GetVehicleConfFromModel(vehicleModel, grade)
-    local vehicleConf = nil
-
-    for _, v in pairs(Config.VehicleSettings) do
-        if v.model == vehicleModel then
-            if v.jobGrades and not TableContains(v.jobGrades, grade) then
-                return nil
-            end
-            return v
-        end
-    end
-
-    return vehicleConf
-end
-
 local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
     local garage = Config.Garages[CurrentGarage]
     local jobGarageConfig = Config.JobVehicles[garage.jobGarageIdentifier]
@@ -714,8 +703,6 @@ local function SpawnVehicleSpawnerVehicle(vehicleModel, location, heading, cb)
 
     if type(jobConf) == "table" then
         vehicleConf = Config.VehicleSettings[jobConf.configName]
-    else
-        vehicleConf = GetVehicleConfFromModel(vehicleModel, jobGrade)
     end
 
     if Config.SpawnVehiclesServerside then

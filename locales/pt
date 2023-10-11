@@ -1,0 +1,63 @@
+local Translations = {
+    error = {
+        no_vehicles = "Nenhum veículo nesta localização",
+        not_impound = "O teu veículo não está apreendido",
+        not_owned = "Não podes guardar este veículo",
+        not_correct_type = "Não podes estacionar este tipo de veículos aqui",
+        not_enough = "Dinheiro insuficiente",
+        no_garage = "Nenhuma",
+        too_far_away = "Estás muito longe do park de estacionamento",
+        occupied = "Este lugar já está ocupado",
+        all_occupied = "Todos os lugares estão ocupado",
+        no_vehicle = "Nenhum veículo para estacionar",
+        no_house_keys = "Não tens as chaves da garagem desta casa",
+    },
+    success = {
+        vehicle_parked = "Veículo guardado",
+    },
+    menu = {
+        header = {
+            house_garage = "Garagem casa",
+            house_car = "Garagem de casa %{value}",
+            public_car = "Garagem Pública %{value}",
+            public_sea = "Marina Pública %{value}",
+            public_air = "Hangar Público %{value}",
+            job_car = "Garagem de Trabalho %{value}",
+            job_sea = "Marina de Trabalho %{value}",
+            job_air = "Hangar trabalho %{value}",
+            gang_car = "Garagem de Gang %{value}",
+            gang_sea = "Marina de Gang %{value}",
+            gang_air = "Hangar de Gang %{value}",
+            depot_car = "Apreendidos %{value}",
+            depot_sea = "Apreendidos %{value}",
+            depot_air = "Apreendidos %{value}",
+            vehicles = "Veículos disponíveis",
+            depot = "%{value} [ $%{value2} ]",
+            garage = "%{value} [ %{value2} ]",
+        },
+        leave = {
+            car = "⬅ Sair Garagem",
+            sea = "⬅ Sair Marina",
+            air = "⬅ Sair Hangar",
+            job = "⬅ Sair Garagem"
+        },
+        text = {
+            vehicles = "Ver veículos guardados!",
+            depot = "Matrícula: %{value}<br>Gas: %{value2} | Motor: %{value3} | Chaparia: %{value4}",
+            garage = "Estado: %{value}<br>Gas: %{value2} | Motor: %{value3} | Chaparia: %{value4}",
+        }
+    },
+    status = {
+        out = "Fora",
+        garaged = "Guardado",
+        impound = "Apreendido",
+    },
+}
+
+if GetConvar('qb_locale', 'en') == 'pt' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end

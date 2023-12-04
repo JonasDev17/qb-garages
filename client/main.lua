@@ -524,7 +524,7 @@ function JobMenuGarage(garageName)
     else
         local identifiers = garage.jobGarageIdentifier
         for i,v in ipairs(identifiers) do
-            local g = Config.JobVehicles[garage.jobGarageIdentifier]
+            local g = Config.JobVehicles[v]
             if g and g.job == playerJob then
                 jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
             end

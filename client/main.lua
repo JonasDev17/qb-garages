@@ -517,7 +517,19 @@ end
 function JobMenuGarage(garageName)
     local playerJob = PlayerJob.name
     local garage = Config.Garages[garageName]
-    local jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
+    local jobGarage = nil
+
+    if not type(garage.jobGarageIdentifier) == "table" then
+        jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
+    else
+        local identifiers = garage.jobGarageIdentifier
+        for i,v in ipairs(identifiers) do
+            local g = Config.JobVehicles[garage.jobGarageIdentifier]
+            if g and g.job == playerJob then
+                jobGarage = Config.JobVehicles[garage.jobGarageIdentifier]
+            end
+        end
+    end
 
     if not jobGarage then
         if garage.jobGarageIdentifier then

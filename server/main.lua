@@ -412,7 +412,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(s
 end)
 
 --Call from qb-phone
-QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(source, cb)
+QBCore.Functions.CreateCallback('qb-garages:server:GetPlayerVehicles', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
     local Vehicles = {}
 

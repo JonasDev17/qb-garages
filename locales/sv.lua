@@ -40,6 +40,7 @@ local Translations = {
             sea = "⬅ Lämna båthus",
             air = "⬅ Lämna Hangar",
             job = "⬅ Lämna garage",
+            gang = "⬅ Lämna garage"
         },
         text = {
             vehicles = "Visa dina parkerade fordon!",

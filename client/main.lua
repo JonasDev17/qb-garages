@@ -895,7 +895,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
                 while not NetworkDoesNetworkIdExist(netId) do Wait(10) end
                 local veh = NetworkGetEntityFromNetworkId(netId)
-                 Citizen.Await(CheckPlate(veh, vehicle.plate))
+                Citizen.Await(CheckPlate(veh, vehicle.plate))
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then
                     cb(veh)

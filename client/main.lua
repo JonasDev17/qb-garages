@@ -895,6 +895,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
                 while not NetworkDoesNetworkIdExist(netId) do Wait(10) end
                 local veh = NetworkGetEntityFromNetworkId(netId)
+                 Citizen.Await(CheckPlate(veh, vehicle.plate))
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then
                     cb(veh)
@@ -914,6 +915,23 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         end
     end
 end)
+
+function CheckPlate(vehicle, plateToSet)
+    local vehiclePlate = promise.new()
+    CreateThread(function()
+        while true do
+            Wait(500)
+            if GetVehicleNumberPlateText(vehicle) == plateToSet then
+                vehiclePlate:resolve(true)
+                return
+            else
+                SetVehicleNumberPlateText(vehicle, plateToSet)
+            end
+        end
+    end)
+    return vehiclePlate
+end
+
 
 function GetVehicleTypeFromModelOrHash(model)
     model = type(model) == 'string' and joaat(model) or model

@@ -54,7 +54,12 @@ Config = Config or {}
     },
 ]]
 
--- NEW ---
+-- NEW -- 
+Config.ShowNearestParkingOnly = false -- whether to show only the nearest parking lot only (blip)
+-- NEW --
+
+
+-- NEW --
 -- There is a new clientside export called 'TrackVehicleByPlate' that can be used to track vehicles by plate, this is useful for other scripts that want to track vehicles by plate (e.g. exports['qb-garages']:TrackVehicleByPlate(plate))
 -- And the clientside event 'qb-garages:client:TrackVehicleByPlate'(e.g. TriggerEvent('qb-garages:client:TrackVehicleByPlate', plate))
 

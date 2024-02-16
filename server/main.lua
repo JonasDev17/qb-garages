@@ -216,7 +216,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                     if Config.SpawnVehiclesServerside then
                         local veh = GetVehicleByPlate(string.upper(vehicle.plate))
-                        if (veh and GetVehicleBodyHealth(veh) < Config.MinImpoundDamage) or not veh then
+                        if (veh and (GetVehicleBodyHealth(veh) > Config.MinImpoundDamage and GetEntityHealth(veh) > Config.MinImpoundDamage)) then
                             goto skip
                         end
                     end

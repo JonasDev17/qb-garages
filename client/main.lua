@@ -893,8 +893,9 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
     else
         if Config.SpawnVehiclesServerside then
             QBCore.Functions.TriggerCallback('qb-garage:server:spawnvehicle', function(netId, properties)
-                Wait(100)
-                local veh = NetToVeh(netId)
+                while not NetworkDoesNetworkIdExist(netId) do Wait(10) end
+                local veh = NetworkGetEntityFromNetworkId(netId)
+                Citizen.Await(CheckPlate(veh, vehicle.plate))
                 UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                 if cb then
                     cb(veh)
@@ -914,6 +915,22 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
         end
     end
 end)
+
+function CheckPlate(vehicle, plateToSet)
+    local vehiclePlate = promise.new()
+    CreateThread(function()
+        while true do
+            Wait(500)
+            if GetVehicleNumberPlateText(vehicle) == plateToSet then
+                vehiclePlate:resolve(true)
+                return
+            else
+                SetVehicleNumberPlateText(vehicle, plateToSet)
+            end
+        end
+    end)
+    return vehiclePlate
+end
 
 -- Credits to esx_core and txAdmin for the list.
 local mismatchedTypes = {

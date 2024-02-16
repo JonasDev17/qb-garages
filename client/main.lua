@@ -1053,8 +1053,13 @@ end)
 RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     -- check whether the vehicle is already spawned
-    local vehExists = DoesEntityExist(OutsideVehicles[vehicle.plate]) or
-                          (not Config.SpawnVehiclesServerside and GetVehicleByPlate(vehicle.plate))
+    local vehExists = false
+    if not Config.SpawnVehiclesServerside then
+        local veh = GetVehicleByPlate(vehicle.plate)
+        if veh and (GetEntityHealth(veh) > Config.MinImpoundDamage and GetVehicleBodyHealth(veh) > Config.MinImpoundDamage) then
+            vehExists = true
+        end
+    end
     if not vehExists then
         local PlayerData = QBCore.Functions.GetPlayerData()
         if PlayerData.money['cash'] >= vehicle.depotprice or PlayerData.money['bank'] >= vehicle.depotprice then

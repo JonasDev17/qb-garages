@@ -450,7 +450,7 @@ QBCore.Functions.CreateCallback('qb-garages:server:GetPlayerVehicles', function(
                 else
                     fullname = VehicleData["name"]
                 end
-                local spot = json.decode(v.parkingspot)
+                local spot = v.parkingspot and json.decode(v.parkingspot) or nil
                 Vehicles[#Vehicles+1] = {
                     fullname = fullname,
                     brand = VehicleData["brand"],

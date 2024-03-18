@@ -85,52 +85,36 @@ RegisterNetEvent("qb-garage:server:UpdateSpawnedVehicle", function(plate, value)
     VehicleSpawnerVehicles[plate] = value
 end)
 
-QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (source, cb, vehInfo, coords, heading, warp)
-    local hash = type(vehInfo.vehicle) == 'string' and joaat(vehInfo.vehicle) or vehInfo.vehicle;
+local vehicleTypes = { -- https://docs.fivem.net/natives/?_0xA273060E
+    motorcycles = 'bike',
+    boats = 'boat',
+    helicopters = 'heli',
+    planes = 'plane',
+    submarines = 'submarine',
+    trailer = 'trailer',
+    train = 'train'
+}
 
-    local ped
-    if not coords then
-        ped = GetPlayerPed(source)
-        coords = GetEntityCoords(ped)
-    end
+local function GetVehicleTypeByModel(model)
+    local vehicleData = QBCore.Shared.Vehicles[model]
+    if not vehicleData then return 'automobile' end
+    local category = vehicleData.category
+    local vehicleType = vehicleTypes[category]
+    return vehicleType or 'automobile'
+end
+-- Backwards Compat
 
-    QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
-
-        if not CreateVehicleServerSetter then
-            error('^1CreateVehicleServerSetter is not available on your artifact, please use artifact 5904 or above to be able to use this^0')
-            return
-        end
-
-        local veh = CreateVehicleServerSetter and CreateVehicleServerSetter(hash, vehicleType, coords.x, coords.y, coords.z, heading) or CreateVehicle(hash, coords.x, coords.y, coords.z, heading, true, true)
-        Wait(500)
-        if not veh or not NetworkGetNetworkIdFromEntity(veh) then
-            print('ISSUE HERE', veh, NetworkGetNetworkIdFromEntity(veh))
-        end
-
-        while not DoesEntityExist(veh) do
-            Wait(0)
-        end
-    
-        while GetVehicleNumberPlateText(veh) == "" do
-            Wait(0)
-        end
-        
-        local vehProps = {}
-        local plate = string.upper(vehInfo.plate)
-        if plate then
-            SetVehicleNumberPlateText(veh, plate)
-        end
-
-        if warp then
-            SetPedIntoVehicle(source, veh, -1)
-        end
-
-        local result = MySQL.query.await('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
-        if result[1] then vehProps = json.decode(result[1].mods) end
-        local netId = NetworkGetNetworkIdFromEntity(veh)
-        OutsideVehicles[plate] = {netID = netId, entity = veh}
-        cb(netId, vehProps or {})
-    end, hash)
+-- Spawns a vehicle and returns its network ID and properties.
+QBCore.Functions.CreateCallback('qb-garages:server:spawnvehicle', function(source, cb, plate, vehicle, coords)
+    local vehType = QBCore.Shared.Vehicles[vehicle] and QBCore.Shared.Vehicles[vehicle].type or GetVehicleTypeByModel(vehicle)
+    local veh = CreateVehicleServerSetter(GetHashKey(vehicle), vehType, coords.x, coords.y, coords.z, coords.w)
+    local netId = NetworkGetNetworkIdFromEntity(veh)
+    SetVehicleNumberPlateText(veh, plate)
+    local vehProps = {}
+    local result = MySQL.rawExecute.await('SELECT mods FROM player_vehicles WHERE plate = ?', { plate })
+    if result and result[1] then vehProps = json.decode(result[1].mods) end
+    OutsideVehicles[plate] = { netID = netId, entity = veh }
+    cb(netId, vehProps, plate)
 end)
 
 local function GetVehicles(citizenid, garageName, state, cb)

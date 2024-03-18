@@ -34,6 +34,15 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     end)
 end)
 
+-- Checks if a vehicle can be spawned based on its type and location.
+QBCore.Functions.CreateCallback('qb-garages:server:IsSpawnOk', function(_, cb, plate, type)
+    if OutsideVehicles[plate] and DoesEntityExist(OutsideVehicles[plate].entity) then
+        cb(false)
+        return
+    end
+    cb(true)
+end)
+
 QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function(source, cb, plate)
     plate = string.upper(plate)
     local src = source

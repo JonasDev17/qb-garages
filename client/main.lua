@@ -904,6 +904,7 @@ RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
                 garage.WarpPlayerIntoVehicle == nil)
         else
             QBCore.Functions.SpawnVehicle(vehicleModel, function(veh)
+                SetVehicleNumberPlateText(veh, vehicle.plate)
                 QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleProperties', function(properties)
                     UpdateSpawnedVehicle(veh, vehicle, heading, garage, properties)
                     if cb then

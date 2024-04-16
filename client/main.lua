@@ -32,7 +32,7 @@ local function TableContains(tab, val)
 end
 
 function TrackVehicleByPlate(plate)
-    QBCore.Functions.TriggerCallback('qb-garages:server:GetVehicleLocation', function(coords)
+    QBCore.Functions.TriggerCallback('qb-garage:server:GetVehicleLocation', function(coords)
         SetNewWaypoint(coords.x, coords.y)
     end, plate)
 end
@@ -114,7 +114,7 @@ local function PublicGarage(garageName, type)
         header = Lang:t("menu.text.vehicles"),
         txt = Lang:t("menu.text.vehicles"),
         params = {
-            event = "qb-garages:client:GarageMenu",
+            event = "qb-garage:client:GarageMenu",
             args = {
                 garageId = garageName,
                 garage = garage,
@@ -144,7 +144,7 @@ local function MenuHouseGarage()
         header = Lang:t("menu.text.vehicles"),
         txt = Lang:t("menu.text.vehicles"),
         params = {
-            event = "qb-garages:client:GarageMenu",
+            event = "qb-garage:client:GarageMenu",
             args = {
                 garageId = CurrentHouseGarage,
                 categories = Config.HouseGarageCategories,
@@ -256,7 +256,7 @@ local function ExitAndDeleteVehicle(vehicle)
     RemoveRadialOptions()
     if Config.SpawnVehiclesServerside then
         Wait(1000)
-        TriggerServerEvent('qb-garages:server:parkVehicle', plate)
+        TriggerServerEvent('qb-garage:server:parkVehicle', plate)
     end
 end
 
@@ -349,7 +349,7 @@ local function ParkOwnedVehicle(veh, garageName, vehLocation, plate)
     ExitAndDeleteVehicle(veh)
     if plate then
         OutsideVehicles[plate] = nil
-        TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+        TriggerServerEvent('qb-garage:server:UpdateOutsideVehicles', OutsideVehicles)
     end
     QBCore.Functions.Notify(Lang:t("success.vehicle_parked"), "success", 4500)
 end
@@ -393,7 +393,7 @@ local function AddRadialParkingOption()
             title = 'Park Vehicle',
             icon = 'square-parking',
             type = 'client',
-            event = 'qb-garages:client:ParkVehicle',
+            event = 'qb-garage:client:ParkVehicle',
             shouldClose = true
         }, MenuItemId1)
     end
@@ -402,7 +402,7 @@ local function AddRadialParkingOption()
         title = 'Open Garage',
         icon = 'warehouse',
         type = 'client',
-        event = 'qb-garages:client:OpenMenu',
+        event = 'qb-garage:client:OpenMenu',
         shouldClose = true
     }, MenuItemId2)
 end
@@ -413,7 +413,7 @@ local function AddRadialImpoundOption()
         title = 'Open Impound Lot',
         icon = 'warehouse',
         type = 'client',
-        event = 'qb-garages:client:OpenMenu',
+        event = 'qb-garage:client:OpenMenu',
         shouldClose = true
     }, MenuItemId1)
 end
@@ -566,7 +566,7 @@ function JobMenuGarage(garageName)
                 header = label,
                 txt = "",
                 params = {
-                    event = "qb-garages:client:TakeOutGarage",
+                    event = "qb-garage:client:TakeOutGarage",
                     args = {
                         vehicleModel = model,
                         garage = garage,
@@ -730,7 +730,7 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
         ClearMenu()
         if plate then
             OutsideVehicles[plate] = spawnedVehicle
-            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+            TriggerServerEvent('qb-garage:server:UpdateOutsideVehicles', OutsideVehicles)
         end
         if Config.FuelScript then
             exports[Config.FuelScript]:SetFuel(spawnedVehicle, 100)
@@ -742,7 +742,7 @@ function UpdateSpawnedVehicle(spawnedVehicle, vehicleInfo, heading, garage, prop
     else
         if plate then
             OutsideVehicles[plate] = spawnedVehicle
-            TriggerServerEvent('qb-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+            TriggerServerEvent('qb-garage:server:UpdateOutsideVehicles', OutsideVehicles)
         end
         if Config.FuelScript then
             exports[Config.FuelScript]:SetFuel(spawnedVehicle, vehicleInfo.fuel)
@@ -773,7 +773,7 @@ end
 
 -- Events
 
-RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
+RegisterNetEvent("qb-garage:client:GarageMenu", function(data)
     local type = data.type
     local garageId = data.garageId
     local garage = data.garage
@@ -830,7 +830,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                             value5 = v.state
                         }),
                         params = {
-                            event = "qb-garages:client:TakeOutDepot",
+                            event = "qb-garage:client:TakeOutDepot",
                             args = {
                                 vehicle = v,
                                 vehicleModel = v.vehicle,
@@ -852,7 +852,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
                             value4 = bodyPercent
                         }),
                         params = {
-                            event = "qb-garages:client:TakeOutGarage",
+                            event = "qb-garage:client:TakeOutGarage",
                             args = {
                                 vehicle = v,
                                 vehicleModel = v.vehicle,
@@ -878,7 +878,7 @@ RegisterNetEvent("qb-garages:client:GarageMenu", function(data)
     end, garageId, type, superCategory)
 end)
 
-RegisterNetEvent('qb-garages:client:TakeOutGarage', function(data, cb)
+RegisterNetEvent('qb-garage:client:TakeOutGarage', function(data, cb)
     local garageType = data.type
     local vehicleModel = data.vehicleModel
     local vehicleConfig = data.vehicleConfig
@@ -993,7 +993,7 @@ function GetVehicleTypeFromModelOrHash(model)
     return types[vehicleType] or "automobile"
 end
 
-QBCore.Functions.CreateClientCallback('qb-garages:client:GetVehicleType', function(cb, model)
+QBCore.Functions.CreateClientCallback('qb-garage:client:GetVehicleType', function(cb, model)
     cb(GetVehicleTypeFromModelOrHash(model));
 end)
 
@@ -1001,7 +1001,7 @@ RegisterNetEvent('qb-radialmenu:client:onRadialmenuOpen', function()
     UpdateRadialMenu()
 end)
 
-RegisterNetEvent('qb-garages:client:OpenMenu', function()
+RegisterNetEvent('qb-garage:client:OpenMenu', function()
     if CurrentGarage then
         local garage = Config.Garages[CurrentGarage]
         local garageType = garage.type
@@ -1011,11 +1011,11 @@ RegisterNetEvent('qb-garages:client:OpenMenu', function()
             PublicGarage(CurrentGarage, garageType)
         end
     elseif CurrentHouseGarage then
-        TriggerEvent('qb-garages:client:OpenHouseGarage')
+        TriggerEvent('qb-garage:client:OpenHouseGarage')
     end
 end)
 
-RegisterNetEvent('qb-garages:client:ParkVehicle', function()
+RegisterNetEvent('qb-garage:client:ParkVehicle', function()
     local ped = PlayerPedId()
     local canPark = true
     local curVeh = GetVehiclePedIsIn(ped)
@@ -1040,7 +1040,7 @@ RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     end
 end)
 
-RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
+RegisterNetEvent('qb-garage:client:ParkLastVehicle', function(parkingName)
     local ped = PlayerPedId()
     local curVeh = GetLastDrivenVehicle(ped)
     if curVeh then
@@ -1051,7 +1051,7 @@ RegisterNetEvent('qb-garages:client:ParkLastVehicle', function(parkingName)
     end
 end)
 
-RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
+RegisterNetEvent('qb-garage:client:TakeOutDepot', function(data)
     local vehicle = data.vehicle
     -- check whether the vehicle is already spawned
     local vehExists = false
@@ -1064,7 +1064,7 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     if not vehExists then
         local PlayerData = QBCore.Functions.GetPlayerData()
         if PlayerData.money['cash'] >= vehicle.depotprice or PlayerData.money['bank'] >= vehicle.depotprice then
-            TriggerEvent("qb-garages:client:TakeOutGarage", data, function(veh)
+            TriggerEvent("qb-garage:client:TakeOutGarage", data, function(veh)
                 if veh then
                     TriggerServerEvent("qb-garage:server:PayDepotPrice", data)
                 end
@@ -1077,15 +1077,15 @@ RegisterNetEvent('qb-garages:client:TakeOutDepot', function(data)
     end
 end)
 
-RegisterNetEvent('qb-garages:client:TrackVehicleByPlate', function(plate)
+RegisterNetEvent('qb-garage:client:TrackVehicleByPlate', function(plate)
     TrackVehicleByPlate(plate)
 end)
 
-RegisterNetEvent('qb-garages:client:OpenHouseGarage', function()
+RegisterNetEvent('qb-garage:client:OpenHouseGarage', function()
     MenuHouseGarage()
 end)
 
-RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
+RegisterNetEvent('qb-garage:client:setHouseGarage', function(house, hasKey)
     if hasKey then
         if Config.HouseGarages[house] and Config.HouseGarages[house].takeVehicle.x then
             RegisterHousePoly(house)
@@ -1095,7 +1095,7 @@ RegisterNetEvent('qb-garages:client:setHouseGarage', function(house, hasKey)
     end
 end)
 
-RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
+RegisterNetEvent('qb-garage:client:houseGarageConfig', function(garageConfig)
     for _, v in pairs(garageConfig) do
         v.vehicleCategories = Config.HouseGarageCategories
     end
@@ -1103,13 +1103,13 @@ RegisterNetEvent('qb-garages:client:houseGarageConfig', function(garageConfig)
     HouseGarages = garageConfig
 end)
 
-RegisterNetEvent('qb-garages:client:addHouseGarage', function(house, garageInfo)
+RegisterNetEvent('qb-garage:client:addHouseGarage', function(house, garageInfo)
     garageInfo.vehicleCategories = Config.HouseGarageCategories
     Config.HouseGarages[house] = garageInfo
     HouseGarages[house] = garageInfo
 end)
 
-RegisterNetEvent('qb-garages:client:removeHouseGarage', function(house)
+RegisterNetEvent('qb-garage:client:removeHouseGarage', function(house)
     Config.HouseGarages[house] = nil
 end)
 

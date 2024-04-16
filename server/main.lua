@@ -34,7 +34,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetOutsideVehicle", function(s
     end)
 end)
 
-QBCore.Functions.CreateCallback("qb-garages:server:GetVehicleLocation", function(source, cb, plate)
+QBCore.Functions.CreateCallback("qb-garage:server:GetVehicleLocation", function(source, cb, plate)
     plate = string.upper(plate)
     local src = source
     local vehicles = GetAllVehicles()
@@ -94,7 +94,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:spawnvehicle', function (sourc
         coords = GetEntityCoords(ped)
     end
 
-    QBCore.Functions.TriggerClientCallback('qb-garages:client:GetVehicleType', source, function (vehicleType)
+    QBCore.Functions.TriggerClientCallback('qb-garage:client:GetVehicleType', source, function (vehicleType)
 
         if not CreateVehicleServerSetter then
             error('^1CreateVehicleServerSetter is not available on your artifact, please use artifact 5904 or above to be able to use this^0')
@@ -344,7 +344,7 @@ RegisterNetEvent('qb-garage:server:updateVehicleState', function(state, plate, g
     MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
 end)
 
-RegisterNetEvent('qb-garages:server:UpdateOutsideVehicles', function(Vehicles)
+RegisterNetEvent('qb-garage:server:UpdateOutsideVehicles', function(Vehicles)
     local src = source
     local ply = QBCore.Functions.GetPlayer(src)
     local citizenId = ply.PlayerData.citizenid
@@ -394,7 +394,7 @@ RegisterNetEvent('qb-garage:server:PayDepotPrice', function(data)
     end)
 end)
 
-RegisterNetEvent('qb-garages:server:parkVehicle', function(plate)
+RegisterNetEvent('qb-garage:server:parkVehicle', function(plate)
     plate = string.upper(plate)
     local vehicle = GetVehicleByPlate(plate)
     if vehicle then
@@ -418,7 +418,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(s
 end)
 
 --Call from qb-phone
-QBCore.Functions.CreateCallback('qb-garages:server:GetPlayerVehicles', function(source, cb)
+QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
     local Vehicles = {}
 
@@ -514,6 +514,6 @@ end, Config.RestoreCommandPermissionLevel)
 
 if Config.EnableTrackVehicleByPlateCommand then
     QBCore.Commands.Add(Config.TrackVehicleByPlateCommand, 'Track vehicle', {{name='plate', help='Plate'}}, true, function(source, args)
-    TriggerClientEvent('qb-garages:client:TrackVehicleByPlate', source, args[1])
+    TriggerClientEvent('qb-garage:client:TrackVehicleByPlate', source, args[1])
     end, Config.TrackVehicleByPlateCommandPermissionLevel)
 end

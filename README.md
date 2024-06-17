@@ -114,39 +114,6 @@ local garageName = 'pdgarage'
         distance = 3
     })
 ```
-### improved phone tracking (DEPRECATED)
-Replace:
-
-```
-RegisterNUICallback('track-vehicle', function(data, cb)
-    local veh = data.veh
-    if findVehFromPlateAndLocate(veh.plate) then
-        QBCore.Functions.Notify("Your vehicle has been marked", "success")
-    else
-        QBCore.Functions.Notify("This vehicle cannot be located", "error")
-    end
-    cb("ok")
-end)
-```
-
-With:
-
-```
-RegisterNUICallback('track-vehicle', function(data, cb)
-    local veh = data.veh
-    if veh.state == 'In' then
-        if veh.parkingspot then
-            SetNewWaypoint(veh.parkingspot.x, veh.parkingspot.y)
-            QBCore.Functions.Notify("Your vehicle has been marked", "success")
-        end
-    elseif veh.state == 'Out' and findVehFromPlateAndLocate(veh.plate) then
-        QBCore.Functions.Notify("Your vehicle has been marked", "success")
-    else
-        QBCore.Functions.Notify("This vehicle cannot be located", "error")
-    end
-    cb("ok")
-end)
-```
 
 ## Credits
 

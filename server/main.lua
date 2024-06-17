@@ -211,8 +211,14 @@ QBCore.Functions.CreateCallback("qb-garage:server:GetGarageVehicles", function(s
                     end
                 end
                 for _, vehicle in pairs(result) do
-                    if Config.SpawnVehiclesServerside and GetVehicleByPlate(string.upper(vehicle.plate)) or not QBCore.Shared.Vehicles[vehicle.vehicle] then
+                    if not QBCore.Shared.Vehicles[vehicle.vehicle] then
                         goto skip
+                    end
+                    if Config.SpawnVehiclesServerside then
+                        local veh = GetVehicleByPlate(string.upper(vehicle.plate))
+                        if (veh and (GetVehicleBodyHealth(veh) > Config.MinImpoundDamage and GetEntityHealth(veh) > Config.MinImpoundDamage)) then
+                            goto skip
+                        end
                     end
                     if vehicle.depotprice == 0 then
                         vehicle.depotprice = Config.DepotPrice
@@ -327,17 +333,9 @@ end)
 RegisterNetEvent('qb-garage:server:updateVehicle', function(state, fuel, engine, body, properties, plate, garage, location, damage)
     plate = string.upper(plate)
     if location and type(location) == 'vector3' then
-        if Config.StoreDamageAccuratly then
-            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ?, parkingspot = ?, damage = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(properties), json.encode(location), json.encode(damage), plate})
-        else
-            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ?, parkingspot = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(properties), json.encode(location), plate})
-        end
+        MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ?, parkingspot = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(properties), json.encode(location), plate})
     else
-        if Config.StoreDamageAccuratly then
-            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ?, damage = ? WHERE plate = ?',{state, garage, fuel, engine, body, json.encode(properties), json.encode(damage), plate})
-        else
-            MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ? WHERE plate = ?', {state, garage, fuel, engine, body, json.encode(properties), plate})
-        end
+        MySQL.update('UPDATE player_vehicles SET state = ?, garage = ?, fuel = ?, engine = ?, body = ?, mods = ? WHERE plate = ?', {state, garage, fuel, engine, body, json.encode(properties), plate})
     end
 end)
 
@@ -420,7 +418,7 @@ QBCore.Functions.CreateCallback("qb-garage:server:checkVehicleOwner", function(s
 end)
 
 --Call from qb-phone
-QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(source, cb)
+QBCore.Functions.CreateCallback('qb-garages:server:GetPlayerVehicles', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
     local Vehicles = {}
 
@@ -452,7 +450,7 @@ QBCore.Functions.CreateCallback('qb-garage:server:GetPlayerVehicles', function(s
                 else
                     fullname = VehicleData["name"]
                 end
-                local spot = json.decode(v.parkingspot)
+                local spot = v.parkingspot and json.decode(v.parkingspot) or nil
                 Vehicles[#Vehicles+1] = {
                     fullname = fullname,
                     brand = VehicleData["brand"],

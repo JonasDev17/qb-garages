@@ -54,9 +54,11 @@ Config = Config or {}
     },
 ]]
 
+-- NEW -- 
+Config.ShowNearestParkingOnly = false -- whether to show only the nearest parking lot only (blip)
 Config.MinImpoundDamage = 1 -- vehicle can be retrieved from impound if vehicle or vehicle body damage is below this
-
 -- NEW ---
+
 -- There is a new clientside export called 'TrackVehicleByPlate' that can be used to track vehicles by plate, this is useful for other scripts that want to track vehicles by plate (e.g. exports['qb-garages']:TrackVehicleByPlate(plate))
 -- And the clientside event 'qb-garages:client:TrackVehicleByPlate'(e.g. TriggerEvent('qb-garages:client:TrackVehicleByPlate', plate))
 

@@ -588,6 +588,80 @@ function JobMenuGarage(garageName)
     exports['qb-menu']:openMenu(vehicleMenu)
 end
 
+function GangMenuGarage(garageName)
+    local playerGang = PlayerGang.name
+    local garage = Config.Garages[garageName]
+    local gangGarage = Config.GangVehicles[garage.gangGarageIdentifier]
+
+    if not gangGarage then
+        if garage.gangGarageIdentifier then
+            TriggerEvent('QBCore:Notify', 
+                string.format('Gang garage with id %s not configured.', garage.gangGarageIdentifier), 'error', 5000)
+        else
+            TriggerEvent('QBCore:Notify',
+                string.format("'gangGarageIdentifier' not defined on job garage %s ", garageName), 'error', 5000)
+        end
+        return
+    end
+
+    local vehicleMenu = {{
+        header = gangGarage.label,
+        isMenuHeader = true
+    }}
+    
+    local gangGrade = QBCore.Functions.GetPlayerData().gang.grade.level
+    local vehicles = gangGarage.vehicles[gangGrade]
+    
+    for index, data in pairs(vehicles) do
+        local model = index
+        local label = data
+        local vehicleConfig = nil
+        local addVehicle = true
+
+        if type(data) == "table" then
+            local vehicleGang = data.gang
+            if vehicleGang then
+                if type(vehicleGang) == "table" and not TableContains(vehicleGang, playerGang) then
+                    addVehicle = false
+                elseif playerJob ~= vehicleGang then
+                    addVehicle = false
+                end
+            end
+            
+            if addVehicle then
+                label = data.label
+                model = data.model
+                vehicleConfig = Config.VehicleSettings[data.configName]
+            end
+        end
+
+        if addVehicle then
+            vehicleMenu[#vehicleMenu + 1] = {
+                header = label,
+                txt = "",
+                params = {
+                    event = "qb-garages:client:TakeOutGarage",
+                    args = {
+                        vehicleModel = model,
+                        garage = garage,
+                        vehicleConfig = vehicleConfig
+                    }
+                }
+            }
+        end
+    end
+
+    vehicleMenu[#vehicleMenu + 1] = {
+        header = Lang:t('menu.leave.gang'),
+        txt = "",
+        params = {
+            event = "qb-menu:client:closeMenu"
+        }
+    }
+
+    exports['qb-menu']:openMenu(vehicleMenu)
+end
+
 function GetFreeParkingSpots(parkingSpots)
     local freeParkingSpots = {}
     for _, parkingSpot in ipairs(parkingSpots) do
@@ -1006,6 +1080,8 @@ RegisterNetEvent('qb-garages:client:OpenMenu', function()
         local garageType = garage.type
         if garageType == 'job' and garage.useVehicleSpawner then
             JobMenuGarage(CurrentGarage)
+        elseif garageType == 'gang' and garage.useVehicleSpawner then
+            GangMenuGarage(CurrentGarage)
         else
             PublicGarage(CurrentGarage, garageType)
         end
@@ -1013,7 +1089,6 @@ RegisterNetEvent('qb-garages:client:OpenMenu', function()
         TriggerEvent('qb-garages:client:OpenHouseGarage')
     end
 end)
-
 RegisterNetEvent('qb-garages:client:ParkVehicle', function()
     local ped = PlayerPedId()
     local canPark = true

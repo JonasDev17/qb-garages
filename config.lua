@@ -35,6 +35,7 @@ Config = Config or {}
         -- job = {'police', 'ambulance'), -- optional, multi job support
         useVehicleSpawner = true, uses the configured job vehicles, make sure to have the job attribute set! (job = 'police')                                                           <---    NEW
         jobGarageIdentifier = 'pd1', required when using vehicle spawner, references the JobVehicles down below, make sure this matches what you used in the JobVehicles table          <---    NEW
+        gangGarageIdentifier = 'pd1', required when using vehicle spawner, references the GangVehicles down below, make sure this matches what you used in the GangVehicles table          <---    NEW
         gang = 'vagos', -- optional, same as job but for gangs, do not use both
         -- gang = {'vagos', 'gsf'}, -- optional, multi gang support
         jobVehiclesIndex = 'pd1', -- the corresponding index (JobVehicles)
@@ -184,6 +185,34 @@ Config.JobVehicles = {
                 ["policet"] = "Police Car 6",
                 ["sheriff"] = "Sheriff Car 1",
                 ["sheriff2"] = "Sheriff Car 2",
+            }
+        }
+    }
+}
+
+Config.GangVehicles = {
+	['ballas'] = { -- <-- jobGarageIdentifier
+        label = "Ballas",
+        vehicles = {
+            -- Grade 0
+            [0] = {
+                ["sultan"] = "Sultan"
+            },
+            -- Grade 1
+            [1] = {
+                ["sultan"] = "Sultan"
+            },
+            -- Grade 2
+            [2] = {
+                ["sultan"] = "Sultan"
+            },
+            -- Grade 3
+            [3] = {
+                ["sultan"] = "Sultan"
+            },
+            -- Grade 4
+            [4] = {
+                ["sultan"] = "Sultan"
             }
         }
     }

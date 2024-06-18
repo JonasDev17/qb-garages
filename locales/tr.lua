@@ -39,7 +39,8 @@ local Translations = {
             car = "⬅ Garajdan Ayrıl",
             sea = "⬅ Bot Garajından Ayrıl",
             air = "⬅ Hangardan Ayrıl",
-            job = "⬅ Garajdan Ayrıl"
+            job = "⬅ Garajdan Ayrıl",
+            gang = "⬅ Garajdan Ayrıl"
         },
         text = {
             vehicles = "Garajdaki arçaları görüntüle!",

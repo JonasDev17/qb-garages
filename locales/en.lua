@@ -39,7 +39,8 @@ local Translations = {
             car = "⬅ Leave Garage",
             sea = "⬅ Leave Boathouse",
             air = "⬅ Leave Hangar",
-            job = "⬅ Leave Garage"
+            job = "⬅ Leave Garage",
+            gang = "⬅ Leave Garage",
         },
         text = {
             vehicles = "View stored vehicles!",
